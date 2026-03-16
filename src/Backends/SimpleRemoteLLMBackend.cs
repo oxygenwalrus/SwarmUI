@@ -72,19 +72,26 @@ public class SimpleRemoteLLMBackend : AbstractLLMBackend
                 throw new Exception("Backend address not configured. Please set the LM Studio address in backend settings.");
             }
 
-            // Prepare the OpenAI-compatible request
+            // Prepare the OpenAI-compatible request with full conversation history
             JObject request = new()
             {
                 ["model"] = user_input.Model ?? "default",
-                ["messages"] = new JArray(
-                    new JObject()
-                    {
-                        ["role"] = "user",
-                        ["content"] = user_input.UserMessage
-                    }
-                ),
+                ["messages"] = user_input.BuildMessagesForAPI(),
                 ["stream"] = true  // Request streaming
             };
+
+            // Add optional parameters if specified
+            if (user_input.MaxTokens.HasValue)
+            {
+                request["max_tokens"] = user_input.MaxTokens.Value;
+                Logs.Debug($"[SimpleRemoteLLMBackend] Max tokens: {user_input.MaxTokens}");
+            }
+
+            if (user_input.Temperature.HasValue)
+            {
+                request["temperature"] = user_input.Temperature.Value;
+                Logs.Debug($"[SimpleRemoteLLMBackend] Temperature: {user_input.Temperature}");
+            }
 
             Logs.Debug($"[SimpleRemoteLLMBackend] Sending request: {request.ToString()}");
 

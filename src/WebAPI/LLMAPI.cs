@@ -132,12 +132,41 @@ public abstract class LLMAPI
             string model = rawInput.TryGetValue("model", out JToken modelToken) ? modelToken.ToString() : null;
             Logs.Info($"[LLM API] Using model: {model ?? "(default)"}");
 
+            // Parse chat history if provided
+            List<ConversationMessage> conversationHistory = new();
+            if (rawInput.TryGetValue("chat_history", out JToken historyToken) && historyToken is JArray historyArray)
+            {
+                conversationHistory = LLMParamInput.ParseHistoryFromJson(historyArray);
+                Logs.Info($"[LLM API] Parsed {conversationHistory.Count} history messages");
+            }
+
             // Build LLM input
             LLMParamInput llmInput = new()
             {
                 UserMessage = userMessage,
-                Model = model ?? "default"
+                Model = model ?? "default",
+                ConversationHistory = conversationHistory
             };
+
+            // Add optional system prompt if provided
+            if (rawInput.TryGetValue("system_prompt", out JToken systemToken))
+            {
+                llmInput.SystemPrompt = systemToken.ToString();
+                Logs.Info($"[LLM API] Using custom system prompt");
+            }
+
+            // Add optional generation parameters
+            if (rawInput.TryGetValue("max_tokens", out JToken maxTokensToken) && int.TryParse(maxTokensToken.ToString(), out int maxTokens))
+            {
+                llmInput.MaxTokens = maxTokens;
+                Logs.Info($"[LLM API] Max tokens: {maxTokens}");
+            }
+
+            if (rawInput.TryGetValue("temperature", out JToken tempToken) && float.TryParse(tempToken.ToString(), out float temp))
+            {
+                llmInput.Temperature = temp;
+                Logs.Info($"[LLM API] Temperature: {temp}");
+            }
 
             // Get the first available LLM backend
             AbstractLLMBackend backend = Program.Backends.AllBackends.Values
@@ -214,12 +243,28 @@ public abstract class LLMAPI
             string model = rawInput.TryGetValue("model", out JToken modelToken) ? modelToken.ToString() : null;
             Logs.Info($"[LLM API] WS Using model: {model ?? "(default)"}");
 
+            // Parse chat history if provided
+            List<ConversationMessage> conversationHistory = new();
+            if (rawInput.TryGetValue("chat_history", out JToken historyToken) && historyToken is JArray historyArray)
+            {
+                conversationHistory = LLMParamInput.ParseHistoryFromJson(historyArray);
+                Logs.Info($"[LLM API] WS Parsed {conversationHistory.Count} history messages");
+            }
+
             // Build LLM input
             LLMParamInput llmInput = new()
             {
                 UserMessage = userMessage,
-                Model = model ?? "default"
+                Model = model ?? "default",
+                ConversationHistory = conversationHistory
             };
+
+            // Add optional system prompt if provided
+            if (rawInput.TryGetValue("system_prompt", out JToken systemToken))
+            {
+                llmInput.SystemPrompt = systemToken.ToString();
+                Logs.Info($"[LLM API] WS Using custom system prompt");
+            }
 
             // Get the first available LLM backend
             AbstractLLMBackend backend = Program.Backends.AllBackends.Values
