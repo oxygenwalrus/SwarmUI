@@ -37,14 +37,8 @@ import { useModelLoading } from '../../hooks/useModelLoading';
 import { swarmClient } from '../../api/client';
 import { resolveAssetUrl } from '../../config/runtimeEndpoints';
 import type { RoleplayCharacter } from '../../types/roleplay';
+import { PRESET_PROMPT_MAP, ROLEPLAY_PROMPT_PRESETS } from '../../data/roleplayPromptPresets';
 import { CharacterAvatar } from './CharacterAvatar';
-
-const DEFAULT_SYSTEM_PROMPT =
-    'You are a roleplay character. Stay in character at all times. ' +
-    'Respond naturally and drive the story forward.\n\n' +
-    'When a scene is vivid and worth illustrating — a dramatic location, a creature, a key moment — ' +
-    'write [SCENE: detailed image generation prompt] on its own line. ' +
-    'Make the image prompt specific: describe lighting, mood, style, subject, and composition.';
 
 const IP_ADAPTER_MODELS = [
     { value: 'faceid plus v2', label: 'FaceID Plus v2 — recommended (SDXL / SD1.5)' },
@@ -84,7 +78,9 @@ function CharacterEditorForm({
     // ── Character text fields ─────────────────────────────────────────────
     const [name, setName] = useState(character?.name ?? '');
     const [personality, setPersonality] = useState(character?.personality ?? '');
-    const [systemPrompt, setSystemPrompt] = useState(character?.systemPrompt ?? DEFAULT_SYSTEM_PROMPT);
+    const [systemPrompt, setSystemPrompt] = useState(
+        character?.systemPrompt ?? PRESET_PROMPT_MAP.get('default-roleplay') ?? ''
+    );
     const [sceneSuggestionPrompt, setSceneSuggestionPrompt] = useState(
         character?.sceneSuggestionPrompt ?? ''
     );
@@ -564,18 +560,42 @@ function CharacterEditorForm({
                         maxRows={3}
                         autosize
                     />
-                    <Textarea
-                        label="System Prompt"
-                        description="Full instructions sent to the AI at the start of every conversation"
-                        placeholder="You are a creative storyteller..."
-                        value={systemPrompt}
-                        onChange={(e) => setSystemPrompt(e.currentTarget.value)}
-                        minRows={7}
-                        maxRows={14}
-                        autosize
-                        required
-                        styles={{ input: { fontFamily: 'monospace', fontSize: 12 } }}
-                    />
+                    <Stack gap={4}>
+                        <Group justify="space-between" align="center">
+                            <Text size="sm" fw={500}>
+                                System Prompt{' '}
+                                <Text span c="red">*</Text>
+                            </Text>
+                            <Select
+                                placeholder="Load preset..."
+                                size="xs"
+                                w={180}
+                                searchable
+                                clearable={false}
+                                value={null}
+                                data={ROLEPLAY_PROMPT_PRESETS.map((g) => ({
+                                    group: g.group,
+                                    items: g.items.map((p) => ({ value: p.value, label: p.label })),
+                                }))}
+                                onChange={(value) => {
+                                    if (!value) return;
+                                    const prompt = PRESET_PROMPT_MAP.get(value);
+                                    if (prompt) setSystemPrompt(prompt);
+                                }}
+                            />
+                        </Group>
+                        <Textarea
+                            description="Full instructions sent to the AI at the start of every conversation"
+                            placeholder="You are a creative storyteller..."
+                            value={systemPrompt}
+                            onChange={(e) => setSystemPrompt(e.currentTarget.value)}
+                            minRows={7}
+                            maxRows={14}
+                            autosize
+                            required
+                            styles={{ input: { fontFamily: 'monospace', fontSize: 12 } }}
+                        />
+                    </Stack>
                     <Textarea
                         label="Scene Suggestion Prompt"
                         description="Optional — how the AI is asked to describe the current scene for image generation"
