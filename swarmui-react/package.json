@@ -1,0 +1,128 @@
+{
+  "name": "swarmui-react",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "node scripts/electron-dev.cjs",
+    "dev:vite": "vite",
+    "build": "tsc -b && vite build",
+    "build:electron": "node scripts/build-runtime.mjs electron",
+    "build:integrated": "npm run build && node scripts/build-integrated.mjs",
+    "build:win": "npm run build:electron && electron-builder --win",
+    "build:mac": "npm run build:electron && electron-builder --mac",
+    "build:linux": "npm run build:electron && electron-builder --linux",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "src/**/*.css": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@mantine/core": "^8.3.9",
+    "@mantine/form": "^8.3.9",
+    "@mantine/hooks": "^8.3.9",
+    "@mantine/notifications": "^8.3.9",
+    "@mantine/tiptap": "^8.3.9",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@tabler/icons-react": "^3.35.0",
+    "@tanstack/react-query": "^5.90.12",
+    "@tanstack/react-virtual": "^3.13.13",
+    "@tiptap/extension-link": "^3.13.0",
+    "@tiptap/react": "^3.13.0",
+    "@tiptap/starter-kit": "^3.13.0",
+    "blurhash": "^2.0.5",
+    "comlink": "^4.4.2",
+    "downshift": "^9.0.13",
+    "framer-motion": "^12.23.26",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-draggable": "^4.5.0",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@electron/remote": "^2.1.0",
+    "@eslint/js": "^9.39.1",
+    "@tauri-apps/api": "^2.10.1",
+    "@tauri-apps/cli": "^2.10.0",
+    "@tauri-apps/plugin-dialog": "^2.6.0",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "concurrently": "^9.1.2",
+    "electron": "^39.2.6",
+    "electron-builder": "^26.8.1",
+    "electron-updater": "^6.3.9",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.4.2",
+    "rollup-plugin-visualizer": "^6.0.5",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vite": "^7.2.4",
+    "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^4.0.18",
+    "wait-on": "^8.0.1",
+    "workbox-window": "^7.4.0"
+  },
+  "build": {
+    "appId": "com.swarmui.react",
+    "productName": "SwarmUI",
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "electron/icon.png"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "electron/icon.png",
+      "category": "public.app-category.graphics-design"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "electron/icon.png",
+      "category": "Graphics"
+    },
+    "extraResources": [
+      {
+        "from": "../",
+        "to": "swarmui",
+        "filter": [
+          "**/*",
+          "!swarmui-react/**"
+        ]
+      }
+    ]
+  }
+}

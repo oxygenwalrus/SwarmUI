@@ -1,0 +1,220 @@
+import {
+    ActionIcon,
+    Group,
+    Menu,
+    SegmentedControl,
+    Text,
+    Tooltip,
+} from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
+import {
+    IconDotsVertical,
+    IconDownload,
+    IconLogout,
+    IconMoon,
+    IconPower,
+    IconReload,
+    IconSearch,
+    IconSun,
+} from '@tabler/icons-react';
+import { ThemeSelector } from '../ThemeSelector';
+import { QueueStatusBadge } from '../QueueStatusBadge';
+import { useThemeStore } from '../../store/themeStore';
+import type { AppPage } from '../../stores/navigationStore';
+import { useShallow } from 'zustand/react/shallow';
+
+interface AppHeaderProps {
+    currentPage: AppPage;
+    onPageChange: (page: AppPage) => void;
+    onPrefetchPage?: (page: AppPage) => void;
+    onOpenCommandPalette: () => void;
+    onOpenModelDownloader: () => void;
+    onReloadWrapper: () => void;
+    onLogout: () => void;
+    onShutdown: () => void;
+    onNavigateToQueue: () => void;
+}
+
+function LightDarkToggle() {
+    const { isLightMode, toggleLightMode } = useThemeStore(useShallow((state) => ({
+        isLightMode: state.isLightMode,
+        toggleLightMode: state.toggleLightMode,
+    })));
+
+    return (
+        <Tooltip label={isLightMode ? 'Switch to Dark Mode' : 'Switch to Light Mode'}>
+            <ActionIcon
+                aria-label={isLightMode ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+                variant="subtle"
+                size="md"
+                onClick={toggleLightMode}
+                color="gray"
+                className="swarm-app-header-action swarm-app-header-action--theme"
+            >
+                {isLightMode ? <IconMoon size={18} /> : <IconSun size={18} />}
+            </ActionIcon>
+        </Tooltip>
+    );
+}
+
+export function AppHeader({
+    currentPage,
+    onPageChange,
+    onPrefetchPage,
+    onOpenCommandPalette,
+    onOpenModelDownloader,
+    onReloadWrapper,
+    onLogout,
+    onShutdown,
+    onNavigateToQueue,
+}: AppHeaderProps) {
+    const isWide = useMediaQuery('(min-width: 1366px)', true);
+    const isCompact = useMediaQuery('(min-width: 1200px)', true);
+
+    const layoutMode: 'full' | 'compact' | 'condensed' = isWide
+        ? 'full'
+        : isCompact
+            ? 'compact'
+            : 'condensed';
+
+    const showOverflowActions = layoutMode === 'condensed';
+    const navItems: { label: string; value: AppPage }[] = [
+        { label: 'Generate', value: 'generate' },
+        { label: 'History', value: 'history' },
+        { label: 'Queue', value: 'queue' },
+        { label: 'Workflows', value: 'workflows' },
+        { label: 'Roleplay', value: 'roleplay' },
+        { label: 'Server', value: 'server' },
+    ];
+
+    return (
+        <div className="swarm-app-header" data-layout={layoutMode}>
+            <Text size="lg" fw={700} c="invokeGray.0" className="swarm-app-header__title">
+                {layoutMode === 'full' ? 'SwarmUI' : 'Swarm'}
+            </Text>
+
+            <div className="swarm-app-header__nav-wrap">
+                <SegmentedControl
+                    value={currentPage}
+                    onChange={(value) => onPageChange(value as AppPage)}
+                    data={navItems.map((item) => ({
+                        value: item.value,
+                        label: (
+                            <span
+                                onMouseEnter={() => onPrefetchPage?.(item.value)}
+                                onFocus={() => onPrefetchPage?.(item.value)}
+                            >
+                                {item.label}
+                            </span>
+                        ),
+                    }))}
+                    color="invokeBrand"
+                    size={layoutMode === 'full' ? 'sm' : 'xs'}
+                    className="swarm-app-header__nav"
+                />
+            </div>
+
+            <Group gap="xs" wrap="nowrap" className="swarm-app-header__actions">
+                <QueueStatusBadge compact onNavigateToQueue={onNavigateToQueue} />
+                <ThemeSelector compact={layoutMode !== 'full'} />
+                <LightDarkToggle />
+
+                {showOverflowActions ? (
+                    <Menu position="bottom-end" shadow="md" withArrow>
+                        <Menu.Target>
+                            <ActionIcon
+                                aria-label="Open header actions menu"
+                                variant="subtle"
+                                size="md"
+                                color="gray"
+                                className="swarm-app-header-action"
+                            >
+                                <IconDotsVertical size={18} />
+                            </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                            <Menu.Item leftSection={<IconSearch size={14} />} onClick={onOpenCommandPalette}>
+                                Command Palette
+                            </Menu.Item>
+                            <Menu.Item leftSection={<IconDownload size={14} />} onClick={onOpenModelDownloader}>
+                                Model Downloader
+                            </Menu.Item>
+                            <Menu.Item leftSection={<IconReload size={14} />} onClick={onReloadWrapper}>
+                                Reload Desktop Wrapper
+                            </Menu.Item>
+                            <Menu.Item leftSection={<IconLogout size={14} />} onClick={onLogout}>
+                                Log Out
+                            </Menu.Item>
+                            <Menu.Item color="red" leftSection={<IconPower size={14} />} onClick={onShutdown}>
+                                Shutdown SwarmUI
+                            </Menu.Item>
+                        </Menu.Dropdown>
+                    </Menu>
+                ) : (
+                    <>
+                        <Tooltip label="Command palette">
+                            <ActionIcon
+                                aria-label="Open command palette"
+                                variant="subtle"
+                                size="md"
+                                color="gray"
+                                onClick={onOpenCommandPalette}
+                                className="swarm-app-header-action"
+                            >
+                                <IconSearch size={18} />
+                            </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label="Model Downloader">
+                            <ActionIcon
+                                aria-label="Open Model Downloader"
+                                variant="subtle"
+                                size="md"
+                                color="gray"
+                                onClick={onOpenModelDownloader}
+                                className="swarm-app-header-action swarm-app-header-action--download"
+                            >
+                                <IconDownload size={18} />
+                            </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label="Reload desktop wrapper">
+                            <ActionIcon
+                                aria-label="Reload desktop wrapper"
+                                variant="subtle"
+                                size="md"
+                                color="gray"
+                                onClick={onReloadWrapper}
+                                className="swarm-app-header-action swarm-app-header-action--reload"
+                            >
+                                <IconReload size={18} />
+                            </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label="Log Out">
+                            <ActionIcon
+                                aria-label="Log out"
+                                variant="subtle"
+                                size="md"
+                                color="gray"
+                                onClick={onLogout}
+                                className="swarm-app-header-action swarm-app-header-action--logout"
+                            >
+                                <IconLogout size={18} />
+                            </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label="Shutdown SwarmUI">
+                            <ActionIcon
+                                aria-label="Shutdown SwarmUI"
+                                variant="subtle"
+                                size="md"
+                                color="gray"
+                                onClick={onShutdown}
+                                className="swarm-app-header-action swarm-app-header-action--shutdown"
+                            >
+                                <IconPower size={18} />
+                            </ActionIcon>
+                        </Tooltip>
+                    </>
+                )}
+            </Group>
+        </div>
+    );
+}

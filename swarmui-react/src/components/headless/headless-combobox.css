@@ -1,0 +1,108 @@
+/**
+ * HeadlessCombobox CSS
+ *
+ * Styles that match Mantine's Select appearance.
+ */
+
+.headless-combobox {
+    width: 100%;
+}
+
+/* Right section with clear and chevron */
+.headless-combobox-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Clear button */
+.headless-combobox-clear {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 4px;
+    font-size: 14px;
+    color: var(--theme-gray-3);
+    opacity: 0.7;
+    transition: opacity 150ms ease;
+}
+
+.headless-combobox-clear:hover {
+    opacity: 1;
+}
+
+/* Chevron rotation */
+.headless-combobox-chevron {
+    color: var(--theme-gray-3);
+    transition: transform 200ms ease;
+}
+
+.headless-combobox-chevron.open {
+    transform: rotate(180deg);
+}
+
+/* Dropdown container */
+.headless-combobox-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    display: none;
+    background-color: var(--theme-dropdown-bg);
+    border-color: var(--theme-gray-5);
+    overflow: hidden;
+}
+
+.headless-combobox-dropdown.open {
+    display: block;
+    animation: headless-dropdown-show 150ms ease-out;
+}
+
+/* Individual option item */
+.headless-combobox-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 100ms ease;
+}
+
+.headless-combobox-item:hover,
+.headless-combobox-item.highlighted {
+    background-color: var(--theme-line-highlight);
+}
+
+.headless-combobox-item.selected {
+    background-color: var(--theme-selection-bg);
+    border: 1px solid var(--theme-selection-border);
+}
+
+.headless-combobox-item.selected .mantine-Text-root {
+    color: var(--theme-info);
+    font-weight: 500;
+}
+
+/* Dropdown animation */
+@keyframes headless-dropdown-show {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .headless-combobox-dropdown.open,
+    .headless-combobox-chevron {
+        animation: none;
+        transition: none;
+    }
+}
