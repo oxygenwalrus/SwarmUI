@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep:*)",
+      "Bash(find . -type f \\\\\\(-name *.js -o -name *.jsx -o -name *.ts -o -name *.tsx \\\\\\))",
+      "Bash(grep -r api/.*generate src/wwwroot/)",
+      "Skill(commit-commands:commit)",
+      "Skill(commit-commands:commit:*)",
+      "Read(//var/log/**)",
+      "Read(//c/Users/Phala/.swarmui/**)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

@@ -15,6 +15,7 @@ public abstract class LLMAPI
         API.RegisterAPICall(GenerateLLMText, true, Permissions.BasicTextGeneration);
         API.RegisterAPICall(GenerateLLMTextWS, true, Permissions.BasicTextGeneration);
         API.RegisterAPICall(GetLLMDiagnostics, false, Permissions.BasicTextGeneration);
+        API.RegisterAPICall(TestLLMConnection, false, Permissions.BasicTextGeneration);
     }
 
     [API.APIDescription("Get diagnostic information about LLM backend configuration and status.",
@@ -222,14 +223,38 @@ public abstract class LLMAPI
     public static async Task<JObject> GenerateLLMTextWS(WebSocket socket, Session session,
         [API.APIParameter("JSON object with 'user_message' (required), 'chat_history' (optional), and 'model' (optional)")] JObject rawInput)
     {
-        Logs.Info($"[LLM API] GenerateLLMTextWS called with input keys: {string.Join(", ", rawInput.Keys)}");
+        Logs.Info($"[LLM API WS] ========================================");
+        Logs.Info($"[LLM API WS] GenerateLLMTextWS called");
+        Logs.Info($"[LLM API WS] Socket state: {socket?.State ?? "NULL"}");
+        Logs.Info($"[LLM API WS] Raw input type: {rawInput?.GetType().Name ?? "NULL"}");
+        Logs.Info($"[LLM API WS] Input keys: {(rawInput != null ? string.Join(", ", rawInput.Keys) : "NULL")}");
+        if (rawInput != null)
+        {
+            foreach (var key in rawInput.Keys)
+            {
+                var val = rawInput[key];
+                if (val is JValue jval)
+                {
+                    Logs.Info($"[LLM API WS]   - {key}: {jval.Type} = {jval.ToString().Substring(0, Math.Min(100, jval.ToString().Length))}");
+                }
+                else if (val is JArray jarr)
+                {
+                    Logs.Info($"[LLM API WS]   - {key}: JArray with {jarr.Count} items");
+                }
+                else
+                {
+                    Logs.Info($"[LLM API WS]   - {key}: {val?.GetType().Name}");
+                }
+            }
+        }
+        Logs.Info($"[LLM API WS] ========================================");
 
         try
         {
             // Validate required parameters
             if (!rawInput.TryGetValue("user_message", out JToken userMessageToken))
             {
-                Logs.Warn($"[LLM API] Missing 'user_message' parameter in WS call. Available keys: {string.Join(", ", rawInput.Keys)}");
+                Logs.Warn($"[LLM API WS] Missing 'user_message' parameter in WS call. Available keys: {string.Join(", ", rawInput.Keys)}");
                 return new JObject()
                 {
                     ["error"] = "'user_message' is required",
@@ -313,6 +338,171 @@ public abstract class LLMAPI
             {
                 ["error"] = ex.Message,
                 ["error_type"] = ex.GetType().Name
+            };
+        }
+    }
+
+    [API.APIDescription("Test the connection to the LLM backend and LM Studio.",
+        """
+            {
+                "status": "ok",
+                "backend_available": true,
+                "backend_type": "simpleremotellm",
+                "backend_status": "RUNNING",
+                "lm_studio_connection": {
+                    "reachable": true,
+                    "url": "http://localhost:8000/v1/chat/completions",
+                    "response_time_ms": 145
+                },
+                "test_generation": {
+                    "success": true,
+                    "response": "Test response from LM Studio"
+                }
+            }
+        """)]
+    public static async Task<JObject> TestLLMConnection(Session session)
+    {
+        JObject result = new();
+
+        try
+        {
+            Logs.Info("[LLM API] TestLLMConnection starting...");
+
+            // Get the first available LLM backend
+            AbstractLLMBackend backend = Program.Backends.AllBackends.Values
+                .Where(b => b?.AbstractBackend is AbstractLLMBackend)
+                .Select(b => b.AbstractBackend as AbstractLLMBackend)
+                .FirstOrDefault();
+
+            result["backend_available"] = backend is not null;
+
+            if (backend is null)
+            {
+                result["status"] = "warning";
+                result["error"] = "No LLM backend configured";
+                return result;
+            }
+
+            result["backend_type"] = backend.GetType().Name;
+            result["backend_status"] = backend.Status.ToString();
+
+            // If it's a SimpleRemoteLLMBackend, test the connection
+            if (backend is SimpleRemoteLLMBackend remoteBackend)
+            {
+                Logs.Info($"[LLM API] Testing connection to: {remoteBackend.Settings.Address}");
+
+                // Test with a simple request
+                var testInput = new LLMParamInput
+                {
+                    UserMessage = "Hello, please respond with just the word 'Hello'.",
+                    Model = "default",
+                    SystemPrompt = "You are a helpful assistant."
+                };
+
+                var connectionTest = new JObject();
+                var targetUrl = remoteBackend.Settings.Address.TrimEnd('/') + "/v1/chat/completions";
+                connectionTest["url"] = targetUrl;
+                connectionTest["method"] = "POST";
+
+                try
+                {
+                    using var client = new System.Net.Http.HttpClient();
+                    client.Timeout = TimeSpan.FromSeconds(10);
+
+                    var testRequest = new JObject
+                    {
+                        ["model"] = "default",
+                        ["messages"] = new JArray
+                        {
+                            new JObject { ["role"] = "user", ["content"] = "Hello" }
+                        },
+                        ["stream"] = false,
+                        ["max_tokens"] = 50
+                    };
+
+                    Logs.Info($"[LLM API] Sending test request to: {targetUrl}");
+                    Logs.Info($"[LLM API] Test request JSON: {testRequest.ToString()}");
+
+                    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                    var response = await client.PostAsync(targetUrl, new System.Net.Http.StringContent(testRequest.ToString(), System.Text.Encoding.UTF8, "application/json"));
+                    stopwatch.Stop();
+
+                    connectionTest["response_time_ms"] = stopwatch.ElapsedMilliseconds;
+                    connectionTest["status_code"] = (int)response.StatusCode;
+                    connectionTest["reachable"] = response.IsSuccessStatusCode;
+
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    connectionTest["response_length"] = responseContent.Length;
+
+                    Logs.Info($"[LLM API] Test response status: {response.StatusCode}");
+                    Logs.Info($"[LLM API] Test response length: {responseContent.Length}");
+                    Logs.Info($"[LLM API] Test response (first 500 chars): {responseContent.Substring(0, Math.Min(500, responseContent.Length))}");
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        connectionTest["error_response"] = responseContent;
+                        result["lm_studio_connection"] = connectionTest;
+                        result["status"] = "error";
+                        result["error"] = $"LM Studio returned status {response.StatusCode}";
+                        return result;
+                    }
+
+                    // Try to parse the response
+                    try
+                    {
+                        var responseObj = JObject.Parse(responseContent);
+                        connectionTest["parsed_successfully"] = true;
+
+                        // Check if it's a valid chat completion response
+                        if (responseObj.TryGetValue("choices", out var choicesToken) && choicesToken is JArray choices && choices.Count > 0)
+                        {
+                            connectionTest["has_choices"] = true;
+                            var firstChoice = (JObject)choices[0];
+                            if (firstChoice.TryGetValue("message", out var messageToken) && messageToken is JObject message)
+                            {
+                                connectionTest["response_content"] = message["content"]?.ToString();
+                            }
+                        }
+                    }
+                    catch (Exception parseEx)
+                    {
+                        Logs.Warn($"[LLM API] Could not parse LM Studio response as JSON: {parseEx.Message}");
+                        connectionTest["parse_error"] = parseEx.Message;
+                    }
+
+                    result["lm_studio_connection"] = connectionTest;
+                }
+                catch (HttpRequestException httpEx)
+                {
+                    Logs.Error($"[LLM API] HTTP request failed: {httpEx.Message}");
+                    connectionTest["error"] = httpEx.Message;
+                    connectionTest["reachable"] = false;
+                    result["lm_studio_connection"] = connectionTest;
+                    result["status"] = "error";
+                    return result;
+                }
+                catch (TaskCanceledException timeoutEx)
+                {
+                    Logs.Error($"[LLM API] Connection timeout: {timeoutEx.Message}");
+                    connectionTest["error"] = "Connection timeout (10 seconds)";
+                    connectionTest["reachable"] = false;
+                    result["lm_studio_connection"] = connectionTest;
+                    result["status"] = "error";
+                    return result;
+                }
+            }
+
+            result["status"] = "ok";
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Logs.Error($"[LLM API] Error in TestLLMConnection: {ex.ReadableString()}");
+            return new JObject()
+            {
+                ["status"] = "error",
+                ["error"] = ex.Message,
+                ["details"] = ex.ReadableString()
             };
         }
     }

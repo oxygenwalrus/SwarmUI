@@ -93,11 +93,19 @@ public class SimpleRemoteLLMBackend : AbstractLLMBackend
                 Logs.Debug($"[SimpleRemoteLLMBackend] Temperature: {user_input.Temperature}");
             }
 
-            Logs.Debug($"[SimpleRemoteLLMBackend] Sending request: {request.ToString()}");
+            string requestJson = request.ToString();
+            Logs.Info($"[SimpleRemoteLLMBackend] ========== REQUEST DETAILS ==========");
+            Logs.Info($"[SimpleRemoteLLMBackend] Full request JSON:");
+            Logs.Info(requestJson);
+            Logs.Info($"[SimpleRemoteLLMBackend] Request size: {requestJson.Length} bytes");
+            Logs.Info($"[SimpleRemoteLLMBackend] Request keys: {string.Join(", ", request.Keys)}");
+            Logs.Info($"[SimpleRemoteLLMBackend] ====================================");
 
             // Build the URL
             string url = Settings.Address.TrimEnd('/') + "/v1/chat/completions";
-            Logs.Info($"[SimpleRemoteLLMBackend] Requesting: {url}");
+            Logs.Info($"[SimpleRemoteLLMBackend] Target URL: {url}");
+            Logs.Info($"[SimpleRemoteLLMBackend] Backend address: {Settings.Address}");
+            Logs.Info($"[SimpleRemoteLLMBackend] Backend status: {Status}");
 
             using HttpClient client = new();
             client.Timeout = TimeSpan.FromMinutes(5);
