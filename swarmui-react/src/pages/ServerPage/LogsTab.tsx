@@ -205,8 +205,9 @@ export function LogsTab() {
                     h="min(calc(var(--app-content-height) - 230px), 820px)"
                     ref={scrollRef}
                     className="swarm-log-panel"
+                    styles={{ viewport: { backgroundColor: '#111111' } }}
                 >
-                    <Box p="xs" style={{ fontFamily: 'monospace', fontSize: 12 }}>
+                    <Box p="xs" style={{ fontFamily: 'monospace', fontSize: 12, backgroundColor: '#111111' }}>
                         {messages.length === 0 ? (
                             <Text c="dimmed" size="sm" ta="center" py="xl">
                                 No log messages yet. Waiting for new entries...
