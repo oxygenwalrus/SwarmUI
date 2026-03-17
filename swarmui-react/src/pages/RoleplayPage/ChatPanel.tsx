@@ -41,6 +41,8 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
         lmStudioEndpoint,
         selectedModelId,
         detectedServerMode,
+        chatTemperature,
+        chatMaxTokens,
         addMessage,
         clearConversation,
         setStreamingChat,
@@ -48,6 +50,7 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
         appendStreamingContent,
         dismissSuggestion,
         getActiveCharacter,
+        setDetectedServerMode,
     } = useRoleplayStore(
         useShallow((s) => ({
             activeCharacterId: s.activeCharacterId,
@@ -58,6 +61,8 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
             lmStudioEndpoint: s.lmStudioEndpoint,
             selectedModelId: s.selectedModelId,
             detectedServerMode: s.detectedServerMode,
+            chatTemperature: s.chatTemperature,
+            chatMaxTokens: s.chatMaxTokens,
             addMessage: s.addMessage,
             clearConversation: s.clearConversation,
             setStreamingChat: s.setStreamingChat,
@@ -65,6 +70,7 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
             appendStreamingContent: s.appendStreamingContent,
             dismissSuggestion: s.dismissSuggestion,
             getActiveCharacter: s.getActiveCharacter,
+            setDetectedServerMode: s.setDetectedServerMode,
         }))
     );
 
@@ -127,8 +133,13 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
             serverMode: detectedServerMode,
             modelId: selectedModelId,
             messages: apiMessages,
+            temperature: chatTemperature,
+            maxTokens: chatMaxTokens,
             onToken: (token) => {
                 appendStreamingContent(token);
+            },
+            onServerModeCorrection: (correctedMode) => {
+                setDetectedServerMode(correctedMode);
             },
             onDone: (fullText) => {
                 // Strip [SCENE: ...] tag and capture it separately
@@ -164,6 +175,8 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
         activeCharacter,
         connectionStatus,
         detectedServerMode,
+        chatTemperature,
+        chatMaxTokens,
         conversations,
         lmStudioEndpoint,
         selectedModelId,
@@ -171,6 +184,7 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
         setStreamingChat,
         setStreamingContent,
         appendStreamingContent,
+        setDetectedServerMode,
     ]);
 
     const handleAbort = useCallback(() => {
@@ -193,7 +207,7 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
     }, [streamingContent, activeCharacterId, addMessage, setStreamingChat, setStreamingContent]);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSend();
         }
@@ -240,6 +254,7 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
                 flex={1}
                 p="xs"
                 viewportRef={viewportRef}
+                style={{ backgroundColor: 'var(--elevation-floor)' }}
             >
                 <Stack gap="xs" ref={scrollRef}>
                     {messages.length === 0 && !isStreamingChat && (
@@ -313,7 +328,7 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
             >
                 <Textarea
                     flex={1}
-                    placeholder={`Message ${activeCharacter.name}... (Ctrl+Enter to send)`}
+                    placeholder={`Message ${activeCharacter.name}... (Shift+Enter for new line)`}
                     value={input}
                     onChange={(e) => setInput(e.currentTarget.value)}
                     onKeyDown={handleKeyDown}

@@ -12,7 +12,7 @@ import { useRoleplayStore } from '../../stores/roleplayStore';
 import { probeAssistantConnection } from '../../services/roleplayChatService';
 import { CharacterSidebar } from './CharacterSidebar';
 import { ChatPanel } from './ChatPanel';
-import { ScenePanel } from './ScenePanel';
+import { ControlsPanel } from './ControlsPanel';
 
 export function RoleplayPage() {
     const isWide = useMediaQuery('(min-width: 1366px)', true);
@@ -21,7 +21,6 @@ export function RoleplayPage() {
     const generateSceneWithPromptRef = useRef<((prompt: string) => void) | null>(null);
 
     const {
-        connectionStatus,
         lmStudioEndpoint,
         setConnectionStatus,
         setConnectionMessage,
@@ -31,7 +30,6 @@ export function RoleplayPage() {
         selectedModelId,
     } = useRoleplayStore(
         useShallow((s) => ({
-            connectionStatus: s.connectionStatus,
             lmStudioEndpoint: s.lmStudioEndpoint,
             setConnectionStatus: s.setConnectionStatus,
             setConnectionMessage: s.setConnectionMessage,
@@ -83,13 +81,6 @@ export function RoleplayPage() {
         probeConnection();
     }, [probeConnection]);
 
-    const connectionBadge = {
-        connected: { label: 'Connected', tone: 'success' as const },
-        connecting: { label: 'Connecting...', tone: 'warning' as const },
-        error: { label: 'Disconnected', tone: 'danger' as const },
-        idle: { label: 'Not Connected', tone: 'secondary' as const },
-    }[connectionStatus];
-
     return (
         <PageScaffold
             density="compact"
@@ -98,13 +89,6 @@ export function RoleplayPage() {
                     title="Roleplay"
                     subtitle="AI-powered character chat with scene generation"
                     icon={<IconTheater size={24} />}
-                    badges={[
-                        {
-                            label: connectionBadge.label,
-                            tone: connectionBadge.tone,
-                            emphasis: 'solid',
-                        },
-                    ]}
                     rightSection={
                         <Group gap="xs">
                             <SwarmButton
@@ -113,7 +97,7 @@ export function RoleplayPage() {
                                 size="xs"
                                 onClick={() => setScenePanelOpen(!scenePanelOpen)}
                             >
-                                {scenePanelOpen ? 'Hide Scene' : 'Show Scene'}
+                                {scenePanelOpen ? 'Hide Controls' : 'Show Controls'}
                             </SwarmButton>
                         </Group>
                     }
@@ -129,7 +113,7 @@ export function RoleplayPage() {
             >
                 {/* Character Sidebar */}
                 <div style={{ width: sidebar.size, flexShrink: 0, overflow: 'hidden' }}>
-                    <CharacterSidebar onProbeConnection={probeConnection} />
+                    <CharacterSidebar />
                 </div>
 
                 <ResizeHandle
@@ -147,7 +131,7 @@ export function RoleplayPage() {
                     />
                 </div>
 
-                {/* Scene Panel */}
+                {/* Controls Panel */}
                 {(scenePanelOpen || isWide) && (
                     <>
                         <div
@@ -158,7 +142,8 @@ export function RoleplayPage() {
                                 borderLeft: '1px solid var(--theme-gray-5)',
                             }}
                         >
-                            <ScenePanel
+                            <ControlsPanel
+                                onProbeConnection={probeConnection}
                                 onRegisterGenerate={(fn) => { generateSceneRef.current = fn; }}
                                 onRegisterGenerateWithPrompt={(fn) => { generateSceneWithPromptRef.current = fn; }}
                             />
