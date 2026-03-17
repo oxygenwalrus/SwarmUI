@@ -30,3 +30,13 @@ docker-compose.yml
 __pycache__/
 venv/
 *.pth
+
+# React frontend (swarmui-react)
+swarmui-react/node_modules/
+swarmui-react/dist/
+swarmui-react/.vite/
+swarmui-react/.claude/
+swarmui-react/electron/
+
+# Claude worktrees
+.claude/worktrees/
