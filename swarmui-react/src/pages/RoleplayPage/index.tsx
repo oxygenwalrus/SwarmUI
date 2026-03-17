@@ -1,6 +1,5 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
 import { Group } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 import { IconTheater } from '@tabler/icons-react';
 import { useShallow } from 'zustand/react/shallow';
 import { PageScaffold } from '../../components/layout/PageScaffold';
@@ -15,8 +14,7 @@ import { ChatPanel } from './ChatPanel';
 import { ControlsPanel } from './ControlsPanel';
 
 export function RoleplayPage() {
-    const isWide = useMediaQuery('(min-width: 1366px)', true);
-    const [controlsPanelOpen, setControlsPanelOpen] = useState(false);
+    const [controlsPanelOpen, setControlsPanelOpen] = useState(true);
     const generateSceneRef = useRef<(() => void) | null>(null);
     const generateSceneWithPromptRef = useRef<((prompt: string) => void) | null>(null);
 
@@ -132,7 +130,7 @@ export function RoleplayPage() {
                 </div>
 
                 {/* Controls Panel */}
-                {(controlsPanelOpen || isWide) && (
+                {controlsPanelOpen && (
                     <>
                         <div
                             style={{

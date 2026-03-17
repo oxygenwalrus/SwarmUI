@@ -375,10 +375,20 @@ export function ControlsPanel({
                                             API mode: {detectedServerMode}
                                         </Text>
                                     )}
-                                    {selectedModelId && (
-                                        <Text size="xs" c="dimmed" truncate>
-                                            Model: {selectedModelId}
-                                        </Text>
+                                    {(availableModels ?? []).length > 0 && (
+                                        <Select
+                                            size="xs"
+                                            label="Model"
+                                            placeholder="Select model…"
+                                            value={selectedModelId || null}
+                                            onChange={(v) => setSelectedModelId(v ?? '')}
+                                            data={(availableModels ?? []).map((m) => ({
+                                                value: m.id,
+                                                label: m.id,
+                                            }))}
+                                            searchable
+                                            nothingFoundMessage="No models found"
+                                        />
                                     )}
                                     <SwarmButton
                                         tone="brand"

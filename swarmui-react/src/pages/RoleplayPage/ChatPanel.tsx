@@ -254,7 +254,7 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
                 flex={1}
                 p="xs"
                 viewportRef={viewportRef}
-                style={{ backgroundColor: 'var(--elevation-floor)' }}
+                style={{ backgroundColor: '#111111' }}
             >
                 <Stack gap="xs" ref={scrollRef}>
                     {messages.length === 0 && !isStreamingChat && (
