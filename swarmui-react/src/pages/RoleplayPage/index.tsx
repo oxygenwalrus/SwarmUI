@@ -16,7 +16,7 @@ import { ControlsPanel } from './ControlsPanel';
 
 export function RoleplayPage() {
     const isWide = useMediaQuery('(min-width: 1366px)', true);
-    const [scenePanelOpen, setScenePanelOpen] = useState(false);
+    const [controlsPanelOpen, setControlsPanelOpen] = useState(false);
     const generateSceneRef = useRef<(() => void) | null>(null);
     const generateSceneWithPromptRef = useRef<((prompt: string) => void) | null>(null);
 
@@ -95,9 +95,9 @@ export function RoleplayPage() {
                                 tone="brand"
                                 emphasis="ghost"
                                 size="xs"
-                                onClick={() => setScenePanelOpen(!scenePanelOpen)}
+                                onClick={() => setControlsPanelOpen(!controlsPanelOpen)}
                             >
-                                {scenePanelOpen ? 'Hide Controls' : 'Show Controls'}
+                                {controlsPanelOpen ? 'Hide Controls' : 'Show Controls'}
                             </SwarmButton>
                         </Group>
                     }
@@ -132,7 +132,7 @@ export function RoleplayPage() {
                 </div>
 
                 {/* Controls Panel */}
-                {(scenePanelOpen || isWide) && (
+                {(controlsPanelOpen || isWide) && (
                     <>
                         <div
                             style={{

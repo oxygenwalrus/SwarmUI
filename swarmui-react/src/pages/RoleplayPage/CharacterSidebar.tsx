@@ -29,16 +29,16 @@ export function CharacterSidebar() {
         activeCharacterId,
         setActiveCharacter,
         removeCharacter,
-        getActiveCharacter,
     } = useRoleplayStore(
         useShallow((s) => ({
             characters: s.characters,
             activeCharacterId: s.activeCharacterId,
             setActiveCharacter: s.setActiveCharacter,
             removeCharacter: s.removeCharacter,
-            getActiveCharacter: s.getActiveCharacter,
         }))
     );
+
+    const activeCharacter = characters.find((c) => c.id === activeCharacterId) ?? null;
 
     const handleNewCharacter = () => {
         setEditingCharacter(null);
@@ -75,30 +75,26 @@ export function CharacterSidebar() {
             </Group>
 
             {/* Active Character Profile */}
-            {(() => {
-                const activeChar = getActiveCharacter();
-                if (!activeChar) return null;
-                return (
-                    <Stack align="center" gap="xs" p="md" style={{ borderBottom: '1px solid var(--theme-gray-5)' }}>
-                        <CharacterAvatar character={activeChar} size={120} />
-                        <Text size="md" fw={700} ta="center">
-                            {activeChar.name}
-                        </Text>
-                        <Text size="xs" c="dimmed" ta="center" lineClamp={3}>
-                            {activeChar.personality}
-                        </Text>
-                        <SwarmButton
-                            tone="brand"
-                            emphasis="ghost"
-                            size="xs"
-                            leftSection={<IconEdit size={12} />}
-                            onClick={() => handleEditCharacter(activeChar)}
-                        >
-                            Edit Character
-                        </SwarmButton>
-                    </Stack>
-                );
-            })()}
+            {activeCharacter && (
+                <Stack align="center" gap="xs" p="md" style={{ borderBottom: '1px solid var(--theme-gray-5)' }}>
+                    <CharacterAvatar character={activeCharacter} size={120} />
+                    <Text size="md" fw={700} ta="center">
+                        {activeCharacter.name}
+                    </Text>
+                    <Text size="xs" c="dimmed" ta="center" lineClamp={3}>
+                        {activeCharacter.personality}
+                    </Text>
+                    <SwarmButton
+                        tone="brand"
+                        emphasis="ghost"
+                        size="xs"
+                        leftSection={<IconEdit size={12} />}
+                        onClick={() => handleEditCharacter(activeCharacter)}
+                    >
+                        Edit Character
+                    </SwarmButton>
+                </Stack>
+            )}
 
             {/* Character List */}
             <ScrollArea flex={1} p="xs">
