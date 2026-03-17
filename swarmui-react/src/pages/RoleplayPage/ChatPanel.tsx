@@ -223,7 +223,7 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
     }
 
     return (
-        <Stack h="100%" gap={0}>
+        <Stack h="100%" gap={0} style={{ backgroundColor: '#111111' }}>
             {/* Chat Header */}
             <Group
                 justify="space-between"
@@ -254,7 +254,7 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
                 flex={1}
                 p="xs"
                 viewportRef={viewportRef}
-                style={{ backgroundColor: '#111111' }}
+                styles={{ viewport: { backgroundColor: '#111111' } }}
             >
                 <Stack gap="xs" ref={scrollRef}>
                     {messages.length === 0 && !isStreamingChat && (
