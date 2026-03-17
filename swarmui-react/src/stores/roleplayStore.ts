@@ -42,10 +42,6 @@ interface RoleplayStoreState {
     // Conversations (keyed by character ID)
     conversations: Record<string, ChatMessage[]>;
 
-    // Scene image
-    sceneImage: string | null;
-    isGeneratingImage: boolean;
-
     // Chat streaming
     isStreamingChat: boolean;
     streamingContent: string;
@@ -68,6 +64,14 @@ interface RoleplayStoreState {
      */
     imageModelId: string;
 
+    // LLM parameters (persisted)
+    chatTemperature: number;
+    chatMaxTokens: number;
+
+    // Image dimensions (persisted, replaces ScenePanel local state)
+    imageWidth: number;
+    imageHeight: number;
+
     // Portrait generation (ephemeral)
     generatingPortraitForId: string | null;
 
@@ -87,10 +91,6 @@ interface RoleplayStoreState {
     attachSceneImageToLastMessage: (characterId: string, imageUrl: string) => void;
     dismissSuggestion: (characterId: string, messageId: string) => void;
 
-    // Actions - Scene
-    setSceneImage: (url: string | null) => void;
-    setGeneratingImage: (generating: boolean) => void;
-
     // Actions - Connection
     setConnectionStatus: (status: RoleplayConnectionState) => void;
     setConnectionMessage: (message: string | null) => void;
@@ -104,6 +104,9 @@ interface RoleplayStoreState {
     setImageCfgScale: (v: number) => void;
     setImageClipStopAtLayer: (v: number | null) => void;
     setImageModelId: (id: string) => void;
+    setChatTemperature: (v: number) => void;
+    setChatMaxTokens: (v: number) => void;
+    setImageDimensions: (width: number, height: number) => void;
 
     // Actions - Portrait
     setGeneratingPortraitForId: (id: string | null) => void;
@@ -124,10 +127,6 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                 // Conversations
                 conversations: {},
 
-                // Scene
-                sceneImage: null,
-                isGeneratingImage: false,
-
                 // Streaming
                 isStreamingChat: false,
                 streamingContent: '',
@@ -145,6 +144,10 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                 imageCfgScale: 7,
                 imageClipStopAtLayer: null,
                 imageModelId: '',
+                chatTemperature: 0.8,
+                chatMaxTokens: 2048,
+                imageWidth: 768,
+                imageHeight: 512,
 
                 // Portrait
                 generatingPortraitForId: null,
@@ -198,7 +201,6 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                             ...state.conversations,
                             [characterId]: [],
                         },
-                        sceneImage: null,
                     })),
 
                 setStreamingChat: (streaming) => set({ isStreamingChat: streaming }),
@@ -246,10 +248,6 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                         };
                     }),
 
-                // Scene actions
-                setSceneImage: (url) => set({ sceneImage: url }),
-                setGeneratingImage: (generating) => set({ isGeneratingImage: generating }),
-
                 // Connection actions
                 setConnectionStatus: (status) => set({ connectionStatus: status }),
                 setConnectionMessage: (message) => set({ connectionMessage: message }),
@@ -263,6 +261,9 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                 setImageCfgScale: (v) => set({ imageCfgScale: v }),
                 setImageClipStopAtLayer: (v) => set({ imageClipStopAtLayer: v }),
                 setImageModelId: (id) => set({ imageModelId: id }),
+                setChatTemperature: (v) => set({ chatTemperature: v }),
+                setChatMaxTokens: (v) => set({ chatMaxTokens: v }),
+                setImageDimensions: (width, height) => set({ imageWidth: width, imageHeight: height }),
 
                 // Portrait action
                 setGeneratingPortraitForId: (id) => set({ generatingPortraitForId: id }),
@@ -292,6 +293,10 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                     imageCfgScale: state.imageCfgScale,
                     imageClipStopAtLayer: state.imageClipStopAtLayer,
                     imageModelId: state.imageModelId,
+                    chatTemperature: state.chatTemperature,
+                    chatMaxTokens: state.chatMaxTokens,
+                    imageWidth: state.imageWidth,
+                    imageHeight: state.imageHeight,
                 }),
             }
         ),
