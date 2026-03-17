@@ -1,0 +1,175 @@
+import { memo } from 'react';
+import { Stack, Group, Badge, Text, Box, ActionIcon, Tooltip } from '@mantine/core';
+import type { UseFormReturnType } from '@mantine/form';
+import type { GenerateParams } from '../../../../api/types';
+import { IconRefresh, IconX } from '@tabler/icons-react';
+import { PromptPresetSelector } from '../../../../components/PromptPresetSelector';
+import { PromptInput } from '../../../../components/PromptInput';
+import { QuickModeIndicator } from '../../../../components/QuickModeIndicator';
+import { usePromptBuilderStore } from '../../../../stores/promptBuilderStore';
+import {
+    compilePromptBuilder,
+    detectManualOverride,
+    extractPrimaryManagedBlock,
+    hasManagedBlock,
+    stripManagedBlocks,
+    upsertManagedBlock,
+} from '../../../../features/promptBuilder';
+import { prependPromptText } from '../../../../utils/promptPresetApply';
+
+export interface PromptSectionProps {
+    /** Form instance */
+    form: UseFormReturnType<GenerateParams>;
+}
+
+/**
+ * Prompt section with prompt presets, main prompt, and negative prompt.
+ */
+export const PromptSection = memo(function PromptSection({
+    form,
+}: PromptSectionProps) {
+    const regions = usePromptBuilderStore((state) => state.regions);
+    const segments = usePromptBuilderStore((state) => state.segments);
+    const syncState = usePromptBuilderStore((state) => state.syncState);
+    const lastCompiledBlockHash = usePromptBuilderStore((state) => state.lastCompiledBlockHash);
+    const markManualOverride = usePromptBuilderStore((state) => state.markManualOverride);
+    const markSynced = usePromptBuilderStore((state) => state.markSynced);
+    const clearManagedBlock = usePromptBuilderStore((state) => state.clearManagedBlock);
+
+    const hasBuilderRules = regions.length > 0 || segments.length > 0;
+    const hasVisibleBlock = hasManagedBlock(form.values.prompt || '');
+    const showBuilderStatus = hasBuilderRules || hasVisibleBlock || !!lastCompiledBlockHash;
+
+    const handlePromptChange = (value: string) => {
+        if (lastCompiledBlockHash) {
+            const overridden = detectManualOverride(value, lastCompiledBlockHash);
+            if (overridden && syncState === 'synced') {
+                markManualOverride();
+            } else if (!overridden && syncState === 'manual_override') {
+                const currentBlock = extractPrimaryManagedBlock(value);
+                if (currentBlock) {
+                    markSynced(currentBlock.raw, lastCompiledBlockHash);
+                }
+            }
+        }
+        form.setFieldValue('prompt', value);
+    };
+
+    const handleResyncFromCanvas = () => {
+        const compiled = compilePromptBuilder({ regions, segments });
+        const nextPrompt = upsertManagedBlock(form.values.prompt || '', compiled.managedBlock);
+        form.setFieldValue('prompt', nextPrompt);
+        markSynced(compiled.managedBlock, compiled.blockHash);
+    };
+
+    const handleRemoveManagedBlock = () => {
+        const nextPrompt = stripManagedBlocks(form.values.prompt || '');
+        form.setFieldValue('prompt', nextPrompt);
+        clearManagedBlock();
+    };
+
+    return (
+        <Stack gap="sm" className="generate-studio__prompt-section">
+            {/* Prompt Presets */}
+            <Box className="generate-studio__prompt-library-trigger">
+                <PromptPresetSelector
+                    compact
+                    onApplyToPrompt={(text) => {
+                        form.setFieldValue('prompt', prependPromptText(form.values.prompt, text));
+                    }}
+                    onApplyToNegative={(text) => {
+                        form.setFieldValue('negativeprompt', prependPromptText(form.values.negativeprompt, text));
+                    }}
+                />
+            </Box>
+
+            {showBuilderStatus && (
+                <Stack gap={6} className="generate-studio__prompt-builder-status">
+                    <Group justify="space-between" align="center" wrap="wrap">
+                        <Group gap="xs">
+                            <Text size="xs" c="dimmed">Prompt Builder</Text>
+                            <Badge
+                                size="sm"
+                                variant="light"
+                                color={
+                                    syncState === 'synced'
+                                        ? 'green'
+                                        : syncState === 'manual_override'
+                                            ? 'yellow'
+                                            : 'gray'
+                                }
+                            >
+                                {syncState.replace('_', ' ')}
+                            </Badge>
+                        </Group>
+                        <Group gap="xs" className="generate-studio__prompt-builder-actions">
+                            <Tooltip label="Resync prompt builder content from the canvas">
+                                <ActionIcon
+                                    size="sm"
+                                    variant="subtle"
+                                    color="gray"
+                                    onClick={handleResyncFromCanvas}
+                                    disabled={!hasBuilderRules}
+                                    aria-label="Resync from canvas"
+                                >
+                                    <IconRefresh size={15} />
+                                </ActionIcon>
+                            </Tooltip>
+                            <Tooltip label="Remove the managed prompt block">
+                                <ActionIcon
+                                    size="sm"
+                                    variant="subtle"
+                                    color="gray"
+                                    onClick={handleRemoveManagedBlock}
+                                    disabled={!hasVisibleBlock}
+                                    aria-label="Remove managed block"
+                                >
+                                    <IconX size={15} />
+                                </ActionIcon>
+                            </Tooltip>
+                        </Group>
+                    </Group>
+                    {syncState === 'manual_override' && (
+                        <Text size="xs" c="yellow.6">
+                            Managed block was edited manually. Canvas state will not auto-overwrite it until resync.
+                        </Text>
+                    )}
+                </Stack>
+            )}
+
+            {/* Prompt */}
+            <PromptInput
+                label="Prompt"
+                placeholder="A beautiful landscape with mountains..."
+                required
+                value={form.values.prompt}
+                onChange={handlePromptChange}
+                autosize
+                minRows={4}
+                maxRows={12}
+                showSyntaxButton={true}
+            />
+
+            {/* Negative Prompt */}
+            <PromptInput
+                label="Negative Prompt"
+                placeholder="ugly, blurry, bad quality..."
+                value={form.values.negativeprompt || ''}
+                onChange={(value) => form.setFieldValue('negativeprompt', value)}
+                autosize
+                minRows={2}
+                maxRows={12}
+            />
+
+            <Box className="generate-studio__prompt-cache-row">
+                <QuickModeIndicator
+                    prompt={form.values.prompt || ''}
+                    model={form.values.model || ''}
+                    negativePrompt={form.values.negativeprompt}
+                    compact={false}
+                />
+            </Box>
+
+        </Stack>
+    );
+});

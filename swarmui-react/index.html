@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- Preconnect to backend for faster API calls -->
+  <link rel="preconnect" href="http://localhost:7801" crossorigin>
+  <link rel="dns-prefetch" href="http://localhost:7801">
+
+  <!-- Google Fonts preconnect and loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SwarmUI</title>
+
+  <!-- Critical inline CSS for instant first paint -->
+  <style>
+    html,
+    body,
+    #root {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0b0f14;
+      color: #ffffff;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    /* Loading container - positioned absolutely so it doesn't affect app layout */
+    .app-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background-color: #0b0f14;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.2s ease-out;
+    }
+
+    .app-loading.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .app-loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid #1f2937;
+      border-top-color: #7c3aed;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .app-loading-text {
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loading overlay - gets removed after React hydrates -->
+  <div class="app-loading" id="app-loading">
+    <div class="app-loading-spinner"></div>
+    <span class="app-loading-text">Loading SwarmUI...</span>
+  </div>
+
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

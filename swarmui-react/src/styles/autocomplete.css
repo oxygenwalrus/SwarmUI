@@ -1,0 +1,119 @@
+/**
+ * Autocomplete Styles
+ * Tag category colors matching the SwarmUI backend styling.
+ */
+
+/* Tag category colors - matching danbooru/e621 conventions */
+:root {
+    /* Category 0: General tags (default, blue) */
+    --tag-color-general: #6c9bd2;
+    /* Category 1: Artist tags (red/salmon) */
+    --tag-color-artist: #d25c5c;
+    /* Category 2: Copyright/Series tags (purple) */
+    --tag-color-copyright: #a85cd2;
+    /* Category 3: Character tags (green) */
+    --tag-color-character: #5cd268;
+    /* Category 4: Meta tags (orange) */
+    --tag-color-meta: #d2a85c;
+    /* Category 5: Custom/Other tags (teal) */
+    --tag-color-custom: #5cb8d2;
+}
+
+/* Dark mode adjustments */
+[data-mantine-color-scheme="dark"] {
+    --tag-color-general: #7ab3f0;
+    --tag-color-artist: #f07a7a;
+    --tag-color-copyright: #c87af0;
+    --tag-color-character: #7af08a;
+    --tag-color-meta: #f0c87a;
+    --tag-color-custom: #7ad8f0;
+}
+
+/* Tag type classes */
+.tag-type-0 {
+    color: var(--tag-color-general);
+}
+
+.tag-type-1 {
+    color: var(--tag-color-artist);
+}
+
+.tag-type-2 {
+    color: var(--tag-color-copyright);
+}
+
+.tag-type-3 {
+    color: var(--tag-color-character);
+}
+
+.tag-type-4 {
+    color: var(--tag-color-meta);
+}
+
+.tag-type-5 {
+    color: var(--tag-color-custom);
+}
+
+/* Autocomplete dropdown container */
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--mantine-color-body);
+    border: 1px solid var(--mantine-color-default-border);
+    border-radius: var(--mantine-radius-md);
+    box-shadow: var(--mantine-shadow-md);
+}
+
+/* Individual suggestion item */
+.autocomplete-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.selected {
+    background-color: var(--mantine-color-blue-light);
+}
+
+/* Tag name with category color */
+.autocomplete-tag-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Tag count badge */
+.autocomplete-tag-count {
+    font-size: 0.75rem;
+    color: var(--mantine-color-dimmed);
+    background: var(--mantine-color-default-hover);
+    padding: 2px 6px;
+    border-radius: var(--mantine-radius-sm);
+}
+
+/* Keyboard hint */
+.autocomplete-hint {
+    font-size: 0.75rem;
+    color: var(--mantine-color-dimmed);
+    padding: 4px 12px;
+    border-top: 1px solid var(--mantine-color-default-border);
+    display: flex;
+    gap: 12px;
+}
+
+.autocomplete-hint kbd {
+    background: var(--mantine-color-default-hover);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 0.7rem;
+}

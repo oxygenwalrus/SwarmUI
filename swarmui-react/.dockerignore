@@ -1,0 +1,11 @@
+# Docker ignore for SwarmUI React
+node_modules
+dist
+release
+.git
+.gitignore
+*.md
+.husky
+.vscode
+.idea
+*.log
