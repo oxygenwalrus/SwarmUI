@@ -606,10 +606,6 @@ public static class T2IAPI
                 output(new JObject() { ["raw_swarm_data"] = new JObject() { ["params_used"] = JArray.FromObject(thisParams.ParamsQueried.ToArray()) } });
             }
             JObject imageOutput = new() { ["image"] = url, ["batch_index"] = $"{actualIndex}", ["request_id"] = $"{thisParams.UserRequestId}", ["metadata"] = string.IsNullOrWhiteSpace(metadata) ? null : metadata };
-            if (!string.IsNullOrEmpty(image.ComfyDirectUrl))
-            {
-                imageOutput["comfy_view_url"] = image.ComfyDirectUrl;
-            }
             output(imageOutput);
         }
         for (int i = 0; i < images && !claim.ShouldCancel; i++)
@@ -639,13 +635,6 @@ public static class T2IAPI
                 }
             }
             int numCalls = 0;
-            void handleReadableErrorFromEngine(SwarmReadableErrorException ex, T2IParamInput failedInput)
-            {
-                if (!TryHandleStructuredReadableGenerationError(session, rawInput, rawModel, failedInput, ex, setErrorWithDetails))
-                {
-                    setError(ex.Message);
-                }
-            }
             tasks.Add(Task.Run(() => T2IEngine.CreateImageTask(thisParams, $"{imageIndex}", claim, output, setError, isWS,
                 (image, metadata) =>
                 {
@@ -663,7 +652,7 @@ public static class T2IAPI
                         actualIndex = -10 - Interlocked.Increment(ref data.NumNonReal);
                     }
                     saveImage(image, actualIndex, thisParams, metadata);
-                }, handleReadableErrorFromEngine)));
+                })));
             if (Program.Backends.QueuedRequests < Program.ServerSettings.Backends.MaxRequestsForcedOrder)
             {
                 Task.Delay(20).Wait(); // Tiny few-ms delay to encourage tasks retaining order.
