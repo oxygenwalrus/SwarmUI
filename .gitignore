@@ -20,7 +20,10 @@ Directory.Build.props
 /Models
 tmp/
 /src/Extensions
+!/src/Extensions/SwarmUI_KohyaTrainingExtension/
 /dlbackend
+/training_data
+!/training_data/.gitkeep
 *.debug
 custom-launch-docker.sh
 dotnet-install.sh

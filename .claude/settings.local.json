@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.bat \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.cmd \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.ps1 \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.sh \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.js)"
+    ]
+  }
+}

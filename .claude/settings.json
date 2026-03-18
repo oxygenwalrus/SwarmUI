@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -l \"BasicTextGeneration\\\\|class Permissions\")",
+      "Bash(grep -rn \"class BackendData\\\\|class T2IBackendData\\\\|AbstractLLMBackend\" /c/Users/Phala/SwarmUI/src/Backends/*.cs)",
+      "Bash(find /c/Users/Phala/SwarmUI/src -name \"*.cs\" -type f -exec grep -l \"Permissions.BasicTextGeneration\\\\|class.*LLM\" {} ;)",
+      "WebFetch(domain:github.com)",
+      "Bash(find /c/Users/Phala/SwarmUI/src -name \"*.cs\" -exec grep -l \"UseStaticFiles\\\\|app.MapFallbackToFile\\\\|MapWhen\\\\|wwwroot\" {} ;)",
+      "Bash(grep -r \"SendGet\\\\|SendPost\\\\|HttpClient\\\\|WebSocket\" /c/Users/Phala/SwarmUI/src/BuiltinExtensions/ComfyUIBackend/*.cs)",
+      "Bash(grep -r \"Session\\\\|Auth\\\\|session_id\" /c/Users/Phala/SwarmUI/src/WebAPI/*.cs)",
+      "Bash(grep -n \"WriteOutput\\\\|SaveImageTask\\\\|File.Copy\\\\|Copy.*input.*output\\\\|File.Move\" /c/Users/Phala/SwarmUI/src/BuiltinExtensions/ComfyUIBackend/*.cs)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(xargs -I {} basename {})",
+      "WebFetch(domain:api.github.com)",
+      "Bash(grep -v '//')",
+      "Bash(npm run build:integrated)"
+    ]
+  }
+}
