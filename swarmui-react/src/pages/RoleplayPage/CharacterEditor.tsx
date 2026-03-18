@@ -38,6 +38,7 @@ import { swarmClient } from '../../api/client';
 import { resolveAssetUrl } from '../../config/runtimeEndpoints';
 import type { RoleplayCharacter } from '../../types/roleplay';
 import { PRESET_PROMPT_MAP, ROLEPLAY_PROMPT_PRESETS } from '../../data/roleplayPromptPresets';
+import { PERSONALITY_PRESET_MAP, PERSONALITY_PRESETS } from '../../data/personalityPresets';
 import { CharacterAvatar } from './CharacterAvatar';
 
 const IP_ADAPTER_MODELS = [
@@ -550,16 +551,37 @@ function CharacterEditorForm({
                         onChange={(e) => setName(e.currentTarget.value)}
                         required
                     />
-                    <Textarea
-                        label="Personality"
-                        description="One or two sentences shown in the sidebar and used as character context"
-                        placeholder="A mysterious wanderer who speaks in riddles and knows too much..."
-                        value={personality}
-                        onChange={(e) => setPersonality(e.currentTarget.value)}
-                        minRows={2}
-                        maxRows={3}
-                        autosize
-                    />
+                    <Stack gap={4}>
+                        <Group justify="space-between" align="center">
+                            <Text size="sm" fw={500}>Personality</Text>
+                            <Select
+                                placeholder="Load preset..."
+                                size="xs"
+                                w={180}
+                                searchable
+                                clearable={false}
+                                value={null}
+                                data={PERSONALITY_PRESETS.map((g) => ({
+                                    group: g.group,
+                                    items: g.items.map((p) => ({ value: p.value, label: p.label })),
+                                }))}
+                                onChange={(value) => {
+                                    if (!value) return;
+                                    const preset = PERSONALITY_PRESET_MAP.get(value);
+                                    if (preset) setPersonality(preset);
+                                }}
+                            />
+                        </Group>
+                        <Textarea
+                            description="How the character acts, speaks, and behaves — injected into the system prompt so the AI plays them accurately"
+                            placeholder="A mysterious wanderer who speaks in riddles and knows too much..."
+                            value={personality}
+                            onChange={(e) => setPersonality(e.currentTarget.value)}
+                            minRows={3}
+                            maxRows={6}
+                            autosize
+                        />
+                    </Stack>
                     <Stack gap={4}>
                         <Group justify="space-between" align="center">
                             <Text size="sm" fw={500}>

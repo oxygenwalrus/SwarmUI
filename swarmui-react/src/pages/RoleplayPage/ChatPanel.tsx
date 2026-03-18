@@ -113,8 +113,11 @@ export function ChatPanel({ onRegenerateScene, onGenerateSceneWithPrompt }: Chat
             userMessage,
         ];
         const recentMessages = conversationMessages.slice(-MAX_CONTEXT_MESSAGES);
+        const fullSystemPrompt = activeCharacter.personality?.trim()
+            ? `${activeCharacter.systemPrompt}\n\nCHARACTER PERSONALITY:\n${activeCharacter.personality.trim()}`
+            : activeCharacter.systemPrompt;
         const apiMessages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
-            { role: 'system', content: activeCharacter.systemPrompt },
+            { role: 'system', content: fullSystemPrompt },
             ...recentMessages.map((m) => ({
                 role: m.role as 'user' | 'assistant',
                 content: m.content,

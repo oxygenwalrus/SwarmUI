@@ -1,4 +1,4 @@
-export type AssistantServerMode = 'legacy-lmstudio' | 'openai-compatible';
+export type AssistantServerMode = 'legacy-lmstudio' | 'openai-compatible' | 'openai-responses';
 
 export interface AssistantModel {
     id: string;
