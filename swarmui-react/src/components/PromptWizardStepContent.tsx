@@ -14,6 +14,7 @@ interface PromptWizardStepContentProps {
 
 type SelectionFilter = 'all' | 'selected' | 'unselected';
 type SearchMode = 'broad' | 'prefix' | 'exact';
+type TagDetailFilter = 'all' | 'single-word' | 'multi-word' | 'negative-capable';
 
 interface TagSection {
   name: string;
@@ -30,6 +31,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
   const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
   const [selectionFilter, setSelectionFilter] = useState<SelectionFilter>('all');
   const [searchMode, setSearchMode] = useState<SearchMode>('broad');
+  const [tagDetailFilter, setTagDetailFilter] = useState<TagDetailFilter>('all');
 
   const query = searchQuery.trim().toLowerCase();
   const queryTerms = useMemo(
@@ -86,10 +88,48 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
     return filteredTags;
   }, [filteredTags, selectedTagIds, selectionFilter]);
 
+  const detailCounts = useMemo(() => {
+    const counts = {
+      all: selectionFilteredTags.length,
+      'single-word': 0,
+      'multi-word': 0,
+      'negative-capable': 0,
+    } as Record<TagDetailFilter, number>;
+
+    for (const tag of selectionFilteredTags) {
+      const normalizedText = tag.text.trim();
+      const isMultiWord = /[\s,_-]/.test(normalizedText);
+      if (isMultiWord) {
+        counts['multi-word'] += 1;
+      }
+      else {
+        counts['single-word'] += 1;
+      }
+      if (tag.negativeText?.trim()) {
+        counts['negative-capable'] += 1;
+      }
+    }
+
+    return counts;
+  }, [selectionFilteredTags]);
+
+  const detailFilteredTags = useMemo(() => {
+    if (tagDetailFilter === 'single-word') {
+      return selectionFilteredTags.filter((tag) => !/[\s,_-]/.test(tag.text.trim()));
+    }
+    if (tagDetailFilter === 'multi-word') {
+      return selectionFilteredTags.filter((tag) => /[\s,_-]/.test(tag.text.trim()));
+    }
+    if (tagDetailFilter === 'negative-capable') {
+      return selectionFilteredTags.filter((tag) => Boolean(tag.negativeText?.trim()));
+    }
+    return selectionFilteredTags;
+  }, [selectionFilteredTags, tagDetailFilter]);
+
   const sortedSubcategories = useMemo(() => {
     const available = new Set<string>();
     let hasGeneral = false;
-    for (const tag of selectionFilteredTags) {
+    for (const tag of detailFilteredTags) {
       if (tag.subcategory) {
         available.add(tag.subcategory);
       }
@@ -99,7 +139,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
     }
 
     const ordered = stepMeta.subcategories.filter((name) => available.has(name));
-    for (const tag of selectionFilteredTags) {
+    for (const tag of detailFilteredTags) {
       if (tag.subcategory && !ordered.includes(tag.subcategory)) {
         ordered.push(tag.subcategory);
       }
@@ -108,19 +148,19 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
       ordered.unshift('General');
     }
     return ordered;
-  }, [selectionFilteredTags, stepMeta.subcategories]);
+  }, [detailFilteredTags, stepMeta.subcategories]);
 
   const subcatCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const subcat of sortedSubcategories) {
       if (subcat === 'General') {
-        counts[subcat] = selectionFilteredTags.filter((t) => !t.subcategory).length;
+        counts[subcat] = detailFilteredTags.filter((t) => !t.subcategory).length;
       } else {
-        counts[subcat] = selectionFilteredTags.filter((t) => t.subcategory === subcat).length;
+        counts[subcat] = detailFilteredTags.filter((t) => t.subcategory === subcat).length;
       }
     }
     return counts;
-  }, [selectionFilteredTags, sortedSubcategories]);
+  }, [detailFilteredTags, sortedSubcategories]);
 
   const resolvedActiveSubcategory = activeSubcategory && sortedSubcategories.includes(activeSubcategory)
     ? activeSubcategory
@@ -130,7 +170,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
     const sectionNames = resolvedActiveSubcategory ? [resolvedActiveSubcategory] : sortedSubcategories;
     return sectionNames
       .map((sectionName): TagSection => {
-        const matchingTags = selectionFilteredTags
+        const matchingTags = detailFilteredTags
           .filter((tag) => {
             if (sectionName === 'General') {
               return !tag.subcategory;
@@ -151,7 +191,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
         };
       })
       .filter((section) => section.tags.length > 0);
-  }, [resolvedActiveSubcategory, selectedTagIds, selectionFilteredTags, sortedSubcategories]);
+  }, [detailFilteredTags, resolvedActiveSubcategory, selectedTagIds, sortedSubcategories]);
 
   return (
     <Stack gap={0} style={{ flex: 1, minHeight: 0 }}>
@@ -196,6 +236,28 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                   onClick={() => setSelectionFilter(filterName)}
                 >
                   {label} ({count})
+                </SwarmBadge>
+              );
+            })}
+          </Group>
+
+          <Group gap="xs">
+            {([
+              { value: 'all', label: 'All tag types' },
+              { value: 'single-word', label: 'Single word' },
+              { value: 'multi-word', label: 'Phrase tag' },
+              { value: 'negative-capable', label: 'Has negative pair' },
+            ] as { value: TagDetailFilter; label: string }[]).map((filterOption) => {
+              const isActive = tagDetailFilter === filterOption.value;
+              return (
+                <SwarmBadge
+                  key={filterOption.value}
+                  tone={isActive ? stepMeta.tone : 'secondary'}
+                  emphasis={isActive ? 'solid' : 'soft'}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setTagDetailFilter(filterOption.value)}
+                >
+                  {filterOption.label} ({detailCounts[filterOption.value]})
                 </SwarmBadge>
               );
             })}
