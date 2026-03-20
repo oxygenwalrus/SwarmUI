@@ -1,5 +1,3 @@
-// swarmui-react/src/features/promptWizard/types.ts
-
 export type BuilderStep =
   | 'subject'
   | 'appearance'
