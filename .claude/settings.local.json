@@ -5,7 +5,11 @@
       "Bash(python3 -c \"import huggingface_hub; print\\(''huggingface_hub available''\\)\")",
       "Bash(python3:*)",
       "Skill(commit-commands:commit)",
-      "Skill(commit-commands:commit:*)"
+      "Skill(commit-commands:commit:*)",
+      "Bash(xargs grep:*)",
+      "Bash(ls \"C:\\\\Users\\\\Phala\\\\SwarmUI\\\\Models\\\\controlnet\"\" 2>/dev/null || echo \"DIRECTORY NOT FOUND \")",
+      "Bash(curl -s -X POST http://localhost:7801/API/TriggerRefresh -H \"Content-Type: application/json\" -d '{\"\"\"\"session_id\"\"\"\":\"\"\"\"local\"\"\"\",\"\"\"\"strong\"\"\"\":false}')",
+      "Bash(curl -s -X POST http://localhost:7801/API/GetNewSession -H \"Content-Type: application/json\" -d '{}')"
     ]
   }
 }

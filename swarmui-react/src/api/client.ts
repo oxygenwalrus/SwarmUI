@@ -1108,17 +1108,23 @@ export class SwarmUIClient {
   async listControlNets(): Promise<any[]> {
     const response = await this.getCachedTriggerRefresh();
 
-    // SwarmUI TriggerRefresh returns a 'list' object with all parameter types
-    if ('list' in response && response.list) {
-      const controlnetParam = response.list.find((param: any) => param.id === 'controlnetmodel');
-      if (controlnetParam && controlnetParam.values) {
-        return controlnetParam.values.map((cn: any) => ({
-          name: typeof cn === 'string' ? cn : cn.name || cn,
-          title: typeof cn === 'object' ? cn.title || cn.name : cn,
-          description: typeof cn === 'object' ? cn.description || '' : '',
-          path: typeof cn === 'string' ? cn : cn.path || cn.name,
-        }));
-      }
+    // SwarmUI TriggerRefresh returns models in response.models['ControlNet'] as [name, path] pairs.
+    // The 'controlnetmodel' param in response.list has values=null for model-type params —
+    // the actual installed models live under response.models.
+    if ('models' in response && response.models && Array.isArray(response.models['ControlNet'])) {
+      return response.models['ControlNet']
+        .filter((entry: any) => Array.isArray(entry) && entry[0] && entry[0] !== '(None)')
+        .map((entry: any) => {
+          const name = entry[0] as string;
+          // Strip extension for a cleaner display label
+          const label = name.replace(/\.[^/.]+$/, '');
+          return {
+            name,
+            title: label,
+            description: '',
+            path: entry[1] as string,
+          };
+        });
     }
 
     return [];
