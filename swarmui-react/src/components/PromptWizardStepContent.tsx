@@ -13,6 +13,7 @@ interface PromptWizardStepContentProps {
 }
 
 type SelectionFilter = 'all' | 'selected' | 'unselected';
+type SearchMode = 'broad' | 'prefix' | 'exact';
 
 interface TagSection {
   name: string;
@@ -28,17 +29,42 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
 }: PromptWizardStepContentProps) {
   const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
   const [selectionFilter, setSelectionFilter] = useState<SelectionFilter>('all');
+  const [searchMode, setSearchMode] = useState<SearchMode>('broad');
 
   const query = searchQuery.trim().toLowerCase();
+  const queryTerms = useMemo(
+    () => query.split(/\s+/).filter(Boolean),
+    [query]
+  );
 
   const filteredTags = useMemo(() => {
-    if (!query) return tags;
-    return tags.filter(
-      (t) =>
-        t.text.toLowerCase().includes(query) ||
-        t.aliases?.some((a) => a.toLowerCase().includes(query))
-    );
-  }, [tags, query]);
+    if (!query) {
+      return tags;
+    }
+
+    const matchesBroad = (value: string) => {
+      const normalizedValue = value.toLowerCase();
+      return queryTerms.every((term) => normalizedValue.includes(term));
+    };
+
+    const matchesPrefix = (value: string) => {
+      const words = value.toLowerCase().split(/[\s,_-]+/).filter(Boolean);
+      return queryTerms.every((term) => words.some((word) => word.startsWith(term)));
+    };
+
+    const matchesExact = (value: string) => value.toLowerCase() === query;
+
+    return tags.filter((tag) => {
+      const candidates = [tag.text, ...(tag.aliases ?? []), tag.subcategory ?? ''];
+      if (searchMode === 'exact') {
+        return candidates.some(matchesExact);
+      }
+      if (searchMode === 'prefix') {
+        return candidates.some(matchesPrefix);
+      }
+      return candidates.some(matchesBroad);
+    });
+  }, [query, queryTerms, searchMode, tags]);
 
   const selectionCounts = useMemo(() => {
     const selected = filteredTags.filter((tag) => selectedTagIds.has(tag.id)).length;
@@ -174,6 +200,30 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
               );
             })}
           </Group>
+
+          {query && (
+            <Group gap="xs">
+              {([
+                { value: 'broad', label: 'Broad match', hint: 'Match all typed terms anywhere' },
+                { value: 'prefix', label: 'Starts with', hint: 'Match the start of words' },
+                { value: 'exact', label: 'Exact phrase', hint: 'Only exact tag, alias, or group names' },
+              ] as { value: SearchMode; label: string; hint: string }[]).map((mode) => {
+                const isActive = searchMode === mode.value;
+                return (
+                  <SwarmBadge
+                    key={mode.value}
+                    tone={isActive ? stepMeta.tone : 'secondary'}
+                    emphasis={isActive ? 'solid' : 'soft'}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setSearchMode(mode.value)}
+                    title={mode.hint}
+                  >
+                    {mode.label}
+                  </SwarmBadge>
+                );
+              })}
+            </Group>
+          )}
         </Stack>
       </Box>
 
