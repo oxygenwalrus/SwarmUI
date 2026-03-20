@@ -31,7 +31,10 @@ controlnetthreepreprocessor?: string;
 ```
 
 ### `src/pages/GeneratePage/hooks/useParameterForm.ts`
-No default values added for preprocessor fields. Omitting them from `DEFAULT_FORM_VALUES` is intentional — undefined fields are not sent in the generate request, which produces the desired Auto behaviour.
+No default values added for preprocessor fields. This is intentional and consistent with `controlnetmodel`, which is also absent from `DEFAULT_FORM_VALUES`. Undefined fields are not sent in the generate request, producing the desired Auto behaviour.
+
+### `src/hooks/useGenerationHandlers.ts`
+The generate pipeline uses an explicit `includeParam` allowlist. The three new preprocessor keys must be added to the ControlNet block of that allowlist, otherwise they will be silently filtered from the payload and never reach the backend.
 
 ## Component Layer
 
@@ -43,6 +46,7 @@ No default values added for preprocessor fields. Omitting them from `DEFAULT_FOR
 | 'controlnettwopreprocessor'
 | 'controlnetthreepreprocessor'
 ```
+Note: `handleImageUpload` and `handleClearImage` accept `ControlNetFieldKey` but are only called for image fields — the preprocessor keys are never passed to them. The union extension is required so `form.setFieldValue(slot.preprocessorKey, ...)` compiles without a type error.
 
 **2. `ControlNetSlotConfig` — add field:**
 ```ts
@@ -57,39 +61,64 @@ Populate in `CONTROL_NET_SLOTS`:
 **3. `PREPROCESSOR_OPTIONS` constant** at top of file:
 ```ts
 const PREPROCESSOR_OPTIONS = [
-  { value: '',                    label: 'Auto (recommended)' },
-  { value: 'None',                label: 'None (raw image)' },
-  { value: 'Canny',               label: 'Canny' },
-  { value: 'SDPoseDrawKeypoints', label: 'OpenPose - Draw Keypoints' },
-  { value: 'SDPoseFaceBBoxes',    label: 'OpenPose - Face Boxes' },
+  { value: '',                        label: 'Auto (recommended)' },
+  { value: 'None',                    label: 'None (raw image)' },
+  { value: 'Canny',                   label: 'Canny' },
+  { value: 'SDPoseDrawKeypoints',     label: 'OpenPose - Draw Keypoints' },
+  { value: 'SDPoseFaceBBoxes',        label: 'OpenPose - Face Boxes' },
   { value: 'SDPoseKeypointExtractor', label: 'OpenPose - Extract Keypoints' },
-  { value: 'CropByBBoxes',        label: 'Crop by Bounding Boxes' },
+  { value: 'CropByBBoxes',            label: 'Crop by Bounding Boxes' },
 ];
 ```
 
-The empty string `''` acts as the sentinel for "Auto". On change, if the value is `''` the form field is set to `undefined` (omitted from request); otherwise the string is written directly.
+This list is **static and intentionally hardcoded** for this phase. The values were confirmed against a live SwarmUI 0.9.8.0 backend's `TriggerRefresh` response (`controlnetpreprocessor.values`). Dynamic enumeration (e.g. picking up DepthAnything if installed) is out of scope — tracked separately.
 
-**4. Dropdown placement:** Between the model `Select` and the strength `SliderWithInput` in each slot's stack.
+**4. `onChange` handler — "Auto" sentinel behaviour (bidirectional):**
 
-**5. Props:** No new props on `ControlNetAccordion` — preprocessor options are static and hardcoded, so no data needs to flow from parent components.
+The empty string `''` is the Mantine `Select` sentinel for the "Auto" option.
+
+**On change (user picks "Auto"):** convert `''` to `undefined`:
+```ts
+onChange={(value) =>
+  form.setFieldValue(slot.preprocessorKey, value === '' ? undefined : value)
+}
+```
+Setting `undefined` keeps the field absent from the form values object (omitted from the generate request).
+
+**On render (displaying current value):** convert `undefined` back to `''` so Mantine selects the "Auto" row rather than rendering blank:
+```ts
+value={form.values[slot.preprocessorKey] as string ?? ''}
+```
+Without this, Mantine `Select` receives `undefined` and treats the component as uncontrolled, causing the dropdown to appear empty on initial load and after any reset rather than showing "Auto (recommended)".
+
+**5. Dropdown placement:** Between the model `Select` and the strength `SliderWithInput` in each slot's stack.
+
+**6. Props:** No new props on `ControlNetAccordion` — preprocessor options are static.
 
 ## UX Details
 
 - **Label:** `"Preprocessor"`
 - **Description:** `"Auto selects based on model. Use None if your image is already preprocessed."`
-- **Placeholder:** `"Auto (recommended)"` when nothing selected
-- No changes required to `WorkspaceSidebar`, `GeneratePage/index.tsx`, or any store
+- **Placeholder:** `"Auto (recommended)"` when field is `undefined`
+- No changes required to `WorkspaceSidebar` or `GeneratePage/index.tsx`
+
+## Edge Cases
+
+- **Preprocessor selected, no image uploaded:** No UI validation is added. The backend handles this gracefully (falls back to init image or errors). This is consistent with existing behaviour for the model dropdown. Out of scope for this change.
+- **Preprocessor selected, ControlNet disabled:** The preprocessor field is sent regardless of the enabled toggle. The backend ignores ControlNet params when ControlNet is not enabled. No special handling needed.
 
 ## Files Changed
 
 | File | Change |
 |------|--------|
 | `src/api/types.ts` | Add 3 preprocessor fields to `GenerateParams` |
-| `src/pages/GeneratePage/components/accordions/ControlNetAccordion.tsx` | Add `PREPROCESSOR_OPTIONS`, extend `ControlNetFieldKey`, extend `ControlNetSlotConfig`, add `preprocessorKey` to slots, render dropdown in each slot |
-| `src/pages/GeneratePage/hooks/useParameterForm.ts` | No change (omission = Auto by design) |
+| `src/hooks/useGenerationHandlers.ts` | Add 3 preprocessor keys to the ControlNet block of the `includeParam` allowlist |
+| `src/pages/GeneratePage/components/accordions/ControlNetAccordion.tsx` | Add `PREPROCESSOR_OPTIONS`, extend `ControlNetFieldKey`, extend `ControlNetSlotConfig`, add `preprocessorKey` to slots, render dropdown in each slot with correct `onChange` |
+| `src/pages/GeneratePage/hooks/useParameterForm.ts` | No change (omission = Auto by design, consistent with `controlnetmodel`) |
 
 ## Out of Scope
 
 - Installing additional preprocessor nodes (e.g. DepthAnything) — separate task
+- Dynamic preprocessor list enumeration from backend — separate task
 - Exposing the `controlnetuniontype` param — separate task
-- Any changes to the generate request pipeline
+- UI validation for missing image when preprocessor is selected — separate task
