@@ -280,6 +280,7 @@ export const WorkspaceSidebar = memo(function WorkspaceSidebar({
     loadingVAEs,
     controlNetOptions,
     loadingControlNets,
+    onRefreshControlNets,
     upscaleModels,
     embeddingOptions,
     wildcardOptions,
