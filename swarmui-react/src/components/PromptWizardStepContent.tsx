@@ -27,6 +27,214 @@ interface TagSection {
   groups: TagGroup[];
 }
 
+interface GroupDefinition {
+  name: string;
+  description: string;
+  tone: StepMeta['tone'] | 'secondary' | 'warning';
+  match: (tag: PromptTag, normalizedText: string) => boolean;
+}
+
+function includesAny(text: string, keywords: string[]): boolean {
+  return keywords.some((keyword) => text.includes(keyword));
+}
+
+function getGroupDefinitions(stepMeta: StepMeta): GroupDefinition[] {
+  if (stepMeta.step === 'subject') {
+    return [
+      {
+        name: 'People & Roles',
+        description: 'Characters, professions, and person-led subjects.',
+        tone: stepMeta.tone,
+        match: (_, text) => includesAny(text, ['girl', 'boy', 'woman', 'man', 'person', 'character', 'hero', 'villain', 'princess', 'queen', 'knight', 'warrior', 'nurse', 'maid']),
+      },
+      {
+        name: 'Creatures & Beings',
+        description: 'Animals, monsters, and fantasy beings.',
+        tone: 'warning',
+        match: (_, text) => includesAny(text, ['cat', 'dog', 'wolf', 'fox', 'bird', 'dragon', 'demon', 'angel', 'monster', 'creature', 'beast', 'succubus', 'elf']),
+      },
+      {
+        name: 'Objects & Props',
+        description: 'Items, artifacts, and object-focused prompts.',
+        tone: 'secondary',
+        match: (_, text) => includesAny(text, ['sword', 'weapon', 'car', 'vehicle', 'chair', 'book', 'device', 'artifact', 'object', 'flower', 'food']),
+      },
+      {
+        name: 'Scenes & Concepts',
+        description: 'Broader scene ideas and concept-led subjects.',
+        tone: 'secondary',
+        match: () => true,
+      },
+    ];
+  }
+
+  if (stepMeta.step === 'appearance') {
+    return [
+      {
+        name: 'Face & Hair',
+        description: 'Hair, face, eyes, and head styling details.',
+        tone: stepMeta.tone,
+        match: (_, text) => includesAny(text, ['hair', 'bang', 'ponytail', 'braid', 'eye', 'eyelash', 'lip', 'smile', 'face', 'makeup', 'ear', 'horn']),
+      },
+      {
+        name: 'Body & Silhouette',
+        description: 'Body shape, figure, and form cues.',
+        tone: 'warning',
+        match: (_, text) => includesAny(text, ['body', 'waist', 'hips', 'legs', 'thigh', 'breast', 'abs', 'muscular', 'slim', 'curvy', 'tall', 'petite']),
+      },
+      {
+        name: 'Clothing & Uniforms',
+        description: 'Apparel, outfits, costumes, and uniforms.',
+        tone: 'secondary',
+        match: (_, text) => includesAny(text, ['dress', 'shirt', 'skirt', 'jacket', 'uniform', 'outfit', 'armor', 'swimsuit', 'bikini', 'corset', 'robe', 'coat', 'leotard']),
+      },
+      {
+        name: 'Accessories & Finish',
+        description: 'Footwear, jewelry, props worn, and finishing details.',
+        tone: 'secondary',
+        match: () => true,
+      },
+    ];
+  }
+
+  if (stepMeta.step === 'action') {
+    return [
+      {
+        name: 'Framing & View',
+        description: 'Camera framing, shot type, and point of view.',
+        tone: stepMeta.tone,
+        match: (_, text) => includesAny(text, ['portrait', 'headshot', 'close-up', 'full body', 'upper body', 'profile view', 'back view', 'pov', 'shot', 'view', 'angle', 'focus']),
+      },
+      {
+        name: 'Pose & Stance',
+        description: 'Static poses, posture, and stance language.',
+        tone: 'warning',
+        match: (_, text) => includesAny(text, ['standing', 'sitting', 'kneeling', 'reclining', 'pose', 'stance', 'arms crossed', 'hand on hip', 'looking back', 'seated']),
+      },
+      {
+        name: 'Motion & Energy',
+        description: 'Movement, motion, and active body energy.',
+        tone: 'secondary',
+        match: (_, text) => includesAny(text, ['walking', 'running', 'jumping', 'movement', 'motion', 'dynamic', 'airborne', 'fighting', 'combat', 'action']),
+      },
+      {
+        name: 'Interaction & Expression',
+        description: 'Gestures, emotional action, and interactive behavior.',
+        tone: 'secondary',
+        match: () => true,
+      },
+    ];
+  }
+
+  if (stepMeta.step === 'setting') {
+    return [
+      {
+        name: 'Composition & Camera',
+        description: 'Camera placement, perspective, and composition terms.',
+        tone: stepMeta.tone,
+        match: (_, text) => includesAny(text, ['angle', 'shot', 'perspective', 'view', 'isometric', 'macro', 'focus', 'wide shot', 'establishing', 'over the shoulder']),
+      },
+      {
+        name: 'Architecture & Urban',
+        description: 'City, street, interior, and built environments.',
+        tone: 'warning',
+        match: (_, text) => includesAny(text, ['city', 'street', 'room', 'hall', 'building', 'apartment', 'cafe', 'office', 'urban', 'neon', 'alley', 'rooftop']),
+      },
+      {
+        name: 'Nature & Outdoor',
+        description: 'Landscape, weather, and outdoor environments.',
+        tone: 'secondary',
+        match: (_, text) => includesAny(text, ['forest', 'beach', 'mountain', 'garden', 'river', 'rain', 'snow', 'sky', 'field', 'outdoor', 'sunset', 'nature']),
+      },
+      {
+        name: 'Fantasy & Specialty',
+        description: 'Fantasy locales, unusual settings, and specialty spaces.',
+        tone: 'secondary',
+        match: () => true,
+      },
+    ];
+  }
+
+  if (stepMeta.step === 'style') {
+    return [
+      {
+        name: 'Medium & Rendering',
+        description: 'Paint, sketch, render, and production medium.',
+        tone: stepMeta.tone,
+        match: (_, text) => includesAny(text, ['painting', 'render', 'sketch', 'drawing', 'illustration', 'cgi', 'watercolor', 'pixel art', 'charcoal', 'graphite']),
+      },
+      {
+        name: 'Aesthetic & Genre',
+        description: 'Visual aesthetic, genre, and broad stylistic direction.',
+        tone: 'warning',
+        match: (_, text) => includesAny(text, ['anime', 'realistic', 'cinematic', 'surreal', 'cyberpunk', 'steampunk', 'noir', 'ghibli', 'retro', 'comic']),
+      },
+      {
+        name: 'Artists & References',
+        description: 'Artist, studio, franchise, and named reference styles.',
+        tone: 'secondary',
+        match: (_, text) => includesAny(text, ['style', 'artstation', 'mucha', 'dali', 'magritte', 'miyazaki', 'mappa', 'ufotable', 'gainax', 'toriyama', 'kishimoto']),
+      },
+      {
+        name: 'Surface & Finish',
+        description: 'Texture, detail, and finishing style notes.',
+        tone: 'secondary',
+        match: () => true,
+      },
+    ];
+  }
+
+  if (stepMeta.step === 'atmosphere') {
+    return [
+      {
+        name: 'Lighting',
+        description: 'Light direction, intensity, and illumination mood.',
+        tone: stepMeta.tone,
+        match: (_, text) => includesAny(text, ['light', 'lighting', 'glow', 'shadow', 'backlit', 'rim light', 'sunlit', 'moonlit', 'neon']),
+      },
+      {
+        name: 'Mood & Emotion',
+        description: 'Emotional tone and feeling of the scene.',
+        tone: 'warning',
+        match: (_, text) => includesAny(text, ['moody', 'calm', 'serene', 'dramatic', 'tense', 'romantic', 'dreamy', 'mysterious', 'gloomy', 'elegant', 'glamour']),
+      },
+      {
+        name: 'Color & Palette',
+        description: 'Color direction and palette shaping terms.',
+        tone: 'secondary',
+        match: (_, text) => includesAny(text, ['color', 'palette', 'pastel', 'monochrome', 'vibrant', 'muted', 'golden', 'blue', 'red', 'sunset']),
+      },
+      {
+        name: 'Scene Effects',
+        description: 'Ambient effects, particles, and environmental atmosphere.',
+        tone: 'secondary',
+        match: () => true,
+      },
+    ];
+  }
+
+  return [
+    {
+      name: 'Positive Quality',
+      description: 'Image quality boosters and fidelity cues.',
+      tone: stepMeta.tone,
+      match: (tag, text) => !tag.negativeText?.trim() && !includesAny(text, ['bad', 'worst', 'lowres', 'blurry', 'error', 'extra', 'deformed']),
+    },
+    {
+      name: 'Cleanup & Negative',
+      description: 'Common negative and artifact-removal guidance.',
+      tone: 'warning',
+      match: (tag, text) => Boolean(tag.negativeText?.trim()) || includesAny(text, ['bad', 'worst', 'lowres', 'blurry', 'error', 'extra', 'deformed']),
+    },
+    {
+      name: 'Refinement',
+      description: 'Additional polish and prompt cleanup helpers.',
+      tone: 'secondary',
+      match: () => true,
+    },
+  ];
+}
+
 export const PromptWizardStepContent = memo(function PromptWizardStepContent({
   stepMeta,
   tags,
@@ -154,9 +362,26 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
           });
 
         const selectedTags = matchingTags.filter((tag) => selectedTagIds.has(tag.id));
-        const negativeCapableTags = matchingTags.filter((tag) => !selectedTagIds.has(tag.id) && Boolean(tag.negativeText?.trim()));
-        const phraseTags = matchingTags.filter((tag) => !selectedTagIds.has(tag.id) && !tag.negativeText?.trim() && /[\s,_-]/.test(tag.text.trim()));
-        const keywordTags = matchingTags.filter((tag) => !selectedTagIds.has(tag.id) && !tag.negativeText?.trim() && !/[\s,_-]/.test(tag.text.trim()));
+        const remainingTags = matchingTags.filter((tag) => !selectedTagIds.has(tag.id));
+        const unassignedTags = [...remainingTags];
+        const semanticGroups = getGroupDefinitions(stepMeta).map((definition) => {
+          const matchedTags: PromptTag[] = [];
+          for (let index = unassignedTags.length - 1; index >= 0; index -= 1) {
+            const tag = unassignedTags[index];
+            if (definition.match(tag, tag.text.toLowerCase())) {
+              matchedTags.unshift(tag);
+              unassignedTags.splice(index, 1);
+            }
+          }
+          return {
+            name: definition.name,
+            description: definition.description,
+            tone: definition.tone,
+            tags: matchedTags,
+          };
+        });
+
+        const uncategorizedTags = unassignedTags;
 
         const groups: TagGroup[] = [
           {
@@ -165,23 +390,12 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
             tone: stepMeta.tone,
             tags: selectedTags,
           },
+          ...semanticGroups,
           {
-            name: 'Negative Pair Ready',
-            description: 'Tags that also carry a paired negative hint.',
-            tone: 'warning',
-            tags: negativeCapableTags,
-          },
-          {
-            name: 'Phrase Details',
-            description: 'More specific descriptive phrases and compound tags.',
+            name: 'More Options',
+            description: 'Tags that do not neatly fit the current inferred groups.',
             tone: 'secondary',
-            tags: phraseTags,
-          },
-          {
-            name: 'Core Keywords',
-            description: 'Shorter core tags for faster prompt building.',
-            tone: 'secondary',
-            tags: keywordTags,
+            tags: uncategorizedTags,
           },
         ].filter((group) => group.tags.length > 0);
 
@@ -191,7 +405,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
         };
       })
       .filter((section) => section.groups.length > 0);
-  }, [resolvedActiveSubcategory, selectedTagIds, selectionFilteredTags, sortedSubcategories, stepMeta.tone]);
+  }, [resolvedActiveSubcategory, selectedTagIds, selectionFilteredTags, sortedSubcategories, stepMeta]);
 
   return (
     <Stack gap={0} style={{ flex: 1, minHeight: 0 }}>
