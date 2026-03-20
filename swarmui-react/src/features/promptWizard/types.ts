@@ -30,6 +30,10 @@ export interface PromptTag {
   text: string;
   step: BuilderStep;
   subcategory?: string;
+  majorGroup?: string;
+  minorGroup?: string;
+  groupOrder?: number;
+  minorOrder?: number;
   profiles: string[];
   aliases?: string[];
   negativeText?: string;

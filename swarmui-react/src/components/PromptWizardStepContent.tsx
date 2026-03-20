@@ -2,7 +2,7 @@ import { memo, useMemo, useState } from 'react';
 import { Box, Group, ScrollArea, Stack, Text } from '@mantine/core';
 import { SwarmBadge, ElevatedCard } from './ui';
 import { PromptWizardTagChip } from './PromptWizardTagChip';
-import type { PromptTag, StepMeta } from '../features/promptWizard/types';
+import type { BuilderStep, PromptTag, StepMeta } from '../features/promptWizard/types';
 
 interface PromptWizardStepContentProps {
   stepMeta: StepMeta;
@@ -15,11 +15,19 @@ interface PromptWizardStepContentProps {
 type SelectionFilter = 'all' | 'selected' | 'unselected';
 type SearchMode = 'broad' | 'prefix' | 'exact';
 
+interface MinorGroup {
+  name: string;
+  order: number;
+  tags: PromptTag[];
+}
+
 interface TagGroup {
   name: string;
   description: string;
   tone: StepMeta['tone'] | 'secondary' | 'warning';
-  tags: PromptTag[];
+  order: number;
+  count: number;
+  minorGroups: MinorGroup[];
 }
 
 interface TagSection {
@@ -27,212 +35,64 @@ interface TagSection {
   groups: TagGroup[];
 }
 
-interface GroupDefinition {
-  name: string;
-  description: string;
-  tone: StepMeta['tone'] | 'secondary' | 'warning';
-  match: (tag: PromptTag, normalizedText: string) => boolean;
-}
+const STEP_GROUP_META: Record<BuilderStep, Record<string, { description: string; tone: StepMeta['tone'] | 'secondary' | 'warning'; order: number }>> = {
+  subject: {
+    'People & Roles': { description: 'Human-led subjects, professions, classes, and archetypes.', tone: 'info', order: 10 },
+    'Creatures & Beings': { description: 'Animals, hybrids, mythic beings, and monsters.', tone: 'warning', order: 20 },
+    'Objects & Props': { description: 'Weapons, tools, artifacts, vehicles, and object subjects.', tone: 'secondary', order: 30 },
+    'Scenes & Themes': { description: 'Scene-led concepts, narrative themes, and content framing.', tone: 'secondary', order: 40 },
+  },
+  appearance: {
+    'Face & Hair': { description: 'Hair, eyes, facial styling, and head details.', tone: 'warning', order: 10 },
+    'Body & Silhouette': { description: 'Build, proportions, skin, curves, and body finish.', tone: 'warning', order: 20 },
+    'Clothing & Uniforms': { description: 'Outfits, uniforms, intimate wear, costumes, and armor.', tone: 'secondary', order: 30 },
+    'Accessories & Finish': { description: 'Footwear, jewelry, headwear, and worn finishing details.', tone: 'secondary', order: 40 },
+  },
+  action: {
+    'Framing & View': { description: 'Shot framing, crop, point of view, and camera direction.', tone: 'success', order: 10 },
+    'Pose & Stance': { description: 'Static pose families, posture, and presenting body language.', tone: 'warning', order: 20 },
+    'Motion & Energy': { description: 'Locomotion, action beats, and movement-driven language.', tone: 'secondary', order: 30 },
+    'Interaction & Expression': { description: 'Gestures, contact, and emotional or reactive cues.', tone: 'secondary', order: 40 },
+  },
+  setting: {
+    'Composition & Camera': { description: 'Camera language, shot construction, and perspective.', tone: 'primary', order: 10 },
+    'Architecture & Urban': { description: 'Indoor spaces, city locations, travel spots, and interiors.', tone: 'warning', order: 20 },
+    'Nature & Outdoor': { description: 'Landscape, terrain, coast, gardens, weather, and seasons.', tone: 'secondary', order: 30 },
+    'Fantasy & Specialty': { description: 'Mythic, haunted, sacred, royal, and futuristic environments.', tone: 'secondary', order: 40 },
+  },
+  style: {
+    'Medium & Rendering': { description: 'Render medium, realism, digital production, and craft.', tone: 'danger', order: 10 },
+    'Aesthetic & Genre': { description: 'Genre language, graphic aesthetics, retro looks, and mood.', tone: 'warning', order: 20 },
+    'Artists & References': { description: 'Named artists, studios, franchises, and direct style references.', tone: 'secondary', order: 30 },
+    'Surface & Finish': { description: 'Texture, color finish, abstract polish, and decorative treatment.', tone: 'secondary', order: 40 },
+  },
+  atmosphere: {
+    Lighting: { description: 'Light quality, temperature, and illumination mood.', tone: 'warning', order: 10 },
+    'Mood & Emotion': { description: 'Emotional tone, intimacy, tension, calm, and scene feeling.', tone: 'warning', order: 20 },
+    'Color & Palette': { description: 'Palette shaping, stylized color direction, and tonal bias.', tone: 'secondary', order: 30 },
+    'Scene Effects': { description: 'Fog, steam, particles, glow, and environmental atmosphere.', tone: 'secondary', order: 40 },
+  },
+  quality: {
+    'Positive Quality': { description: 'Quality boosters, detail cues, and positive render guidance.', tone: 'secondary', order: 10 },
+    'Cleanup & Negative': { description: 'Artifact cleanup, anatomy correction, and negative prompt cues.', tone: 'warning', order: 20 },
+    Refinement: { description: 'Extra polish and prompt refinement helpers.', tone: 'secondary', order: 30 },
+  },
+};
 
-function includesAny(text: string, keywords: string[]): boolean {
-  return keywords.some((keyword) => text.includes(keyword));
-}
-
-function getGroupDefinitions(stepMeta: StepMeta): GroupDefinition[] {
-  if (stepMeta.step === 'subject') {
-    return [
-      {
-        name: 'People & Roles',
-        description: 'Characters, professions, and person-led subjects.',
-        tone: stepMeta.tone,
-        match: (_, text) => includesAny(text, ['girl', 'boy', 'woman', 'man', 'person', 'character', 'hero', 'villain', 'princess', 'queen', 'knight', 'warrior', 'nurse', 'maid']),
-      },
-      {
-        name: 'Creatures & Beings',
-        description: 'Animals, monsters, and fantasy beings.',
-        tone: 'warning',
-        match: (_, text) => includesAny(text, ['cat', 'dog', 'wolf', 'fox', 'bird', 'dragon', 'demon', 'angel', 'monster', 'creature', 'beast', 'succubus', 'elf']),
-      },
-      {
-        name: 'Objects & Props',
-        description: 'Items, artifacts, and object-focused prompts.',
-        tone: 'secondary',
-        match: (_, text) => includesAny(text, ['sword', 'weapon', 'car', 'vehicle', 'chair', 'book', 'device', 'artifact', 'object', 'flower', 'food']),
-      },
-      {
-        name: 'Scenes & Concepts',
-        description: 'Broader scene ideas and concept-led subjects.',
-        tone: 'secondary',
-        match: () => true,
-      },
-    ];
+function getGroupMeta(step: BuilderStep, groupName: string, stepTone: StepMeta['tone']) {
+  if (groupName === 'Selected') {
+    return {
+      description: 'Tags you have already chosen in this section.',
+      tone: stepTone,
+      order: 0,
+    };
   }
 
-  if (stepMeta.step === 'appearance') {
-    return [
-      {
-        name: 'Face & Hair',
-        description: 'Hair, face, eyes, and head styling details.',
-        tone: stepMeta.tone,
-        match: (_, text) => includesAny(text, ['hair', 'bang', 'ponytail', 'braid', 'eye', 'eyelash', 'lip', 'smile', 'face', 'makeup', 'ear', 'horn']),
-      },
-      {
-        name: 'Body & Silhouette',
-        description: 'Body shape, figure, and form cues.',
-        tone: 'warning',
-        match: (_, text) => includesAny(text, ['body', 'waist', 'hips', 'legs', 'thigh', 'breast', 'abs', 'muscular', 'slim', 'curvy', 'tall', 'petite']),
-      },
-      {
-        name: 'Clothing & Uniforms',
-        description: 'Apparel, outfits, costumes, and uniforms.',
-        tone: 'secondary',
-        match: (_, text) => includesAny(text, ['dress', 'shirt', 'skirt', 'jacket', 'uniform', 'outfit', 'armor', 'swimsuit', 'bikini', 'corset', 'robe', 'coat', 'leotard']),
-      },
-      {
-        name: 'Accessories & Finish',
-        description: 'Footwear, jewelry, props worn, and finishing details.',
-        tone: 'secondary',
-        match: () => true,
-      },
-    ];
-  }
-
-  if (stepMeta.step === 'action') {
-    return [
-      {
-        name: 'Framing & View',
-        description: 'Camera framing, shot type, and point of view.',
-        tone: stepMeta.tone,
-        match: (_, text) => includesAny(text, ['portrait', 'headshot', 'close-up', 'full body', 'upper body', 'profile view', 'back view', 'pov', 'shot', 'view', 'angle', 'focus']),
-      },
-      {
-        name: 'Pose & Stance',
-        description: 'Static poses, posture, and stance language.',
-        tone: 'warning',
-        match: (_, text) => includesAny(text, ['standing', 'sitting', 'kneeling', 'reclining', 'pose', 'stance', 'arms crossed', 'hand on hip', 'looking back', 'seated']),
-      },
-      {
-        name: 'Motion & Energy',
-        description: 'Movement, motion, and active body energy.',
-        tone: 'secondary',
-        match: (_, text) => includesAny(text, ['walking', 'running', 'jumping', 'movement', 'motion', 'dynamic', 'airborne', 'fighting', 'combat', 'action']),
-      },
-      {
-        name: 'Interaction & Expression',
-        description: 'Gestures, emotional action, and interactive behavior.',
-        tone: 'secondary',
-        match: () => true,
-      },
-    ];
-  }
-
-  if (stepMeta.step === 'setting') {
-    return [
-      {
-        name: 'Composition & Camera',
-        description: 'Camera placement, perspective, and composition terms.',
-        tone: stepMeta.tone,
-        match: (_, text) => includesAny(text, ['angle', 'shot', 'perspective', 'view', 'isometric', 'macro', 'focus', 'wide shot', 'establishing', 'over the shoulder']),
-      },
-      {
-        name: 'Architecture & Urban',
-        description: 'City, street, interior, and built environments.',
-        tone: 'warning',
-        match: (_, text) => includesAny(text, ['city', 'street', 'room', 'hall', 'building', 'apartment', 'cafe', 'office', 'urban', 'neon', 'alley', 'rooftop']),
-      },
-      {
-        name: 'Nature & Outdoor',
-        description: 'Landscape, weather, and outdoor environments.',
-        tone: 'secondary',
-        match: (_, text) => includesAny(text, ['forest', 'beach', 'mountain', 'garden', 'river', 'rain', 'snow', 'sky', 'field', 'outdoor', 'sunset', 'nature']),
-      },
-      {
-        name: 'Fantasy & Specialty',
-        description: 'Fantasy locales, unusual settings, and specialty spaces.',
-        tone: 'secondary',
-        match: () => true,
-      },
-    ];
-  }
-
-  if (stepMeta.step === 'style') {
-    return [
-      {
-        name: 'Medium & Rendering',
-        description: 'Paint, sketch, render, and production medium.',
-        tone: stepMeta.tone,
-        match: (_, text) => includesAny(text, ['painting', 'render', 'sketch', 'drawing', 'illustration', 'cgi', 'watercolor', 'pixel art', 'charcoal', 'graphite']),
-      },
-      {
-        name: 'Aesthetic & Genre',
-        description: 'Visual aesthetic, genre, and broad stylistic direction.',
-        tone: 'warning',
-        match: (_, text) => includesAny(text, ['anime', 'realistic', 'cinematic', 'surreal', 'cyberpunk', 'steampunk', 'noir', 'ghibli', 'retro', 'comic']),
-      },
-      {
-        name: 'Artists & References',
-        description: 'Artist, studio, franchise, and named reference styles.',
-        tone: 'secondary',
-        match: (_, text) => includesAny(text, ['style', 'artstation', 'mucha', 'dali', 'magritte', 'miyazaki', 'mappa', 'ufotable', 'gainax', 'toriyama', 'kishimoto']),
-      },
-      {
-        name: 'Surface & Finish',
-        description: 'Texture, detail, and finishing style notes.',
-        tone: 'secondary',
-        match: () => true,
-      },
-    ];
-  }
-
-  if (stepMeta.step === 'atmosphere') {
-    return [
-      {
-        name: 'Lighting',
-        description: 'Light direction, intensity, and illumination mood.',
-        tone: stepMeta.tone,
-        match: (_, text) => includesAny(text, ['light', 'lighting', 'glow', 'shadow', 'backlit', 'rim light', 'sunlit', 'moonlit', 'neon']),
-      },
-      {
-        name: 'Mood & Emotion',
-        description: 'Emotional tone and feeling of the scene.',
-        tone: 'warning',
-        match: (_, text) => includesAny(text, ['moody', 'calm', 'serene', 'dramatic', 'tense', 'romantic', 'dreamy', 'mysterious', 'gloomy', 'elegant', 'glamour']),
-      },
-      {
-        name: 'Color & Palette',
-        description: 'Color direction and palette shaping terms.',
-        tone: 'secondary',
-        match: (_, text) => includesAny(text, ['color', 'palette', 'pastel', 'monochrome', 'vibrant', 'muted', 'golden', 'blue', 'red', 'sunset']),
-      },
-      {
-        name: 'Scene Effects',
-        description: 'Ambient effects, particles, and environmental atmosphere.',
-        tone: 'secondary',
-        match: () => true,
-      },
-    ];
-  }
-
-  return [
-    {
-      name: 'Positive Quality',
-      description: 'Image quality boosters and fidelity cues.',
-      tone: stepMeta.tone,
-      match: (tag, text) => !tag.negativeText?.trim() && !includesAny(text, ['bad', 'worst', 'lowres', 'blurry', 'error', 'extra', 'deformed']),
-    },
-    {
-      name: 'Cleanup & Negative',
-      description: 'Common negative and artifact-removal guidance.',
-      tone: 'warning',
-      match: (tag, text) => Boolean(tag.negativeText?.trim()) || includesAny(text, ['bad', 'worst', 'lowres', 'blurry', 'error', 'extra', 'deformed']),
-    },
-    {
-      name: 'Refinement',
-      description: 'Additional polish and prompt cleanup helpers.',
-      tone: 'secondary',
-      match: () => true,
-    },
-  ];
+  return STEP_GROUP_META[step][groupName] ?? {
+    description: 'Additional tags that can help round out this section.',
+    tone: 'secondary',
+    order: 90,
+  };
 }
 
 export const PromptWizardStepContent = memo(function PromptWizardStepContent({
@@ -271,7 +131,13 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
     const matchesExact = (value: string) => value.toLowerCase() === query;
 
     return tags.filter((tag) => {
-      const candidates = [tag.text, ...(tag.aliases ?? []), tag.subcategory ?? ''];
+      const candidates = [
+        tag.text,
+        ...(tag.aliases ?? []),
+        tag.subcategory ?? '',
+        tag.majorGroup ?? '',
+        tag.minorGroup ?? '',
+      ];
       if (searchMode === 'exact') {
         return candidates.some(matchesExact);
       }
@@ -329,11 +195,9 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
   const subcatCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const subcat of sortedSubcategories) {
-      if (subcat === 'General') {
-        counts[subcat] = selectionFilteredTags.filter((t) => !t.subcategory).length;
-      } else {
-        counts[subcat] = selectionFilteredTags.filter((t) => t.subcategory === subcat).length;
-      }
+      counts[subcat] = subcat === 'General'
+        ? selectionFilteredTags.filter((tag) => !tag.subcategory).length
+        : selectionFilteredTags.filter((tag) => tag.subcategory === subcat).length;
     }
     return counts;
   }, [selectionFilteredTags, sortedSubcategories]);
@@ -354,78 +218,98 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
             return tag.subcategory === sectionName;
           })
           .sort((left, right) => {
-            const leftSelected = selectedTagIds.has(left.id);
-            const rightSelected = selectedTagIds.has(right.id);
-            if (leftSelected !== rightSelected) {
-              return leftSelected ? -1 : 1;
+            if ((left.groupOrder ?? 999) !== (right.groupOrder ?? 999)) {
+              return (left.groupOrder ?? 999) - (right.groupOrder ?? 999);
+            }
+            if ((left.minorOrder ?? 999) !== (right.minorOrder ?? 999)) {
+              return (left.minorOrder ?? 999) - (right.minorOrder ?? 999);
             }
             return left.text.localeCompare(right.text);
           });
 
         const selectedTags = matchingTags.filter((tag) => selectedTagIds.has(tag.id));
         const remainingTags = matchingTags.filter((tag) => !selectedTagIds.has(tag.id));
-        const unassignedTags = [...remainingTags];
-        const semanticGroups = getGroupDefinitions(stepMeta).map((definition) => {
-          const matchedTags: PromptTag[] = [];
-          for (let index = unassignedTags.length - 1; index >= 0; index -= 1) {
-            const tag = unassignedTags[index];
-            if (definition.match(tag, tag.text.toLowerCase())) {
-              matchedTags.unshift(tag);
-              unassignedTags.splice(index, 1);
-            }
-          }
-          return {
-            name: definition.name,
-            description: definition.description,
-            tone: definition.tone,
-            tags: matchedTags,
-          };
-        });
+        const majorGroups = new Map<string, PromptTag[]>();
 
-        const uncategorizedTags = unassignedTags;
+        for (const tag of remainingTags) {
+          const key = tag.majorGroup ?? 'More Options';
+          const bucket = majorGroups.get(key) ?? [];
+          bucket.push(tag);
+          majorGroups.set(key, bucket);
+        }
 
-        const groups: TagGroup[] = [
-          {
+        const groups: TagGroup[] = [];
+
+        if (selectedTags.length > 0) {
+          groups.push({
             name: 'Selected',
-            description: 'Tags already in your prompt from this group.',
+            description: 'Tags you have already chosen in this section.',
             tone: stepMeta.tone,
-            tags: selectedTags,
-          },
-          ...semanticGroups,
-          {
-            name: 'More Options',
-            description: 'Tags that do not neatly fit the current inferred groups.',
-            tone: 'secondary',
-            tags: uncategorizedTags,
-          },
-        ].filter((group) => group.tags.length > 0);
+            order: 0,
+            count: selectedTags.length,
+            minorGroups: [
+              {
+                name: 'Chosen Tags',
+                order: 0,
+                tags: selectedTags.sort((left, right) => left.text.localeCompare(right.text)),
+              },
+            ],
+          });
+        }
+
+        for (const [groupName, groupTags] of majorGroups.entries()) {
+          const groupMeta = getGroupMeta(stepMeta.step, groupName, stepMeta.tone);
+          const minorGroupsMap = new Map<string, PromptTag[]>();
+
+          for (const tag of groupTags) {
+            const minorKey = tag.minorGroup ?? 'General';
+            const bucket = minorGroupsMap.get(minorKey) ?? [];
+            bucket.push(tag);
+            minorGroupsMap.set(minorKey, bucket);
+          }
+
+          const minorGroups = Array.from(minorGroupsMap.entries())
+            .map(([minorName, minorTags]): MinorGroup => ({
+              name: minorName,
+              order: Math.min(...minorTags.map((tag) => tag.minorOrder ?? 999)),
+              tags: minorTags.sort((left, right) => left.text.localeCompare(right.text)),
+            }))
+            .sort((left, right) => left.order - right.order || left.name.localeCompare(right.name));
+
+          groups.push({
+            name: groupName,
+            description: groupMeta.description,
+            tone: groupMeta.tone,
+            order: groupMeta.order,
+            count: groupTags.length,
+            minorGroups,
+          });
+        }
 
         return {
           name: sectionName,
-          groups,
+          groups: groups.sort((left, right) => left.order - right.order || left.name.localeCompare(right.name)),
         };
       })
       .filter((section) => section.groups.length > 0);
   }, [resolvedActiveSubcategory, selectedTagIds, selectionFilteredTags, sortedSubcategories, stepMeta]);
 
   const majorGroupTabs = useMemo(() => {
-    const counts = new Map<string, { count: number; tone: TagGroup['tone'] }>();
+    const counts = new Map<string, { count: number; tone: TagGroup['tone']; order: number }>();
     for (const section of sections) {
       for (const group of section.groups) {
         const existing = counts.get(group.name);
         if (existing) {
-          existing.count += group.tags.length;
+          existing.count += group.count;
         }
         else {
-          counts.set(group.name, { count: group.tags.length, tone: group.tone });
+          counts.set(group.name, { count: group.count, tone: group.tone, order: group.order });
         }
       }
     }
-    return Array.from(counts.entries()).map(([name, meta]) => ({
-      name,
-      count: meta.count,
-      tone: meta.tone,
-    }));
+    return Array.from(counts.entries())
+      .map(([name, meta]) => ({ name, count: meta.count, tone: meta.tone, order: meta.order }))
+      .sort((left, right) => left.order - right.order || left.name.localeCompare(right.name));
   }, [sections]);
 
   const resolvedActiveMajorGroup = activeMajorGroup && majorGroupTabs.some((group) => group.name === activeMajorGroup)
@@ -452,6 +336,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
         style={{
           borderBottom: '1px solid var(--mantine-color-default-border)',
           background: `linear-gradient(180deg, color-mix(in srgb, var(--mantine-color-${stepMeta.tone}-light) 55%, transparent), transparent)`,
+          flexShrink: 0,
         }}
       >
         <Stack gap="sm">
@@ -473,11 +358,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
             {(['all', 'selected', 'unselected'] as SelectionFilter[]).map((filterName) => {
               const isActive = selectionFilter === filterName;
               const count = selectionCounts[filterName];
-              const label = filterName === 'all'
-                ? 'All'
-                : filterName === 'selected'
-                  ? 'Selected'
-                  : 'Available';
+              const label = filterName === 'all' ? 'All' : filterName === 'selected' ? 'Selected' : 'Available';
               return (
                 <SwarmBadge
                   key={filterName}
@@ -518,16 +399,12 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
         </Stack>
       </Box>
 
-      <Box
-        px="lg"
-        py="sm"
-        style={{ borderBottom: '1px solid var(--mantine-color-default-border)', flexShrink: 0 }}
-      >
+      <Box px="lg" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-default-border)', flexShrink: 0 }}>
         <ScrollArea offsetScrollbars>
           <Group gap="xs" wrap="nowrap">
             <SwarmBadge
-              tone={activeSubcategory === null ? stepMeta.tone : 'secondary'}
-              emphasis={activeSubcategory === null ? 'solid' : 'soft'}
+              tone={resolvedActiveSubcategory === null ? stepMeta.tone : 'secondary'}
+              emphasis={resolvedActiveSubcategory === null ? 'solid' : 'soft'}
               style={{ cursor: 'pointer' }}
               onClick={() => setActiveSubcategory(null)}
             >
@@ -556,11 +433,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
       </Box>
 
       {majorGroupTabs.length > 0 && (
-        <Box
-          px="lg"
-          py="sm"
-          style={{ borderBottom: '1px solid var(--mantine-color-default-border)', flexShrink: 0 }}
-        >
+        <Box px="lg" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-default-border)', flexShrink: 0 }}>
           <ScrollArea offsetScrollbars>
             <Group gap="xs" wrap="nowrap">
               <SwarmBadge
@@ -587,13 +460,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
         </Box>
       )}
 
-      {/* Tag grid */}
-      <ScrollArea
-        offsetScrollbars
-        scrollbarSize={10}
-        type="scroll"
-        style={{ flex: 1, minHeight: 0, height: 0 }}
-      >
+      <ScrollArea offsetScrollbars scrollbarSize={10} type="scroll" style={{ flex: 1, minHeight: 0, height: 0 }}>
         <Box p="lg">
           {filteredSections.length === 0 ? (
             <ElevatedCard elevation="floor" withBorder>
@@ -623,7 +490,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                           {section.name}
                         </SwarmBadge>
                         <Text size="md" c="dimmed">
-                          {section.groups.reduce((total, group) => total + group.tags.length, 0)} tag{section.groups.reduce((total, group) => total + group.tags.length, 0) === 1 ? '' : 's'}
+                          {section.groups.reduce((total, group) => total + group.count, 0)} tag{section.groups.reduce((total, group) => total + group.count, 0) === 1 ? '' : 's'}
                         </Text>
                       </Group>
                       {resolvedActiveSubcategory === null && (
@@ -637,6 +504,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                         </SwarmBadge>
                       )}
                     </Group>
+
                     <Stack gap="md">
                       {section.groups.map((group) => (
                         <Box
@@ -655,23 +523,48 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                                   {group.name}
                                 </SwarmBadge>
                                 <Text size="md" c="dimmed">
-                                  {group.tags.length}
+                                  {group.count}
                                 </Text>
                               </Group>
-                              <Text size="sm" c="dimmed" style={{ maxWidth: 320, textAlign: 'right' }}>
+                              <Text size="sm" c="dimmed" style={{ maxWidth: 360, textAlign: 'right' }}>
                                 {group.description}
                               </Text>
                             </Group>
-                            <Group gap="sm">
-                              {group.tags.map((tag) => (
-                                <PromptWizardTagChip
-                                  key={tag.id}
-                                  text={tag.text}
-                                  selected={selectedTagIds.has(tag.id)}
-                                  onToggle={() => onToggleTag(tag.id)}
-                                />
+
+                            <Stack gap="sm">
+                              {group.minorGroups.map((minorGroup) => (
+                                <Box
+                                  key={`${group.name}-${minorGroup.name}`}
+                                  p="sm"
+                                  style={{
+                                    borderRadius: 'var(--mantine-radius-sm)',
+                                    background: 'color-mix(in srgb, var(--elevation-paper) 86%, transparent)',
+                                    border: '1px solid color-mix(in srgb, var(--mantine-color-default-border) 88%, transparent)',
+                                  }}
+                                >
+                                  <Stack gap="xs">
+                                    <Group justify="space-between" align="center">
+                                      <Text size="sm" fw={700}>
+                                        {minorGroup.name}
+                                      </Text>
+                                      <Text size="sm" c="dimmed">
+                                        {minorGroup.tags.length}
+                                      </Text>
+                                    </Group>
+                                    <Group gap="sm">
+                                      {minorGroup.tags.map((tag) => (
+                                        <PromptWizardTagChip
+                                          key={tag.id}
+                                          text={tag.text}
+                                          selected={selectedTagIds.has(tag.id)}
+                                          onToggle={() => onToggleTag(tag.id)}
+                                        />
+                                      ))}
+                                    </Group>
+                                  </Stack>
+                                </Box>
                               ))}
-                            </Group>
+                            </Stack>
                           </Stack>
                         </Box>
                       ))}
