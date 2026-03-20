@@ -31,7 +31,10 @@ type ControlNetFieldKey =
     | 'controlnetthreemodel'
     | 'controlnetthreestrength'
     | 'controlnetthreestart'
-    | 'controlnetthreeend';
+    | 'controlnetthreeend'
+    | 'controlnetpreprocessor'
+    | 'controlnettwopreprocessor'
+    | 'controlnetthreepreprocessor';
 
 interface ControlNetSlotConfig {
     value: string;
@@ -41,6 +44,7 @@ interface ControlNetSlotConfig {
     strengthKey: ControlNetFieldKey;
     startKey: ControlNetFieldKey;
     endKey: ControlNetFieldKey;
+    preprocessorKey: ControlNetFieldKey;
 }
 
 const CONTROL_NET_SLOTS: ControlNetSlotConfig[] = [
@@ -52,6 +56,7 @@ const CONTROL_NET_SLOTS: ControlNetSlotConfig[] = [
         strengthKey: 'controlnetstrength',
         startKey: 'controlnetstart',
         endKey: 'controlnetend',
+        preprocessorKey: 'controlnetpreprocessor',
     },
     {
         value: 'controlnet-secondary',
@@ -61,6 +66,7 @@ const CONTROL_NET_SLOTS: ControlNetSlotConfig[] = [
         strengthKey: 'controlnettwostrength',
         startKey: 'controlnettwostart',
         endKey: 'controlnettwoend',
+        preprocessorKey: 'controlnettwopreprocessor',
     },
     {
         value: 'controlnet-tertiary',
@@ -70,7 +76,18 @@ const CONTROL_NET_SLOTS: ControlNetSlotConfig[] = [
         strengthKey: 'controlnetthreestrength',
         startKey: 'controlnetthreestart',
         endKey: 'controlnetthreeend',
+        preprocessorKey: 'controlnetthreepreprocessor',
     },
+];
+
+export const PREPROCESSOR_OPTIONS = [
+    { value: '',                        label: 'Auto (recommended)' },
+    { value: 'None',                    label: 'None (raw image)' },
+    { value: 'Canny',                   label: 'Canny' },
+    { value: 'SDPoseDrawKeypoints',     label: 'OpenPose - Draw Keypoints' },
+    { value: 'SDPoseFaceBBoxes',        label: 'OpenPose - Face Boxes' },
+    { value: 'SDPoseKeypointExtractor', label: 'OpenPose - Extract Keypoints' },
+    { value: 'CropByBBoxes',            label: 'Crop by Bounding Boxes' },
 ];
 
 export interface ControlNetAccordionProps {
