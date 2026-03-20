@@ -216,6 +216,19 @@ export const ControlNetAccordion = memo(function ControlNetAccordion({
                                             description={`Model for ${slot.title.toLowerCase()} guidance`}
                                         />
 
+                                        <Select
+                                            label="Preprocessor"
+                                            description="Auto selects based on model. Use None if your image is already preprocessed."
+                                            data={PREPROCESSOR_OPTIONS}
+                                            value={(form.values[slot.preprocessorKey] as string | undefined) ?? ''}
+                                            onChange={(value) =>
+                                                form.setFieldValue(
+                                                    slot.preprocessorKey,
+                                                    value == null || value === '' ? undefined : value
+                                                )
+                                            }
+                                        />
+
                                         <SliderWithInput
                                             label={`${slot.title} Strength`}
                                             value={(form.values[slot.strengthKey] as number | undefined) || 1}
