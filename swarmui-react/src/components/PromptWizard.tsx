@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { Center, Group, Loader, Modal, Stack, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
@@ -12,7 +12,7 @@ import { usePromptWizardStore } from '../stores/promptWizardStore';
 import { STEP_META, getStepMeta } from '../features/promptWizard/steps';
 import { getProfile } from '../features/promptWizard/profiles';
 import { assemblePrompt } from '../features/promptWizard/assemble';
-import type { BuilderStep, PromptTag, PromptPreset } from '../features/promptWizard/types';
+import type { BuilderStep, PromptTag } from '../features/promptWizard/types';
 
 interface PromptWizardProps {
   onApplyToPrompt?: (text: string) => void;
@@ -22,20 +22,12 @@ interface PromptWizardProps {
 
 // Lazy-loaded data
 let defaultTagsPromise: Promise<PromptTag[]> | null = null;
-let defaultPresetsPromise: Promise<PromptPreset[]> | null = null;
 
 function loadDefaultTags(): Promise<PromptTag[]> {
   if (!defaultTagsPromise) {
     defaultTagsPromise = import('../data/promptTags.json').then((m) => m.default as PromptTag[]);
   }
   return defaultTagsPromise;
-}
-
-function loadDefaultPresets(): Promise<PromptPreset[]> {
-  if (!defaultPresetsPromise) {
-    defaultPresetsPromise = import('../data/promptQuickPresets.json').then((m) => m.default as PromptPreset[]);
-  }
-  return defaultPresetsPromise;
 }
 
 export const PromptWizard = memo(function PromptWizard({
@@ -46,7 +38,6 @@ export const PromptWizard = memo(function PromptWizard({
   const [opened, { open, close }] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [defaultTags, setDefaultTags] = useState<PromptTag[]>([]);
-  const [defaultPresets, setDefaultPresets] = useState<PromptPreset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
 
@@ -57,19 +48,19 @@ export const PromptWizard = memo(function PromptWizard({
     customTags,
     toggleTag,
     clearSelections,
-    applyPreset,
     setActiveStep,
     setActiveProfile,
   } = usePromptWizardStore();
 
-  // Load data on first open
-  useEffect(() => {
-    if (!opened || hasLoaded || isLoading) return;
+  const handleOpen = useCallback(() => {
+    open();
+    if (hasLoaded || isLoading) {
+      return;
+    }
     setIsLoading(true);
-    Promise.all([loadDefaultTags(), loadDefaultPresets()])
-      .then(([tags, presets]) => {
+    loadDefaultTags()
+      .then((tags) => {
         setDefaultTags(tags);
-        setDefaultPresets(presets);
         setHasLoaded(true);
       })
       .catch(() => {
@@ -80,7 +71,7 @@ export const PromptWizard = memo(function PromptWizard({
         });
       })
       .finally(() => setIsLoading(false));
-  }, [opened, hasLoaded, isLoading]);
+  }, [hasLoaded, isLoading, open]);
 
   // Merge default + custom tags
   const allTags = useMemo(() => [...defaultTags, ...customTags], [defaultTags, customTags]);
@@ -90,12 +81,6 @@ export const PromptWizard = memo(function PromptWizard({
   const stepTags = useMemo(
     () => hasSearch ? allTags : allTags.filter((t) => t.step === activeStep),
     [allTags, activeStep, hasSearch]
-  );
-
-  // Presets for active step
-  const stepPresets = useMemo(
-    () => defaultPresets.filter((p) => p.step === activeStep),
-    [defaultPresets, activeStep]
   );
 
   // Tag counts per step
@@ -152,7 +137,7 @@ export const PromptWizard = memo(function PromptWizard({
   return (
     <>
       {/* Trigger button */}
-      <UnstyledButton onClick={open} style={{ width: '100%', textAlign: 'left' }} aria-label="Open prompt wizard">
+      <UnstyledButton onClick={handleOpen} style={{ width: '100%', textAlign: 'left' }} aria-label="Open prompt wizard">
         <ElevatedCard
           elevation="paper"
           withBorder
@@ -225,11 +210,9 @@ export const PromptWizard = memo(function PromptWizard({
             <PromptWizardStepContent
               stepMeta={stepMeta}
               tags={stepTags}
-              presets={stepPresets}
               selectedTagIds={selectedTagIdSet}
               searchQuery={searchQuery}
               onToggleTag={toggleTag}
-              onApplyPreset={applyPreset}
             />
 
             {/* Next / Previous navigation */}

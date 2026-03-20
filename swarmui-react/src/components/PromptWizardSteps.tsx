@@ -30,14 +30,14 @@ export const PromptWizardSteps = memo(function PromptWizardSteps({
                 style={{
                   padding: '6px 12px',
                   borderRadius: 'var(--mantine-radius-md)',
-                  background: isActive ? 'var(--elevation-raised)' : undefined,
-                  border: isActive ? '1px solid color-mix(in srgb, var(--theme-accent-2) 45%, var(--theme-gray-5))' : '1px solid transparent',
+                  background: isActive ? `color-mix(in srgb, var(--mantine-color-${meta.tone}-light) 75%, var(--elevation-raised))` : undefined,
+                  border: isActive ? `1px solid color-mix(in srgb, var(--mantine-color-${meta.tone}-filled) 28%, var(--theme-gray-5))` : '1px solid transparent',
                 }}
               >
-                <Text size="xs" c="dimmed" fw={600}>{index + 1}</Text>
+                <Text size="xs" c={isActive ? `${meta.tone}.6` : 'dimmed'} fw={700}>{index + 1}</Text>
                 <Text size="sm" fw={isActive ? 600 : 400}>{meta.label}</Text>
                 {count > 0 && (
-                  <SwarmBadge tone="primary" emphasis="solid" size="xs">{count}</SwarmBadge>
+                  <SwarmBadge tone={isActive ? meta.tone : 'primary'} emphasis="solid" size="xs">{count}</SwarmBadge>
                 )}
               </Group>
             </UnstyledButton>

@@ -7,11 +7,14 @@ export type BuilderStep =
   | 'atmosphere'
   | 'quality';
 
+export type WizardTone = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info';
+
 export interface StepMeta {
   step: BuilderStep;
   label: string;
   description: string;
   subcategories: string[];
+  tone: WizardTone;
 }
 
 export interface PromptProfile {
