@@ -1,0 +1,45 @@
+// swarmui-react/src/features/promptWizard/types.ts
+
+export type BuilderStep =
+  | 'subject'
+  | 'appearance'
+  | 'action'
+  | 'setting'
+  | 'style'
+  | 'atmosphere'
+  | 'quality';
+
+export interface StepMeta {
+  step: BuilderStep;
+  label: string;
+  description: string;
+  subcategories: string[];
+}
+
+export interface PromptProfile {
+  id: string;
+  name: string;
+  stepOrder: BuilderStep[];
+  tagSeparator: string;
+  description?: string;
+}
+
+export interface PromptTag {
+  id: string;
+  text: string;
+  step: BuilderStep;
+  subcategory?: string;
+  profiles: string[];
+  aliases?: string[];
+  negativeText?: string;
+  isCustom?: boolean;
+}
+
+export interface PromptPreset {
+  id: string;
+  name: string;
+  step: BuilderStep;
+  tagIds: string[];
+  description?: string;
+  isDefault: boolean;
+}
