@@ -14,11 +14,17 @@ interface PromptWizardStepContentProps {
 
 type SelectionFilter = 'all' | 'selected' | 'unselected';
 type SearchMode = 'broad' | 'prefix' | 'exact';
-type TagDetailFilter = 'all' | 'single-word' | 'multi-word' | 'negative-capable';
+
+interface TagGroup {
+  name: string;
+  description: string;
+  tone: StepMeta['tone'] | 'secondary' | 'warning';
+  tags: PromptTag[];
+}
 
 interface TagSection {
   name: string;
-  tags: PromptTag[];
+  groups: TagGroup[];
 }
 
 export const PromptWizardStepContent = memo(function PromptWizardStepContent({
@@ -31,7 +37,6 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
   const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
   const [selectionFilter, setSelectionFilter] = useState<SelectionFilter>('all');
   const [searchMode, setSearchMode] = useState<SearchMode>('broad');
-  const [tagDetailFilter, setTagDetailFilter] = useState<TagDetailFilter>('all');
 
   const query = searchQuery.trim().toLowerCase();
   const queryTerms = useMemo(
@@ -88,48 +93,10 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
     return filteredTags;
   }, [filteredTags, selectedTagIds, selectionFilter]);
 
-  const detailCounts = useMemo(() => {
-    const counts = {
-      all: selectionFilteredTags.length,
-      'single-word': 0,
-      'multi-word': 0,
-      'negative-capable': 0,
-    } as Record<TagDetailFilter, number>;
-
-    for (const tag of selectionFilteredTags) {
-      const normalizedText = tag.text.trim();
-      const isMultiWord = /[\s,_-]/.test(normalizedText);
-      if (isMultiWord) {
-        counts['multi-word'] += 1;
-      }
-      else {
-        counts['single-word'] += 1;
-      }
-      if (tag.negativeText?.trim()) {
-        counts['negative-capable'] += 1;
-      }
-    }
-
-    return counts;
-  }, [selectionFilteredTags]);
-
-  const detailFilteredTags = useMemo(() => {
-    if (tagDetailFilter === 'single-word') {
-      return selectionFilteredTags.filter((tag) => !/[\s,_-]/.test(tag.text.trim()));
-    }
-    if (tagDetailFilter === 'multi-word') {
-      return selectionFilteredTags.filter((tag) => /[\s,_-]/.test(tag.text.trim()));
-    }
-    if (tagDetailFilter === 'negative-capable') {
-      return selectionFilteredTags.filter((tag) => Boolean(tag.negativeText?.trim()));
-    }
-    return selectionFilteredTags;
-  }, [selectionFilteredTags, tagDetailFilter]);
-
   const sortedSubcategories = useMemo(() => {
     const available = new Set<string>();
     let hasGeneral = false;
-    for (const tag of detailFilteredTags) {
+    for (const tag of selectionFilteredTags) {
       if (tag.subcategory) {
         available.add(tag.subcategory);
       }
@@ -139,7 +106,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
     }
 
     const ordered = stepMeta.subcategories.filter((name) => available.has(name));
-    for (const tag of detailFilteredTags) {
+    for (const tag of selectionFilteredTags) {
       if (tag.subcategory && !ordered.includes(tag.subcategory)) {
         ordered.push(tag.subcategory);
       }
@@ -148,19 +115,19 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
       ordered.unshift('General');
     }
     return ordered;
-  }, [detailFilteredTags, stepMeta.subcategories]);
+  }, [selectionFilteredTags, stepMeta.subcategories]);
 
   const subcatCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const subcat of sortedSubcategories) {
       if (subcat === 'General') {
-        counts[subcat] = detailFilteredTags.filter((t) => !t.subcategory).length;
+        counts[subcat] = selectionFilteredTags.filter((t) => !t.subcategory).length;
       } else {
-        counts[subcat] = detailFilteredTags.filter((t) => t.subcategory === subcat).length;
+        counts[subcat] = selectionFilteredTags.filter((t) => t.subcategory === subcat).length;
       }
     }
     return counts;
-  }, [detailFilteredTags, sortedSubcategories]);
+  }, [selectionFilteredTags, sortedSubcategories]);
 
   const resolvedActiveSubcategory = activeSubcategory && sortedSubcategories.includes(activeSubcategory)
     ? activeSubcategory
@@ -170,7 +137,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
     const sectionNames = resolvedActiveSubcategory ? [resolvedActiveSubcategory] : sortedSubcategories;
     return sectionNames
       .map((sectionName): TagSection => {
-        const matchingTags = detailFilteredTags
+        const matchingTags = selectionFilteredTags
           .filter((tag) => {
             if (sectionName === 'General') {
               return !tag.subcategory;
@@ -185,13 +152,46 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
             }
             return left.text.localeCompare(right.text);
           });
+
+        const selectedTags = matchingTags.filter((tag) => selectedTagIds.has(tag.id));
+        const negativeCapableTags = matchingTags.filter((tag) => !selectedTagIds.has(tag.id) && Boolean(tag.negativeText?.trim()));
+        const phraseTags = matchingTags.filter((tag) => !selectedTagIds.has(tag.id) && !tag.negativeText?.trim() && /[\s,_-]/.test(tag.text.trim()));
+        const keywordTags = matchingTags.filter((tag) => !selectedTagIds.has(tag.id) && !tag.negativeText?.trim() && !/[\s,_-]/.test(tag.text.trim()));
+
+        const groups: TagGroup[] = [
+          {
+            name: 'Selected',
+            description: 'Tags already in your prompt from this group.',
+            tone: stepMeta.tone,
+            tags: selectedTags,
+          },
+          {
+            name: 'Negative Pair Ready',
+            description: 'Tags that also carry a paired negative hint.',
+            tone: 'warning',
+            tags: negativeCapableTags,
+          },
+          {
+            name: 'Phrase Details',
+            description: 'More specific descriptive phrases and compound tags.',
+            tone: 'secondary',
+            tags: phraseTags,
+          },
+          {
+            name: 'Core Keywords',
+            description: 'Shorter core tags for faster prompt building.',
+            tone: 'secondary',
+            tags: keywordTags,
+          },
+        ].filter((group) => group.tags.length > 0);
+
         return {
           name: sectionName,
-          tags: matchingTags,
+          groups,
         };
       })
-      .filter((section) => section.tags.length > 0);
-  }, [detailFilteredTags, resolvedActiveSubcategory, selectedTagIds, sortedSubcategories]);
+      .filter((section) => section.groups.length > 0);
+  }, [resolvedActiveSubcategory, selectedTagIds, selectionFilteredTags, sortedSubcategories, stepMeta.tone]);
 
   return (
     <Stack gap={0} style={{ flex: 1, minHeight: 0 }}>
@@ -236,28 +236,6 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                   onClick={() => setSelectionFilter(filterName)}
                 >
                   {label} ({count})
-                </SwarmBadge>
-              );
-            })}
-          </Group>
-
-          <Group gap="xs">
-            {([
-              { value: 'all', label: 'All tag types' },
-              { value: 'single-word', label: 'Single word' },
-              { value: 'multi-word', label: 'Phrase tag' },
-              { value: 'negative-capable', label: 'Has negative pair' },
-            ] as { value: TagDetailFilter; label: string }[]).map((filterOption) => {
-              const isActive = tagDetailFilter === filterOption.value;
-              return (
-                <SwarmBadge
-                  key={filterOption.value}
-                  tone={isActive ? stepMeta.tone : 'secondary'}
-                  emphasis={isActive ? 'solid' : 'soft'}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => setTagDetailFilter(filterOption.value)}
-                >
-                  {filterOption.label} ({detailCounts[filterOption.value]})
                 </SwarmBadge>
               );
             })}
@@ -353,7 +331,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                           {section.name}
                         </SwarmBadge>
                         <Text size="sm" c="dimmed">
-                          {section.tags.length} tag{section.tags.length === 1 ? '' : 's'}
+                          {section.groups.reduce((total, group) => total + group.tags.length, 0)} tag{section.groups.reduce((total, group) => total + group.tags.length, 0) === 1 ? '' : 's'}
                         </Text>
                       </Group>
                       {resolvedActiveSubcategory === null && (
@@ -367,16 +345,45 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                         </SwarmBadge>
                       )}
                     </Group>
-                    <Group gap="xs">
-                      {section.tags.map((tag) => (
-                        <PromptWizardTagChip
-                          key={tag.id}
-                          text={tag.text}
-                          selected={selectedTagIds.has(tag.id)}
-                          onToggle={() => onToggleTag(tag.id)}
-                        />
+                    <Stack gap="sm">
+                      {section.groups.map((group) => (
+                        <Box
+                          key={`${section.name}-${group.name}`}
+                          p="sm"
+                          style={{
+                            borderRadius: 'var(--mantine-radius-md)',
+                            background: `color-mix(in srgb, var(--mantine-color-${group.tone}-light) 50%, transparent)`,
+                            border: `1px solid color-mix(in srgb, var(--mantine-color-${group.tone}-filled) 14%, var(--mantine-color-default-border))`,
+                          }}
+                        >
+                          <Stack gap="xs">
+                            <Group justify="space-between" align="center">
+                              <Group gap="xs" align="center">
+                                <SwarmBadge tone={group.tone} emphasis="soft">
+                                  {group.name}
+                                </SwarmBadge>
+                                <Text size="sm" c="dimmed">
+                                  {group.tags.length}
+                                </Text>
+                              </Group>
+                              <Text size="xs" c="dimmed">
+                                {group.description}
+                              </Text>
+                            </Group>
+                            <Group gap="xs">
+                              {group.tags.map((tag) => (
+                                <PromptWizardTagChip
+                                  key={tag.id}
+                                  text={tag.text}
+                                  selected={selectedTagIds.has(tag.id)}
+                                  onToggle={() => onToggleTag(tag.id)}
+                                />
+                              ))}
+                            </Group>
+                          </Stack>
+                        </Box>
                       ))}
-                    </Group>
+                    </Stack>
                   </Stack>
                 </ElevatedCard>
               ))}
