@@ -370,16 +370,22 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                                 {group.description}
                               </Text>
                             </Group>
-                            <Group gap="xs">
-                              {group.tags.map((tag) => (
-                                <PromptWizardTagChip
-                                  key={tag.id}
-                                  text={tag.text}
-                                  selected={selectedTagIds.has(tag.id)}
-                                  onToggle={() => onToggleTag(tag.id)}
-                                />
-                              ))}
-                            </Group>
+                            <ScrollArea
+                              offsetScrollbars
+                              scrollbarSize={8}
+                              style={{ maxHeight: 148 }}
+                            >
+                              <Group gap="xs">
+                                {group.tags.map((tag) => (
+                                  <PromptWizardTagChip
+                                    key={tag.id}
+                                    text={tag.text}
+                                    selected={selectedTagIds.has(tag.id)}
+                                    onToggle={() => onToggleTag(tag.id)}
+                                  />
+                                ))}
+                              </Group>
+                            </ScrollArea>
                           </Stack>
                         </Box>
                       ))}
