@@ -1,13 +1,14 @@
 import { memo, useCallback, useMemo, useState } from 'react';
-import { Center, Group, Loader, Modal, Stack, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
+import { Box, Center, Group, Loader, Modal, Stack, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconChevronRight, IconSparkles } from '@tabler/icons-react';
-import { ElevatedCard, SwarmBadge, SwarmButton } from './ui';
+import { ElevatedCard, ResizeHandle, SwarmBadge, SwarmButton } from './ui';
 import { PromptWizardHeader } from './PromptWizardHeader';
 import { PromptWizardSteps } from './PromptWizardSteps';
 import { PromptWizardStepContent } from './PromptWizardStepContent';
 import { PromptWizardPreview } from './PromptWizardPreview';
+import { useResizablePanel } from '../hooks/useResizablePanel';
 import { usePromptWizardStore } from '../stores/promptWizardStore';
 import { normalizePromptTags } from '../features/promptWizard/normalizeTags';
 import { STEP_META, getStepMeta } from '../features/promptWizard/steps';
@@ -41,6 +42,18 @@ export const PromptWizard = memo(function PromptWizard({
   const [defaultTags, setDefaultTags] = useState<PromptTag[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const widthPanel = useResizablePanel({
+    initialSize: 1160,
+    minSize: 880,
+    maxSize: 1600,
+    direction: 'horizontal',
+  });
+  const heightPanel = useResizablePanel({
+    initialSize: 900,
+    minSize: 680,
+    maxSize: 1200,
+    direction: 'vertical',
+  });
 
   const {
     selectedTagIds,
@@ -174,11 +187,21 @@ export const PromptWizard = memo(function PromptWizard({
       <Modal
         opened={opened}
         onClose={close}
-        size="xl"
+        size={widthPanel.size}
         padding={0}
         centered
         styles={{
-          content: { overflow: 'hidden', background: 'var(--elevation-table)', display: 'flex', flexDirection: 'column', maxHeight: '85vh' },
+          content: {
+            overflow: 'hidden',
+            background: 'var(--elevation-table)',
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+            width: `min(${widthPanel.size}px, 96vw)`,
+            maxWidth: '96vw',
+            height: `min(${heightPanel.size}px, 92vh)`,
+            maxHeight: '92vh',
+          },
           header: { display: 'none' },
           body: { padding: 0, display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 },
         }}
@@ -191,7 +214,7 @@ export const PromptWizard = memo(function PromptWizard({
             </Stack>
           </Center>
         ) : (
-          <>
+          <Box style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
             <PromptWizardHeader
               activeProfileId={activeProfileId}
               onProfileChange={setActiveProfile}
@@ -243,7 +266,25 @@ export const PromptWizard = memo(function PromptWizard({
               onClear={clearSelections}
               hasSelection={totalSelected > 0}
             />
-          </>
+
+            <Box style={{ position: 'absolute', top: 0, right: 0, bottom: 12, zIndex: 8 }}>
+              <ResizeHandle
+                direction="horizontal"
+                onPointerDown={widthPanel.handlePointerDown}
+                onNudge={widthPanel.nudgeSize}
+                isResizing={widthPanel.isResizing}
+              />
+            </Box>
+
+            <Box style={{ position: 'absolute', left: 0, right: 12, bottom: 0, zIndex: 8 }}>
+              <ResizeHandle
+                direction="vertical"
+                onPointerDown={heightPanel.handlePointerDown}
+                onNudge={heightPanel.nudgeSize}
+                isResizing={heightPanel.isResizing}
+              />
+            </Box>
+          </Box>
         )}
       </Modal>
     </>
