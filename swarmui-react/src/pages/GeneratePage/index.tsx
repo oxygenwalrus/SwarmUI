@@ -950,6 +950,7 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
                                     loadingVAEs={dataLoaders.loadingVAEs}
                                     controlNetOptions={dataLoaders.controlNetOptions}
                                     loadingControlNets={dataLoaders.loadingControlNets}
+                                    onRefreshControlNets={dataLoaders.loadControlNets}
                                     upscaleModels={dataLoaders.upscaleModels}
                                     embeddingOptions={dataLoaders.embeddingOptions}
                                     wildcardOptions={dataLoaders.wildcardOptions}

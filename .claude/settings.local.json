@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.bat \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.cmd \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.ps1 \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.sh \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.js)"
+      "Bash(ls \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.bat \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.cmd \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.ps1 \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.sh \"c:/Users/Phala/SwarmUI/swarmui-react/\"*.js)",
+      "Bash(python3 -c \"import huggingface_hub; print\\(''huggingface_hub available''\\)\")",
+      "Bash(python3:*)",
+      "Skill(commit-commands:commit)",
+      "Skill(commit-commands:commit:*)"
     ]
   }
 }

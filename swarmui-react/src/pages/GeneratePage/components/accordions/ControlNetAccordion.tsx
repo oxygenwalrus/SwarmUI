@@ -8,8 +8,10 @@ import {
     Button,
     FileButton,
     Group,
+    Image,
+    Badge,
 } from '@mantine/core';
-import { IconUpload } from '@tabler/icons-react';
+import { IconUpload, IconX } from '@tabler/icons-react';
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams } from '../../../../api/types';
 import { SliderWithInput } from '../../../../components/SliderWithInput';
@@ -77,6 +79,7 @@ export interface ControlNetAccordionProps {
     onToggle: (enabled: boolean) => void;
     controlNetOptions: { value: string; label: string }[];
     loadingControlNets: boolean;
+    onRefreshModels?: () => void;
 }
 
 /**
@@ -89,6 +92,7 @@ export const ControlNetAccordion = memo(function ControlNetAccordion({
     onToggle,
     controlNetOptions = [],
     loadingControlNets,
+    onRefreshModels,
 }: ControlNetAccordionProps) {
     const handleImageUpload = (key: ControlNetFieldKey, file: File | null) => {
         if (file) {
@@ -98,6 +102,10 @@ export const ControlNetAccordion = memo(function ControlNetAccordion({
             };
             reader.readAsDataURL(file);
         }
+    };
+
+    const handleClearImage = (key: ControlNetFieldKey) => {
+        form.setFieldValue(key, '');
     };
 
     return (
@@ -112,9 +120,19 @@ export const ControlNetAccordion = memo(function ControlNetAccordion({
                         onChange={(e) => onToggle(e.currentTarget.checked)}
                     />
 
-                    <Text size="xs" c="invokeGray.3">
-                        Use up to three ControlNet layers to guide generation with structural input.
-                    </Text>
+                    <Group justify="space-between" align="center">
+                        <Text size="xs" c="invokeGray.3">
+                            Use up to three ControlNet layers to guide generation with structural input.
+                        </Text>
+                        <Button
+                            size="xs"
+                            variant="subtle"
+                            onClick={onRefreshModels}
+                            disabled={loadingControlNets}
+                        >
+                            {loadingControlNets ? 'Loading...' : 'Refresh Models'}
+                        </Button>
+                    </Group>
 
                     <Accordion multiple defaultValue={['controlnet-primary']}>
                         {CONTROL_NET_SLOTS.map((slot) => (
@@ -122,22 +140,50 @@ export const ControlNetAccordion = memo(function ControlNetAccordion({
                                 <Accordion.Control>{slot.title}</Accordion.Control>
                                 <Accordion.Panel>
                                     <Stack gap="md">
-                                        <FileButton
-                                            onChange={(file) => handleImageUpload(slot.imageKey, file)}
-                                            accept="image/*"
-                                        >
-                                            {(props) => (
-                                                <Button
-                                                    {...props}
-                                                    leftSection={<IconUpload size={16} />}
-                                                    variant="light"
-                                                    fullWidth
-                                                    size="xs"
-                                                >
-                                                    Upload {slot.title} Image
-                                                </Button>
+                                        <div>
+                                            <FileButton
+                                                onChange={(file) => handleImageUpload(slot.imageKey, file)}
+                                                accept="image/*"
+                                            >
+                                                {(props) => (
+                                                    <Button
+                                                        {...props}
+                                                        leftSection={<IconUpload size={16} />}
+                                                        variant="light"
+                                                        fullWidth
+                                                        size="xs"
+                                                    >
+                                                        Upload {slot.title} Image
+                                                    </Button>
+                                                )}
+                                            </FileButton>
+
+                                            {form.values[slot.imageKey] && (
+                                                <Stack gap="xs" mt="sm">
+                                                    <Group justify="space-between" align="flex-start">
+                                                        <Badge size="sm" variant="dot">
+                                                            Image Uploaded
+                                                        </Badge>
+                                                        <Button
+                                                            size="xs"
+                                                            variant="subtle"
+                                                            color="red"
+                                                            leftSection={<IconX size={14} />}
+                                                            onClick={() => handleClearImage(slot.imageKey)}
+                                                        >
+                                                            Clear
+                                                        </Button>
+                                                    </Group>
+                                                    <Image
+                                                        src={form.values[slot.imageKey] as string}
+                                                        alt="ControlNet input"
+                                                        radius="md"
+                                                        fit="contain"
+                                                        height={150}
+                                                    />
+                                                </Stack>
                                             )}
-                                        </FileButton>
+                                        </div>
 
                                         <Select
                                             label={`${slot.title} Model`}

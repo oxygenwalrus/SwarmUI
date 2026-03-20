@@ -112,6 +112,7 @@ interface WorkspaceSidebarProps {
     loadingVAEs: boolean;
     controlNetOptions: { value: string; label: string }[];
     loadingControlNets: boolean;
+    onRefreshControlNets?: () => void;
     upscaleModels: Model[];
     embeddingOptions: { value: string; label: string }[];
     wildcardOptions: { value: string; label: string }[];
@@ -1226,6 +1227,7 @@ export const WorkspaceSidebar = memo(function WorkspaceSidebar({
                                                         onToggle={setEnableControlNet}
                                                         controlNetOptions={controlNetOptions}
                                                         loadingControlNets={loadingControlNets}
+                                                        onRefreshModels={onRefreshControlNets}
                                                     />
                                                     <RefinerAccordion
                                                         form={form}
