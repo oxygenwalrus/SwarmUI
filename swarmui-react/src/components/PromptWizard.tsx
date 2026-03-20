@@ -217,7 +217,15 @@ export const PromptWizard = memo(function PromptWizard({
             />
 
             {/* Next / Previous navigation */}
-            <Group justify="space-between" px="md" py="xs" style={{ borderTop: '1px solid var(--mantine-color-default-border)' }}>
+            <Group
+              justify="space-between"
+              px="md"
+              py="xs"
+              style={{
+                borderTop: '1px solid var(--mantine-color-default-border)',
+                flexShrink: 0,
+              }}
+            >
               <SwarmButton tone="secondary" emphasis="ghost" onClick={goToPrev} disabled={!canGoPrev}>
                 Previous
               </SwarmButton>

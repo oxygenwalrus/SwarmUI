@@ -28,6 +28,7 @@ export const PromptWizardPreview = memo(function PromptWizardPreview({
         borderTop: '1px solid var(--mantine-color-default-border)',
         background: 'color-mix(in srgb, var(--elevation-table) 92%, transparent)',
         backdropFilter: 'blur(8px)',
+        flexShrink: 0,
       }}
     >
       <Stack gap="sm">

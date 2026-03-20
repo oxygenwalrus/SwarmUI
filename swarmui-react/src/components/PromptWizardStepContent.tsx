@@ -518,7 +518,11 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
         </Stack>
       </Box>
 
-      <Box px="lg" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-default-border)' }}>
+      <Box
+        px="lg"
+        py="sm"
+        style={{ borderBottom: '1px solid var(--mantine-color-default-border)', flexShrink: 0 }}
+      >
         <ScrollArea offsetScrollbars>
           <Group gap="xs" wrap="nowrap">
             <SwarmBadge
@@ -552,7 +556,11 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
       </Box>
 
       {majorGroupTabs.length > 0 && (
-        <Box px="lg" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-default-border)' }}>
+        <Box
+          px="lg"
+          py="sm"
+          style={{ borderBottom: '1px solid var(--mantine-color-default-border)', flexShrink: 0 }}
+        >
           <ScrollArea offsetScrollbars>
             <Group gap="xs" wrap="nowrap">
               <SwarmBadge
@@ -580,7 +588,12 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
       )}
 
       {/* Tag grid */}
-      <ScrollArea style={{ flex: 1, minHeight: 0 }} offsetScrollbars>
+      <ScrollArea
+        offsetScrollbars
+        scrollbarSize={10}
+        type="scroll"
+        style={{ flex: 1, minHeight: 0, height: 0 }}
+      >
         <Box p="lg">
           {filteredSections.length === 0 ? (
             <ElevatedCard elevation="floor" withBorder>
