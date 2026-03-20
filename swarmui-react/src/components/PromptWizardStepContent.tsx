@@ -243,6 +243,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
   onToggleTag,
 }: PromptWizardStepContentProps) {
   const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
+  const [activeMajorGroup, setActiveMajorGroup] = useState<string | null>(null);
   const [selectionFilter, setSelectionFilter] = useState<SelectionFilter>('all');
   const [searchMode, setSearchMode] = useState<SearchMode>('broad');
 
@@ -407,6 +408,42 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
       .filter((section) => section.groups.length > 0);
   }, [resolvedActiveSubcategory, selectedTagIds, selectionFilteredTags, sortedSubcategories, stepMeta]);
 
+  const majorGroupTabs = useMemo(() => {
+    const counts = new Map<string, { count: number; tone: TagGroup['tone'] }>();
+    for (const section of sections) {
+      for (const group of section.groups) {
+        const existing = counts.get(group.name);
+        if (existing) {
+          existing.count += group.tags.length;
+        }
+        else {
+          counts.set(group.name, { count: group.tags.length, tone: group.tone });
+        }
+      }
+    }
+    return Array.from(counts.entries()).map(([name, meta]) => ({
+      name,
+      count: meta.count,
+      tone: meta.tone,
+    }));
+  }, [sections]);
+
+  const resolvedActiveMajorGroup = activeMajorGroup && majorGroupTabs.some((group) => group.name === activeMajorGroup)
+    ? activeMajorGroup
+    : null;
+
+  const filteredSections = useMemo(() => {
+    if (!resolvedActiveMajorGroup) {
+      return sections;
+    }
+    return sections
+      .map((section) => ({
+        ...section,
+        groups: section.groups.filter((group) => group.name === resolvedActiveMajorGroup),
+      }))
+      .filter((section) => section.groups.length > 0);
+  }, [resolvedActiveMajorGroup, sections]);
+
   return (
     <Stack gap={0} style={{ flex: 1, minHeight: 0 }}>
       <Box
@@ -514,10 +551,38 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
         </ScrollArea>
       </Box>
 
+      {majorGroupTabs.length > 0 && (
+        <Box px="md" py="xs" style={{ borderBottom: '1px solid var(--mantine-color-default-border)' }}>
+          <ScrollArea offsetScrollbars>
+            <Group gap="xs" wrap="nowrap">
+              <SwarmBadge
+                tone={resolvedActiveMajorGroup === null ? stepMeta.tone : 'secondary'}
+                emphasis={resolvedActiveMajorGroup === null ? 'solid' : 'soft'}
+                style={{ cursor: 'pointer' }}
+                onClick={() => setActiveMajorGroup(null)}
+              >
+                All Major Groups ({majorGroupTabs.reduce((total, group) => total + group.count, 0)})
+              </SwarmBadge>
+              {majorGroupTabs.map((group) => (
+                <SwarmBadge
+                  key={group.name}
+                  tone={resolvedActiveMajorGroup === group.name ? group.tone : 'secondary'}
+                  emphasis={resolvedActiveMajorGroup === group.name ? 'solid' : 'soft'}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setActiveMajorGroup(group.name)}
+                >
+                  {group.name} ({group.count})
+                </SwarmBadge>
+              ))}
+            </Group>
+          </ScrollArea>
+        </Box>
+      )}
+
       {/* Tag grid */}
       <ScrollArea style={{ flex: 1 }} offsetScrollbars>
         <Box p="md">
-          {sections.length === 0 ? (
+          {filteredSections.length === 0 ? (
             <ElevatedCard elevation="floor" withBorder>
               <Stack align="center" gap="xs" py="xl">
                 <Text fw={600}>No tags{query ? ' match your search' : ' match these filters'}</Text>
@@ -528,7 +593,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
             </ElevatedCard>
           ) : (
             <Stack gap="md">
-              {sections.map((section) => (
+              {filteredSections.map((section) => (
                 <ElevatedCard
                   key={section.name}
                   elevation="floor"
@@ -559,51 +624,57 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                         </SwarmBadge>
                       )}
                     </Group>
-                    <Stack gap="sm">
-                      {section.groups.map((group) => (
-                        <Box
-                          key={`${section.name}-${group.name}`}
-                          p="sm"
-                          style={{
-                            borderRadius: 'var(--mantine-radius-md)',
-                            background: `color-mix(in srgb, var(--mantine-color-${group.tone}-light) 50%, transparent)`,
-                            border: `1px solid color-mix(in srgb, var(--mantine-color-${group.tone}-filled) 14%, var(--mantine-color-default-border))`,
-                          }}
-                        >
-                          <Stack gap="xs">
-                            <Group justify="space-between" align="center">
-                              <Group gap="xs" align="center">
-                                <SwarmBadge tone={group.tone} emphasis="soft">
-                                  {group.name}
-                                </SwarmBadge>
-                                <Text size="sm" c="dimmed">
-                                  {group.tags.length}
+                    <ScrollArea
+                      offsetScrollbars
+                      scrollbarSize={8}
+                      style={{ maxHeight: 420 }}
+                    >
+                      <Stack gap="sm" pr="xs">
+                        {section.groups.map((group) => (
+                          <Box
+                            key={`${section.name}-${group.name}`}
+                            p="sm"
+                            style={{
+                              borderRadius: 'var(--mantine-radius-md)',
+                              background: `color-mix(in srgb, var(--mantine-color-${group.tone}-light) 50%, transparent)`,
+                              border: `1px solid color-mix(in srgb, var(--mantine-color-${group.tone}-filled) 14%, var(--mantine-color-default-border))`,
+                            }}
+                          >
+                            <Stack gap="xs">
+                              <Group justify="space-between" align="center">
+                                <Group gap="xs" align="center">
+                                  <SwarmBadge tone={group.tone} emphasis="soft">
+                                    {group.name}
+                                  </SwarmBadge>
+                                  <Text size="sm" c="dimmed">
+                                    {group.tags.length}
+                                  </Text>
+                                </Group>
+                                <Text size="xs" c="dimmed">
+                                  {group.description}
                                 </Text>
                               </Group>
-                              <Text size="xs" c="dimmed">
-                                {group.description}
-                              </Text>
-                            </Group>
-                            <ScrollArea
-                              offsetScrollbars
-                              scrollbarSize={8}
-                              style={{ maxHeight: 148 }}
-                            >
-                              <Group gap="xs">
-                                {group.tags.map((tag) => (
-                                  <PromptWizardTagChip
-                                    key={tag.id}
-                                    text={tag.text}
-                                    selected={selectedTagIds.has(tag.id)}
-                                    onToggle={() => onToggleTag(tag.id)}
-                                  />
-                                ))}
-                              </Group>
-                            </ScrollArea>
-                          </Stack>
-                        </Box>
-                      ))}
-                    </Stack>
+                              <ScrollArea
+                                offsetScrollbars
+                                scrollbarSize={8}
+                                style={{ height: Math.min(Math.max(group.tags.length > 10 ? 168 : 92, 92), 168) }}
+                              >
+                                <Group gap="xs">
+                                  {group.tags.map((tag) => (
+                                    <PromptWizardTagChip
+                                      key={tag.id}
+                                      text={tag.text}
+                                      selected={selectedTagIds.has(tag.id)}
+                                      onToggle={() => onToggleTag(tag.id)}
+                                    />
+                                  ))}
+                                </Group>
+                              </ScrollArea>
+                            </Stack>
+                          </Box>
+                        ))}
+                      </Stack>
+                    </ScrollArea>
                   </Stack>
                 </ElevatedCard>
               ))}
