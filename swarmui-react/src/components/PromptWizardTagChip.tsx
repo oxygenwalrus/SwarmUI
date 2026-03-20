@@ -16,7 +16,8 @@ export const PromptWizardTagChip = memo(function PromptWizardTagChip({
     <SwarmBadge
       tone={selected ? 'primary' : 'secondary'}
       emphasis={selected ? 'solid' : 'soft'}
-      style={{ cursor: 'pointer', userSelect: 'none' }}
+      size="lg"
+      style={{ cursor: 'pointer', userSelect: 'none', fontSize: '0.95rem', paddingInline: 14, paddingBlock: 8 }}
       onClick={onToggle}
     >
       {text}

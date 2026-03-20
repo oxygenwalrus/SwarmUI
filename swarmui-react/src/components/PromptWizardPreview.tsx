@@ -32,7 +32,7 @@ export const PromptWizardPreview = memo(function PromptWizardPreview({
     >
       <Stack gap="sm">
         <Group justify="space-between" align="center">
-          <Text fw={600} size="sm">Prompt Preview</Text>
+          <Text fw={600} size="md">Prompt Preview</Text>
           <SwarmButton
             tone="secondary"
             emphasis="ghost"
@@ -52,7 +52,7 @@ export const PromptWizardPreview = memo(function PromptWizardPreview({
           minRows={2}
           maxRows={4}
           placeholder="Select tags to preview the assembled prompt..."
-          styles={{ input: { fontFamily: 'monospace', fontSize: 'var(--mantine-font-size-sm)' } }}
+          styles={{ input: { fontFamily: 'monospace', fontSize: 'var(--mantine-font-size-md)' } }}
         />
 
         {negativePreview && (
@@ -63,7 +63,7 @@ export const PromptWizardPreview = memo(function PromptWizardPreview({
             minRows={1}
             maxRows={2}
             placeholder="No negative tags selected"
-            styles={{ input: { fontFamily: 'monospace', fontSize: 'var(--mantine-font-size-sm)', color: 'var(--mantine-color-red-text)' } }}
+            styles={{ input: { fontFamily: 'monospace', fontSize: 'var(--mantine-font-size-md)', color: 'var(--mantine-color-red-text)' } }}
           />
         )}
 
