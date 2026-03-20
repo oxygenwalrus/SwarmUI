@@ -111,6 +111,9 @@ export interface GenerateParams {
   controlnetthreestrength?: number;
   controlnetthreestart?: number;
   controlnetthreeend?: number;
+  controlnetpreprocessor?: string;
+  controlnettwopreprocessor?: string;
+  controlnetthreepreprocessor?: string;
 
   // Allow any additional parameters
   [key: string]: unknown;
