@@ -21,3 +21,19 @@ export interface PromptProfile {
   tagSeparator: string;
   description?: string;
 }
+
+export interface PromptTag {
+  id: string;
+  text: string;
+  step: BuilderStep;
+  subcategory?: string;
+  profiles: string[];
+  isCustom?: boolean;
+}
+
+export interface PromptPreset {
+  id: string;
+  name: string;
+  tagIds: string[];
+  isDefault?: boolean;
+}
