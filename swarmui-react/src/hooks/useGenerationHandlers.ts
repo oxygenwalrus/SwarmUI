@@ -529,6 +529,9 @@ export function useGenerationHandlers({
                     'controlnetthreestrength',
                     'controlnetthreestart',
                     'controlnetthreeend',
+                    'controlnetpreprocessor',
+                    'controlnettwopreprocessor',
+                    'controlnetthreepreprocessor',
                 ].includes(key)
             ) return enableControlNet;
 
