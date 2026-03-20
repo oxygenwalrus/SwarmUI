@@ -9,6 +9,7 @@ import { PromptWizardSteps } from './PromptWizardSteps';
 import { PromptWizardStepContent } from './PromptWizardStepContent';
 import { PromptWizardPreview } from './PromptWizardPreview';
 import { usePromptWizardStore } from '../stores/promptWizardStore';
+import { normalizePromptTags } from '../features/promptWizard/normalizeTags';
 import { STEP_META, getStepMeta } from '../features/promptWizard/steps';
 import { getProfile } from '../features/promptWizard/profiles';
 import { assemblePrompt } from '../features/promptWizard/assemble';
@@ -25,7 +26,7 @@ let defaultTagsPromise: Promise<PromptTag[]> | null = null;
 
 function loadDefaultTags(): Promise<PromptTag[]> {
   if (!defaultTagsPromise) {
-    defaultTagsPromise = import('../data/promptTags.json').then((m) => m.default as PromptTag[]);
+    defaultTagsPromise = import('../data/promptTags.json').then((m) => normalizePromptTags(m.default as PromptTag[]));
   }
   return defaultTagsPromise;
 }
