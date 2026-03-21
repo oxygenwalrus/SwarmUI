@@ -73,12 +73,12 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   archery: { step: 'action', subcategory: 'Gesture', majorGroup: 'Interaction & Expression', minorGroup: 'Prop Interaction', groupOrder: 40, minorOrder: 20 },
   cape: { step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Outerwear & Layers', groupOrder: 30, minorOrder: 30 },
   chainmail: { step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Fantasy & Armor', groupOrder: 30, minorOrder: 20 },
-  cool: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Calm & Serene', groupOrder: 20, minorOrder: 20 },
+  cool: { text: 'cool attitude', step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Calm & Serene', groupOrder: 20, minorOrder: 20 },
   'cybernetic implants': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Mythic & Nonhuman Traits', groupOrder: 20, minorOrder: 40 },
   'elegant accessory': { step: 'appearance', subcategory: 'Accessories', majorGroup: 'Accessories & Finish', minorGroup: 'Wearable Details', groupOrder: 40, minorOrder: 40 },
   'full helm': { step: 'appearance', subcategory: 'Accessories', majorGroup: 'Accessories & Finish', minorGroup: 'Headwear', groupOrder: 40, minorOrder: 20 },
   'head protection': { step: 'appearance', subcategory: 'Accessories', majorGroup: 'Accessories & Finish', minorGroup: 'Headwear', groupOrder: 40, minorOrder: 20 },
-  heavy: { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Shape & Build', groupOrder: 20, minorOrder: 10 },
+  heavy: { text: 'heavy build', step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Shape & Build', groupOrder: 20, minorOrder: 10 },
   'heavy protection': { step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Fantasy & Armor', groupOrder: 30, minorOrder: 20 },
   heraldry: { step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Fantasy & Armor', groupOrder: 30, minorOrder: 20 },
   hood: { step: 'appearance', subcategory: 'Accessories', majorGroup: 'Accessories & Finish', minorGroup: 'Headwear', groupOrder: 40, minorOrder: 20 },
@@ -426,7 +426,32 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   'upward perspective': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Angles & Perspective', groupOrder: 10, minorOrder: 10 },
   'elevated urban setting': { step: 'setting', subcategory: 'Urban', majorGroup: 'Architecture & Urban', minorGroup: 'City & Nightlife', groupOrder: 20, minorOrder: 10 },
   anime: { step: 'style', subcategory: 'Anime', majorGroup: 'Artists & References', minorGroup: 'Anime Style Cues', groupOrder: 30, minorOrder: 30 },
-  'unreal engine 5': { step: 'style', subcategory: 'Digital', majorGroup: 'Medium & Rendering', minorGroup: '3D & Rendered', groupOrder: 10, minorOrder: 20 },
+  'anime art': { text: 'anime style', step: 'style', subcategory: 'Anime', majorGroup: 'Artists & References', minorGroup: 'Anime Style Cues', groupOrder: 30, minorOrder: 30 },
+  painted: { text: 'painted finish', step: 'style', subcategory: 'Finish', majorGroup: 'Surface & Finish', minorGroup: 'Abstract & Decorative', groupOrder: 40, minorOrder: 30 },
+  fluid: { text: 'fluid brushwork', step: 'style', subcategory: 'Painting', majorGroup: 'Medium & Rendering', minorGroup: 'Watercolor & Soft Paint', groupOrder: 10, minorOrder: 20 },
+  delicate: { text: 'delicate rendering', step: 'style', subcategory: 'Painting', majorGroup: 'Medium & Rendering', minorGroup: 'Traditional Illustration', groupOrder: 10, minorOrder: 30 },
+  scenic: { text: 'scenic composition', step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
+  vibrant: { text: 'vibrant palette', step: 'atmosphere', subcategory: 'Color Palette', majorGroup: 'Color & Palette', minorGroup: 'Bold & Stylized', groupOrder: 30, minorOrder: 40 },
+  intense: { text: 'intense mood', step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
+  fantasy: { text: 'fantasy aesthetic', step: 'style', subcategory: 'Cinematic', majorGroup: 'Aesthetic & Genre', minorGroup: 'Epic & Genre', groupOrder: 20, minorOrder: 20 },
+  professional: { text: 'professional polish', step: 'quality', subcategory: 'Positive Quality', majorGroup: 'Positive Quality', minorGroup: 'Refinement & Control', groupOrder: 10, minorOrder: 30 },
+  stunning: { text: 'striking presentation', step: 'quality', subcategory: 'Positive Quality', majorGroup: 'Positive Quality', minorGroup: 'Refinement & Control', groupOrder: 10, minorOrder: 30 },
+  corporate: { text: 'corporate professional', step: 'subject', subcategory: 'Character', majorGroup: 'People & Roles', minorGroup: 'Professions & Roles', groupOrder: 10, minorOrder: 20 },
+  urban: { text: 'urban setting', step: 'setting', subcategory: 'Urban', majorGroup: 'Architecture & Urban', minorGroup: 'City & Nightlife', groupOrder: 20, minorOrder: 10 },
+  sharp: { text: 'sharp detail', step: 'quality', subcategory: 'Positive Quality', majorGroup: 'Positive Quality', minorGroup: 'Detail & Fidelity', groupOrder: 10, minorOrder: 20 },
+  soft: { text: 'soft lighting', step: 'atmosphere', subcategory: 'Lighting', majorGroup: 'Lighting', minorGroup: 'Warm & Intimate Light', groupOrder: 10, minorOrder: 10 },
+  warm: { text: 'warm palette', step: 'atmosphere', subcategory: 'Color Palette', majorGroup: 'Color & Palette', minorGroup: 'Warm Palette', groupOrder: 30, minorOrder: 10 },
+  dark: { text: 'dark aesthetic', step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
+  'romantic city': { text: 'romantic city setting', step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
+  'cozy affection': { text: 'cozy intimate mood', step: 'atmosphere', subcategory: 'Explicit', majorGroup: 'Intimacy & Explicit Tone', minorGroup: 'Private & Romantic', groupOrder: 50, minorOrder: 30 },
+  dominant: { text: 'dominant demeanor', step: 'action', subcategory: 'Explicit', majorGroup: 'Explicit Actions', minorGroup: 'Erotic Touch', groupOrder: 50, minorOrder: 40 },
+  'submissive pet': { text: 'pet-play submissive styling', step: 'appearance', subcategory: 'Explicit', majorGroup: 'Explicit Appearance', minorGroup: 'Intimate Apparel', groupOrder: 50, minorOrder: 20 },
+  'open crotch': { text: 'open-crotch garment', step: 'appearance', subcategory: 'Explicit', majorGroup: 'Explicit Appearance', minorGroup: 'Nudity & Exposure', groupOrder: 50, minorOrder: 10 },
+  'dark  clothes': { text: 'dark clothes', step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Everyday & Formal Wear', groupOrder: 30, minorOrder: 40 },
+  'digital painting': { text: 'digital art', step: 'style', subcategory: 'Digital', majorGroup: 'Medium & Rendering', minorGroup: 'Digital Illustration', groupOrder: 10, minorOrder: 30 },
+  'warm glow': { text: 'warm lighting', step: 'atmosphere', subcategory: 'Lighting', majorGroup: 'Lighting', minorGroup: 'Warm & Intimate Light', groupOrder: 10, minorOrder: 10 },
+  'unreal engine 5': { text: 'unreal engine', step: 'style', subcategory: 'Digital', majorGroup: 'Medium & Rendering', minorGroup: '3D & Rendered', groupOrder: 10, minorOrder: 20 },
+  'trending on artstation': { text: 'artstation', step: 'style', subcategory: 'Digital', majorGroup: 'Artists & References', minorGroup: 'Studios & Creators', groupOrder: 30, minorOrder: 20 },
   nanite: { step: 'style', subcategory: 'Digital', majorGroup: 'Medium & Rendering', minorGroup: '3D & Rendered', groupOrder: 10, minorOrder: 20 },
   lumen: { step: 'style', subcategory: 'Digital', majorGroup: 'Medium & Rendering', minorGroup: '3D & Rendered', groupOrder: 10, minorOrder: 20 },
   'photorealistic render': { step: 'style', subcategory: 'Realistic', majorGroup: 'Medium & Rendering', minorGroup: 'Photo & Realism', groupOrder: 10, minorOrder: 10 },
@@ -1198,6 +1223,49 @@ function normalizeTag(tag: PromptTag): PromptTag {
   return classifyByStep(rerouted, text);
 }
 
+function mergeNormalizedTags(tags: PromptTag[]): PromptTag[] {
+  const merged = new Map<string, PromptTag>();
+  for (const tag of tags) {
+    const key = [
+      tag.step,
+      normalizeText(tag.text),
+      tag.subcategory ?? '',
+      tag.majorGroup ?? '',
+      tag.minorGroup ?? '',
+    ].join('|');
+    const existing = merged.get(key);
+    if (!existing) {
+      merged.set(key, {
+        ...tag,
+        aliases: tag.aliases ? [...new Set(tag.aliases)] : undefined,
+        profiles: [...new Set(tag.profiles)],
+      });
+      continue;
+    }
+
+    const aliases = new Set<string>([
+      ...(existing.aliases ?? []),
+      ...(tag.aliases ?? []),
+    ]);
+    if (normalizeText(existing.text) !== normalizeText(tag.text)) {
+      aliases.add(tag.text);
+    }
+
+    merged.set(key, {
+      ...existing,
+      profiles: [...new Set([...existing.profiles, ...tag.profiles])],
+      aliases: aliases.size > 0 ? [...aliases] : undefined,
+      negativeText: existing.negativeText ?? tag.negativeText,
+      relatedTagIds: [...new Set([...(existing.relatedTagIds ?? []), ...(tag.relatedTagIds ?? [])])],
+      conflictTagIds: [...new Set([...(existing.conflictTagIds ?? []), ...(tag.conflictTagIds ?? [])])],
+      pairingTagIds: [...new Set([...(existing.pairingTagIds ?? []), ...(tag.pairingTagIds ?? [])])],
+      curationNote: existing.curationNote ?? tag.curationNote,
+      isCustom: existing.isCustom || tag.isCustom,
+    });
+  }
+  return [...merged.values()];
+}
+
 export function normalizePromptTags(tags: PromptTag[]): PromptTag[] {
-  return tags.map((tag) => normalizeTag(tag));
+  return mergeNormalizedTags(tags.map((tag) => normalizeTag(tag)));
 }
