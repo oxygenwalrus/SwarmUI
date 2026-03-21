@@ -144,11 +144,11 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   'glowing particles': { step: 'atmosphere', subcategory: 'Effects', majorGroup: 'Scene Effects', minorGroup: 'Particles & Sparkles', groupOrder: 40, minorOrder: 20 },
   'glowing symbols': { step: 'atmosphere', subcategory: 'Effects', majorGroup: 'Scene Effects', minorGroup: 'Glow & Atmospherics', groupOrder: 40, minorOrder: 30 },
   goblin: { step: 'subject', subcategory: 'Creature', majorGroup: 'Creatures & Beings', minorGroup: 'Hybrids & Monsters', groupOrder: 20, minorOrder: 20 },
-  'holographic display': { step: 'subject', subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Devices & Tech', groupOrder: 30, minorOrder: 20 },
-  'holographic projection': { step: 'atmosphere', subcategory: 'Effects', majorGroup: 'Scene Effects', minorGroup: 'Glow & Atmospherics', groupOrder: 40, minorOrder: 30 },
+  'holographic display': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'holographic projection': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
   'hood up': { step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Outerwear & Layers', groupOrder: 30, minorOrder: 30 },
-  hud: { step: 'subject', subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Devices & Tech', groupOrder: 30, minorOrder: 20 },
-  'joints': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Mythic & Nonhuman Traits', groupOrder: 20, minorOrder: 40 },
+  hud: { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'joints': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
   'lens flare': { step: 'atmosphere', subcategory: 'Effects', majorGroup: 'Scene Effects', minorGroup: 'Glow & Atmospherics', groupOrder: 40, minorOrder: 30 },
   lightning: { step: 'atmosphere', subcategory: 'Effects', majorGroup: 'Scene Effects', minorGroup: 'Glow & Atmospherics', groupOrder: 40, minorOrder: 30 },
   'magic aura': { step: 'atmosphere', subcategory: 'Effects', majorGroup: 'Scene Effects', minorGroup: 'Glow & Atmospherics', groupOrder: 40, minorOrder: 30 },
@@ -285,6 +285,25 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   'serious expression': { step: 'action', subcategory: 'Expression', majorGroup: 'Interaction & Expression', minorGroup: 'Emotion & Presence', groupOrder: 40, minorOrder: 10 },
   'surprised expression': { step: 'action', subcategory: 'Expression', majorGroup: 'Interaction & Expression', minorGroup: 'Intense Reactions', groupOrder: 40, minorOrder: 30 },
   'tired expression': { step: 'action', subcategory: 'Expression', majorGroup: 'Interaction & Expression', minorGroup: 'Emotion & Presence', groupOrder: 40, minorOrder: 10 },
+  'tech visor': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'robotic parts': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'chrome skin': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'cybernetic eyes': { step: 'appearance', subcategory: 'Eyes', majorGroup: 'Face & Hair', minorGroup: 'Eye Shape & Color', groupOrder: 10, minorOrder: 10 },
+  'glowing circuitry': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'data lines': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'wires connecting to head': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'data cables': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'digital interference': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'synthetic skin seams': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'panel lines': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'artificial body': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'synthetic enhancements': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'visible implants': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'techno-organic features': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  protogen: { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'visor face': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'cybernetic furry': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
+  'robot furry': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
   toned: { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Shape & Build', groupOrder: 20, minorOrder: 10 },
   abs: { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Shape & Build', groupOrder: 20, minorOrder: 10 },
   biceps: { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Shape & Build', groupOrder: 20, minorOrder: 10 },
@@ -313,7 +332,7 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
 
 const EXPLICIT_THEME_KEYWORDS = ['nsfw', 'r-18', 'adult content', 'explicit content', 'erotic', 'porn', 'sex scene', 'boudoir', 'pin-up', 'romantic intimacy'];
 const EXPLICIT_APPEARANCE_KEYWORDS = ['nude', 'naked', 'unclothed', 'nipple', 'underboob', 'cleavage', 'thong', 'crotchless', 'panties', 'panty', 'lingerie', 'pasties', 'intimates', 'intimate apparel', 'exposing cleavage', 'garter', 'translucent clothing'];
-const EXPLICIT_ACTION_KEYWORDS = ['sex', 'cum', 'cumshot', 'bondage', 'orgasm', 'penetration', 'oral sex', 'forced oral', 'mutual oral sex', 'anal sex', 'anal penetration', 'breast smother', 'vibrator', 'sex toy', 'cumming', 'swallowing cum', 'kissing ass'];
+const EXPLICIT_ACTION_KEYWORDS = ['sex', 'cum', 'cumshot', 'bondage', 'orgasm', 'penetration', 'oral sex', 'forced oral', 'mutual oral sex', 'anal sex', 'anal penetration', 'breast smother', 'vibrator', 'sex toy', 'cumming', 'swallowing cum', 'kissing ass', 'blowjob', 'fellatio', 'cunnilingus', 'titfuck', 'paizuri', 'deepthroat', 'creampie', 'bukkake', 'masturbation', 'fingering', 'handjob', 'footjob', 'groping', 'spanking', 'threesome', 'group sex', 'double penetration', 'dp', 'doggystyle', 'doggy position', 'missionary position', 'cowgirl position', 'reverse cowgirl', 'mating press', 'spitroast', 'facesitting', 'sitting on face', 'oral and vaginal simultaneously', 'showing penetration inside', 'looking out from inside vagina', 'showing pussy', 'playing with pussy', 'cock between boobs', 'two cocks', 'multiple penises', 'pov looking down at penis', 'extreme close up pussy', 'penis through wall', 'first person sex', 'pov penetration', 'lotus position sex', 'standing sex', 'sitting sex', 'public sex'];
 const INTIMATE_ACTION_KEYWORDS = ['embrace', 'kiss', 'kissing', 'bedroom eyes', 'intimate eye contact', 'touching own breasts', 'pressing breasts together', 'squeezing breasts', 'breasts resting on object', 'heavy breasts supported'];
 const EXPLICIT_ATMOSPHERE_KEYWORDS = ['seductive', 'boudoir', 'aftercare', 'post-romance', 'private bedroom mood', 'intimate', 'playful allure', 'tender closeness', 'gentle vulnerability'];
 const SUBJECT_OBJECT_KEYWORDS = ['weapon', 'gun', 'handgun', 'pistol', 'rifle', 'sword', 'shield', 'blade', 'axe', 'spear', 'polearm', 'scythe', 'bow', 'quiver', 'staff', 'book', 'tome', 'grimoire', 'spellbook', 'orb', 'crystal ball', 'lantern', 'lamp', 'camera', 'phone', 'smartphone', 'microphone', 'headphone', 'headset', 'instrument', 'guitar', 'lute', 'umbrella', 'flower', 'bouquet', 'box', 'chest', 'vial', 'potion', 'artifact', 'holy symbol', 'backpack', 'badge', 'dagger', 'helmet', 'monitor', 'lockpick', 'net', 'trident', 'patrol car', 'tools', 'stethoscope', 'jetpack', 'katana'];
@@ -593,12 +612,14 @@ function classifyAppearance(tag: PromptTag, text: string): PromptTag {
       ? 'Shape & Build'
       : includesAny(text, ['legs', 'thigh', 'feet'])
         ? 'Legs & Lower Body'
+        : includesAny(text, ['cyber', 'robot', 'robotic', 'synthetic', 'artificial', 'holographic', 'hud', 'visor', 'circuit', 'data ', 'wires', 'cables', 'glitch', 'digital', 'mechanical', 'panel', 'chrome skin', 'implant', 'techno-organic', 'protogen'])
+          ? 'Cybernetic & Synthetic Traits'
         : includesAny(text, ['tail', 'wings', 'horns', 'fangs', 'scales', 'gills', 'claws', 'fur', 'pointed ears'])
           ? 'Mythic & Nonhuman Traits'
         : includesAny(text, ['breast', 'chest', 'bust'])
           ? 'Chest & Curves'
           : 'Skin & Surface';
-    const minorOrder = minorGroup === 'Shape & Build' ? 10 : minorGroup === 'Chest & Curves' ? 20 : minorGroup === 'Legs & Lower Body' ? 30 : minorGroup === 'Mythic & Nonhuman Traits' ? 40 : 50;
+    const minorOrder = minorGroup === 'Shape & Build' ? 10 : minorGroup === 'Chest & Curves' ? 20 : minorGroup === 'Legs & Lower Body' ? 30 : minorGroup === 'Mythic & Nonhuman Traits' ? 40 : minorGroup === 'Cybernetic & Synthetic Traits' ? 45 : 50;
     return applyTaxonomy(tag, {
       subcategory,
       majorGroup: 'Body & Silhouette',
@@ -659,12 +680,14 @@ function classifyAction(tag: PromptTag, text: string): PromptTag {
   if (tag.subcategory === 'Explicit' || isExplicitAction(text) || isIntimateAction(text)) {
     const minorGroup = includesAny(text, ['cum', 'cumshot', 'cumming'])
       ? 'Fluids & Aftermath'
-      : includesAny(text, ['sex', 'oral', 'anal', 'bondage', 'penetration', 'vibrator', 'sex toy'])
+      : includesAny(text, ['missionary', 'cowgirl', 'doggy', 'doggystyle', 'reverse cowgirl', 'mating press', 'spitroast', 'facesitting', 'sitting on face', 'bondage', 'hogtie', 'restrained', 'tied up', 'shibari'])
+        ? 'Positions & Restraint'
+        : includesAny(text, ['sex', 'oral', 'anal', 'penetration', 'vibrator', 'sex toy', 'blowjob', 'fellatio', 'cunnilingus', 'titfuck', 'paizuri', 'deepthroat', 'masturbation', 'fingering', 'handjob', 'footjob'])
         ? 'Sex Acts'
-        : includesAny(text, ['kiss', 'kissing', 'embrace', 'eye contact'])
+      : includesAny(text, ['kiss', 'kissing', 'embrace', 'eye contact'])
           ? 'Intimate Contact'
           : 'Erotic Touch';
-    const minorOrder = minorGroup === 'Sex Acts' ? 10 : minorGroup === 'Intimate Contact' ? 20 : minorGroup === 'Fluids & Aftermath' ? 30 : 40;
+    const minorOrder = minorGroup === 'Sex Acts' ? 10 : minorGroup === 'Positions & Restraint' ? 15 : minorGroup === 'Intimate Contact' ? 20 : minorGroup === 'Fluids & Aftermath' ? 30 : 40;
     return applyTaxonomy(tag, {
       subcategory: 'Explicit',
       majorGroup: 'Explicit Actions',
