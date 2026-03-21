@@ -37,6 +37,10 @@ export interface PromptTag {
   profiles: string[];
   aliases?: string[];
   negativeText?: string;
+  relatedTagIds?: string[];
+  conflictTagIds?: string[];
+  pairingTagIds?: string[];
+  curationNote?: string;
   isCustom?: boolean;
 }
 
@@ -47,4 +51,44 @@ export interface PromptPreset {
   tagIds: string[];
   description?: string;
   isDefault: boolean;
+}
+
+export type StepCompletion = 'empty' | 'started' | 'strong';
+
+export interface PromptBundle {
+  id: string;
+  name: string;
+  tagIds: string[];
+  description?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface PromptRecipe {
+  id: string;
+  name: string;
+  profileId: string;
+  tagIds: string[];
+  description?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface PromptWizardStateSnapshot {
+  id: string;
+  name: string;
+  profileId: string;
+  activeStep: BuilderStep;
+  selectedTagIds: string[];
+  manualNegativeTexts: string[];
+  description?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface PromptHealthIssue {
+  id: string;
+  title: string;
+  detail: string;
+  tone: WizardTone;
 }

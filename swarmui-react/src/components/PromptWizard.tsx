@@ -5,16 +5,19 @@ import { notifications } from '@mantine/notifications';
 import { IconChevronRight, IconSparkles } from '@tabler/icons-react';
 import { ElevatedCard, ResizeHandle, SwarmBadge, SwarmButton } from './ui';
 import { PromptWizardHeader } from './PromptWizardHeader';
+import { PromptWizardSidebar } from './PromptWizardSidebar';
 import { PromptWizardSteps } from './PromptWizardSteps';
 import { PromptWizardStepContent } from './PromptWizardStepContent';
 import { PromptWizardPreview } from './PromptWizardPreview';
 import { useResizablePanel } from '../hooks/useResizablePanel';
 import { usePromptWizardStore } from '../stores/promptWizardStore';
 import { normalizePromptTags } from '../features/promptWizard/normalizeTags';
+import { annotatePromptTags } from '../features/promptWizard/tagRelationships';
 import { STEP_META, getStepMeta } from '../features/promptWizard/steps';
 import { getProfile } from '../features/promptWizard/profiles';
 import { assemblePrompt } from '../features/promptWizard/assemble';
-import type { BuilderStep, PromptTag } from '../features/promptWizard/types';
+import { buildPromptHealth, buildStepSummaries, findNextIncompleteStep } from '../features/promptWizard/wizardInsights';
+import type { BuilderStep, PromptPreset, PromptTag } from '../features/promptWizard/types';
 
 interface PromptWizardProps {
   onApplyToPrompt?: (text: string) => void;
@@ -24,12 +27,20 @@ interface PromptWizardProps {
 
 // Lazy-loaded data
 let defaultTagsPromise: Promise<PromptTag[]> | null = null;
+let defaultPresetsPromise: Promise<PromptPreset[]> | null = null;
 
 function loadDefaultTags(): Promise<PromptTag[]> {
   if (!defaultTagsPromise) {
-    defaultTagsPromise = import('../data/promptTags.json').then((m) => normalizePromptTags(m.default as PromptTag[]));
+    defaultTagsPromise = import('../data/promptTags.json').then((m) => annotatePromptTags(normalizePromptTags(m.default as PromptTag[])));
   }
   return defaultTagsPromise;
+}
+
+function loadDefaultPresets(): Promise<PromptPreset[]> {
+  if (!defaultPresetsPromise) {
+    defaultPresetsPromise = import('../data/promptQuickPresets.json').then((m) => m.default as PromptPreset[]);
+  }
+  return defaultPresetsPromise;
 }
 
 export const PromptWizard = memo(function PromptWizard({
@@ -39,7 +50,9 @@ export const PromptWizard = memo(function PromptWizard({
 }: PromptWizardProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchScope, setSearchScope] = useState<'global' | 'step'>('global');
   const [defaultTags, setDefaultTags] = useState<PromptTag[]>([]);
+  const [defaultPresets, setDefaultPresets] = useState<PromptPreset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const widthPanel = useResizablePanel({
@@ -57,13 +70,34 @@ export const PromptWizard = memo(function PromptWizard({
 
   const {
     selectedTagIds,
+    manualNegativeTexts,
     activeProfileId,
     activeStep,
+    lastEditedStep,
+    recentSteps,
+    recentGroupKeys,
     customTags,
+    customPresets,
+    sessionBundles,
+    savedRecipes,
+    savedStates,
     toggleTag,
+    toggleManualNegativeText,
     clearSelections,
     setActiveStep,
     setActiveProfile,
+    markStepInteraction,
+    recordGroupFocus,
+    applyPreset,
+    saveBundle,
+    applyBundle,
+    removeBundle,
+    saveRecipe,
+    applyRecipe,
+    removeRecipe,
+    saveStateSnapshot,
+    loadStateSnapshot,
+    removeStateSnapshot,
   } = usePromptWizardStore();
 
   const handleOpen = useCallback(() => {
@@ -72,9 +106,10 @@ export const PromptWizard = memo(function PromptWizard({
       return;
     }
     setIsLoading(true);
-    loadDefaultTags()
-      .then((tags) => {
+    Promise.all([loadDefaultTags(), loadDefaultPresets()])
+      .then(([tags, presets]) => {
         setDefaultTags(tags);
+        setDefaultPresets(presets);
         setHasLoaded(true);
       })
       .catch(() => {
@@ -88,13 +123,20 @@ export const PromptWizard = memo(function PromptWizard({
   }, [hasLoaded, isLoading, open]);
 
   // Merge default + custom tags
-  const allTags = useMemo(() => [...defaultTags, ...customTags], [defaultTags, customTags]);
+  const allTags = useMemo(() => annotatePromptTags([...defaultTags, ...customTags]), [customTags, defaultTags]);
 
   // When searching, show tags across all steps; otherwise scope to active step
   const hasSearch = searchQuery.trim().length > 0;
   const stepTags = useMemo(
-    () => hasSearch ? allTags : allTags.filter((t) => t.step === activeStep),
-    [allTags, activeStep, hasSearch]
+    () => {
+      if (!hasSearch) {
+        return allTags.filter((t) => t.step === activeStep);
+      }
+      return searchScope === 'global'
+        ? allTags
+        : allTags.filter((t) => t.step === activeStep);
+    },
+    [activeStep, allTags, hasSearch, searchScope]
   );
 
   // Tag counts per step
@@ -109,6 +151,11 @@ export const PromptWizard = memo(function PromptWizard({
   }, [selectedTagIds, allTags]);
 
   const selectedTagIdSet = useMemo(() => new Set(selectedTagIds), [selectedTagIds]);
+  const stepSummaries = useMemo(() => buildStepSummaries(STEP_META, allTags, selectedTagIdSet), [allTags, selectedTagIdSet]);
+  const completionByStep = useMemo(
+    () => Object.fromEntries(STEP_META.map((meta) => [meta.step, stepSummaries[meta.step].completion])) as Record<BuilderStep, 'empty' | 'started' | 'strong'>,
+    [stepSummaries]
+  );
 
   // Assembly
   const profile = getProfile(activeProfileId);
@@ -120,6 +167,18 @@ export const PromptWizard = memo(function PromptWizard({
     () => profile ? assemblePrompt(selectedTags, profile) : { positive: '', negative: '' },
     [selectedTags, profile]
   );
+  const mergedNegativePreview = useMemo(() => {
+    const extraNegatives = manualNegativeTexts.filter((text) => !assembled.negative.toLowerCase().split(profile?.tagSeparator ?? ', ').includes(text.toLowerCase()));
+    return [assembled.negative, ...extraNegatives].filter(Boolean).join(profile?.tagSeparator ?? ', ');
+  }, [assembled.negative, manualNegativeTexts, profile]);
+  const explicitCount = useMemo(
+    () => selectedTags.filter((tag) => tag.subcategory === 'Explicit' || tag.majorGroup?.includes('Explicit')).length,
+    [selectedTags]
+  );
+  const promptHealth = useMemo(
+    () => buildPromptHealth(selectedTags, manualNegativeTexts),
+    [manualNegativeTexts, selectedTags]
+  );
 
   const handleApplyPrompt = useCallback(() => {
     if (!assembled.positive || !onApplyToPrompt) return;
@@ -128,25 +187,61 @@ export const PromptWizard = memo(function PromptWizard({
   }, [assembled.positive, onApplyToPrompt]);
 
   const handleApplyNegative = useCallback(() => {
-    if (!assembled.negative || !onApplyToNegative) return;
-    onApplyToNegative(assembled.negative);
+    if (!mergedNegativePreview || !onApplyToNegative) return;
+    onApplyToNegative(mergedNegativePreview);
     notifications.show({ title: 'Negative Applied', message: 'Negative tags added.', color: 'teal' });
-  }, [assembled.negative, onApplyToNegative]);
+  }, [mergedNegativePreview, onApplyToNegative]);
 
   const totalSelected = selectedTagIds.length;
   const stepMeta = getStepMeta(activeStep)!;
+  const profileStepSummary = useMemo(
+    () => (profile?.stepOrder ?? []).map((step) => getStepMeta(step)?.label ?? step).join(' -> '),
+    [profile]
+  );
 
   // Step navigation
   const profileStepOrder = profile?.stepOrder ?? STEP_META.map((m) => m.step);
+  const orderedStepMeta = useMemo(
+    () => profileStepOrder.map((step) => getStepMeta(step)).filter(Boolean) as typeof STEP_META,
+    [profileStepOrder]
+  );
   const currentStepIndex = profileStepOrder.indexOf(activeStep);
   const canGoPrev = currentStepIndex > 0;
   const canGoNext = currentStepIndex < profileStepOrder.length - 1;
+  const nextIncompleteStep = useMemo(
+    () => findNextIncompleteStep(orderedStepMeta, stepSummaries, activeStep),
+    [activeStep, orderedStepMeta, stepSummaries]
+  );
   const goToPrev = useCallback(() => {
     if (canGoPrev) setActiveStep(profileStepOrder[currentStepIndex - 1]);
   }, [canGoPrev, currentStepIndex, profileStepOrder, setActiveStep]);
   const goToNext = useCallback(() => {
     if (canGoNext) setActiveStep(profileStepOrder[currentStepIndex + 1]);
   }, [canGoNext, currentStepIndex, profileStepOrder, setActiveStep]);
+
+  const handleToggleTag = useCallback((tagId: string) => {
+    toggleTag(tagId);
+    markStepInteraction(activeStep);
+  }, [activeStep, markStepInteraction, toggleTag]);
+
+  const handleSaveBundle = useCallback((name: string, description?: string) => {
+    saveBundle({ name, description, tagIds: selectedTagIds });
+  }, [saveBundle, selectedTagIds]);
+
+  const handleSaveRecipe = useCallback((name: string, description?: string) => {
+    saveRecipe({ name, description, profileId: activeProfileId, tagIds: selectedTagIds });
+  }, [activeProfileId, saveRecipe, selectedTagIds]);
+
+  const handleSaveState = useCallback((name: string, description?: string) => {
+    saveStateSnapshot({
+      name,
+      description,
+      profileId: activeProfileId,
+      activeStep,
+      selectedTagIds,
+      manualNegativeTexts,
+    });
+  }, [activeProfileId, activeStep, manualNegativeTexts, saveStateSnapshot, selectedTagIds]);
 
   return (
     <>
@@ -220,6 +315,8 @@ export const PromptWizard = memo(function PromptWizard({
               onProfileChange={setActiveProfile}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              searchScope={searchScope}
+              onSearchScopeChange={setSearchScope}
               totalSelected={totalSelected}
               onClose={close}
             />
@@ -228,16 +325,50 @@ export const PromptWizard = memo(function PromptWizard({
               steps={STEP_META}
               activeStep={activeStep}
               tagCountsByStep={tagCountsByStep}
+              completionByStep={completionByStep}
               onStepClick={setActiveStep}
             />
 
-            <PromptWizardStepContent
-              stepMeta={stepMeta}
-              tags={stepTags}
-              selectedTagIds={selectedTagIdSet}
-              searchQuery={searchQuery}
-              onToggleTag={toggleTag}
-            />
+            <Group gap={0} style={{ flex: 1, minHeight: 0, alignItems: 'stretch' }}>
+              <PromptWizardSidebar
+                steps={orderedStepMeta}
+                activeStep={activeStep}
+                stepSummaries={stepSummaries}
+                lastEditedStep={lastEditedStep}
+                recentSteps={recentSteps}
+                recentGroupKeys={recentGroupKeys}
+                profileName={profile?.name ?? 'Unknown profile'}
+                nextIncompleteStep={nextIncompleteStep}
+                defaultPresets={defaultPresets}
+                customPresets={customPresets}
+                sessionBundles={sessionBundles}
+                savedRecipes={savedRecipes}
+                savedStates={savedStates}
+                onJumpStep={setActiveStep}
+                onApplyPreset={applyPreset}
+                onApplyBundle={applyBundle}
+                onRemoveBundle={removeBundle}
+                onApplyRecipe={applyRecipe}
+                onRemoveRecipe={removeRecipe}
+                onLoadState={loadStateSnapshot}
+                onRemoveState={removeStateSnapshot}
+                onSaveBundle={handleSaveBundle}
+                onSaveRecipe={handleSaveRecipe}
+                onSaveState={handleSaveState}
+              />
+
+              <PromptWizardStepContent
+                stepMeta={stepMeta}
+                tags={stepTags}
+                allTags={allTags}
+                selectedTagIds={selectedTagIdSet}
+                manualNegativeTexts={manualNegativeTexts}
+                searchQuery={searchQuery}
+                onToggleTag={handleToggleTag}
+                onAddNegativePair={toggleManualNegativeText}
+                onFocusGroup={recordGroupFocus}
+              />
+            </Group>
 
             {/* Next / Previous navigation */}
             <Group
@@ -260,7 +391,13 @@ export const PromptWizard = memo(function PromptWizard({
 
             <PromptWizardPreview
               positivePreview={assembled.positive}
-              negativePreview={assembled.negative}
+              negativePreview={mergedNegativePreview}
+              positiveCount={selectedTags.length}
+              negativeCount={mergedNegativePreview ? mergedNegativePreview.split(profile?.tagSeparator ?? ', ').filter(Boolean).length : 0}
+              explicitCount={explicitCount}
+              profileName={profile?.name ?? 'Unknown profile'}
+              profileStepSummary={profileStepSummary}
+              healthIssues={promptHealth}
               onApplyToPrompt={handleApplyPrompt}
               onApplyToNegative={handleApplyNegative}
               onClear={clearSelections}

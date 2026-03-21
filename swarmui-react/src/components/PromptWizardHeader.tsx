@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Group, Select, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
 import { IconSearch, IconSparkles, IconX } from '@tabler/icons-react';
-import { SwarmActionIcon, SwarmBadge } from './ui';
+import { SwarmActionIcon, SwarmBadge, SwarmSegmentedControl } from './ui';
 import { PROFILES } from '../features/promptWizard/profiles';
 
 interface PromptWizardHeaderProps {
@@ -9,6 +9,8 @@ interface PromptWizardHeaderProps {
   onProfileChange: (profileId: string) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  searchScope: 'global' | 'step';
+  onSearchScopeChange: (scope: 'global' | 'step') => void;
   totalSelected: number;
   onClose: () => void;
 }
@@ -18,6 +20,8 @@ export const PromptWizardHeader = memo(function PromptWizardHeader({
   onProfileChange,
   searchQuery,
   onSearchChange,
+  searchScope,
+  onSearchScopeChange,
   totalSelected,
   onClose,
 }: PromptWizardHeaderProps) {
@@ -44,12 +48,21 @@ export const PromptWizardHeader = memo(function PromptWizardHeader({
       </Group>
       <Group align="stretch" gap="md">
         <TextInput
-          placeholder="Search tags across all steps..."
+          placeholder={searchScope === 'global' ? 'Search tags across all steps...' : 'Search only in the current step...'}
           leftSection={<IconSearch size={16} />}
           value={searchQuery}
           onChange={(event) => onSearchChange(event.currentTarget.value)}
           size="md"
           style={{ flex: 1 }}
+        />
+        <SwarmSegmentedControl
+          value={searchScope}
+          onChange={(value) => onSearchScopeChange(value as 'global' | 'step')}
+          data={[
+            { label: 'Global', value: 'global' },
+            { label: 'This Step', value: 'step' },
+          ]}
+          style={{ minWidth: 180 }}
         />
         <Select
           data={PROFILES.map((p) => ({ value: p.id, label: p.name }))}

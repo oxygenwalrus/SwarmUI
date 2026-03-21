@@ -1,12 +1,13 @@
 import { memo } from 'react';
 import { Group, ScrollArea, Text, UnstyledButton } from '@mantine/core';
 import { SwarmBadge } from './ui';
-import type { BuilderStep, StepMeta } from '../features/promptWizard/types';
+import type { BuilderStep, StepMeta, StepCompletion } from '../features/promptWizard/types';
 
 interface PromptWizardStepsProps {
   steps: StepMeta[];
   activeStep: BuilderStep;
   tagCountsByStep: Record<BuilderStep, number>;
+  completionByStep: Record<BuilderStep, StepCompletion>;
   onStepClick: (step: BuilderStep) => void;
 }
 
@@ -14,6 +15,7 @@ export const PromptWizardSteps = memo(function PromptWizardSteps({
   steps,
   activeStep,
   tagCountsByStep,
+  completionByStep,
   onStepClick,
 }: PromptWizardStepsProps) {
   return (
@@ -22,6 +24,8 @@ export const PromptWizardSteps = memo(function PromptWizardSteps({
         {steps.map((meta, index) => {
           const isActive = meta.step === activeStep;
           const count = tagCountsByStep[meta.step] ?? 0;
+          const completion = completionByStep[meta.step] ?? 'empty';
+          const completionTone = completion === 'strong' ? 'success' : completion === 'started' ? meta.tone : 'secondary';
           return (
             <UnstyledButton key={meta.step} onClick={() => onStepClick(meta.step)}>
               <Group
@@ -36,6 +40,7 @@ export const PromptWizardSteps = memo(function PromptWizardSteps({
               >
                 <Text size="sm" c={isActive ? `${meta.tone}.6` : 'dimmed'} fw={700}>{index + 1}</Text>
                 <Text size="md" fw={isActive ? 600 : 500}>{meta.label}</Text>
+                <SwarmBadge tone={completionTone} emphasis="soft" size="sm">{completion}</SwarmBadge>
                 {count > 0 && (
                   <SwarmBadge tone={isActive ? meta.tone : 'primary'} emphasis="solid" size="sm">{count}</SwarmBadge>
                 )}

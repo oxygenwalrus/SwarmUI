@@ -1,15 +1,29 @@
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
-import type { BuilderStep, PromptTag, PromptPreset } from '../features/promptWizard/types';
+import type {
+  BuilderStep,
+  PromptTag,
+  PromptPreset,
+  PromptBundle,
+  PromptRecipe,
+  PromptWizardStateSnapshot,
+} from '../features/promptWizard/types';
 import { DEFAULT_PROFILE_ID } from '../features/promptWizard/profiles';
 
 interface PromptWizardStore {
   // State
   selectedTagIds: string[];
+  manualNegativeTexts: string[];
   activeProfileId: string;
   activeStep: BuilderStep;
+  lastEditedStep: BuilderStep;
+  recentSteps: BuilderStep[];
+  recentGroupKeys: string[];
   customTags: PromptTag[];
   customPresets: PromptPreset[];
+  sessionBundles: PromptBundle[];
+  savedRecipes: PromptRecipe[];
+  savedStates: PromptWizardStateSnapshot[];
   migrationVersion: number;
 
   // Tag selection
@@ -17,6 +31,9 @@ interface PromptWizardStore {
   selectTag: (tagId: string) => void;
   deselectTag: (tagId: string) => void;
   clearSelections: () => void;
+  setSelectedTagIds: (tagIds: string[]) => void;
+  toggleManualNegativeText: (text: string) => void;
+  removeManualNegativeText: (text: string) => void;
 
   // Quick-fill presets
   applyPreset: (tagIds: string[]) => void;
@@ -24,6 +41,8 @@ interface PromptWizardStore {
   // Navigation
   setActiveStep: (step: BuilderStep) => void;
   setActiveProfile: (profileId: string) => void;
+  markStepInteraction: (step: BuilderStep) => void;
+  recordGroupFocus: (groupKey: string) => void;
 
   // Custom tags
   addCustomTag: (tag: { text: string; step: BuilderStep; subcategory?: string }) => void;
@@ -33,8 +52,27 @@ interface PromptWizardStore {
   addCustomPreset: (preset: Omit<PromptPreset, 'id' | 'isDefault'>) => void;
   removeCustomPreset: (presetId: string) => void;
 
+  // Bundles, recipes, and saved states
+  saveBundle: (bundle: Omit<PromptBundle, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  applyBundle: (bundleId: string, mode?: 'merge' | 'replace') => void;
+  removeBundle: (bundleId: string) => void;
+  saveRecipe: (recipe: Omit<PromptRecipe, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  applyRecipe: (recipeId: string, mode?: 'merge' | 'replace') => void;
+  removeRecipe: (recipeId: string) => void;
+  saveStateSnapshot: (snapshot: Omit<PromptWizardStateSnapshot, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  loadStateSnapshot: (snapshotId: string) => void;
+  removeStateSnapshot: (snapshotId: string) => void;
+
   // Migration
   setMigrationVersion: (version: number) => void;
+}
+
+function uniqueStrings(values: string[]): string[] {
+  return Array.from(new Set(values));
+}
+
+function pushRecent<T>(items: T[], value: T, max = 8): T[] {
+  return [value, ...items.filter((item) => item !== value)].slice(0, max);
 }
 
 export const usePromptWizardStore = create<PromptWizardStore>()(
@@ -42,10 +80,17 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
     persist(
       (set) => ({
         selectedTagIds: [],
+        manualNegativeTexts: [],
         activeProfileId: DEFAULT_PROFILE_ID,
         activeStep: 'subject',
+        lastEditedStep: 'subject',
+        recentSteps: ['subject'],
+        recentGroupKeys: [],
         customTags: [],
         customPresets: [],
+        sessionBundles: [],
+        savedRecipes: [],
+        savedStates: [],
         migrationVersion: 0,
 
         toggleTag: (tagId) => {
@@ -71,7 +116,29 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
         },
 
         clearSelections: () => {
-          set({ selectedTagIds: [] });
+          set({ selectedTagIds: [], manualNegativeTexts: [] });
+        },
+
+        setSelectedTagIds: (tagIds) => {
+          set({ selectedTagIds: uniqueStrings(tagIds) });
+        },
+
+        toggleManualNegativeText: (text) => {
+          const normalized = text.trim();
+          if (!normalized) {
+            return;
+          }
+          set((state) => ({
+            manualNegativeTexts: state.manualNegativeTexts.includes(normalized)
+              ? state.manualNegativeTexts.filter((value) => value !== normalized)
+              : [...state.manualNegativeTexts, normalized],
+          }));
+        },
+
+        removeManualNegativeText: (text) => {
+          set((state) => ({
+            manualNegativeTexts: state.manualNegativeTexts.filter((value) => value !== text),
+          }));
         },
 
         applyPreset: (tagIds) => {
@@ -83,11 +150,27 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
         },
 
         setActiveStep: (step) => {
-          set({ activeStep: step });
+          set((state) => ({
+            activeStep: step,
+            recentSteps: pushRecent(state.recentSteps, step),
+          }));
         },
 
         setActiveProfile: (profileId) => {
           set({ activeProfileId: profileId });
+        },
+
+        markStepInteraction: (step) => {
+          set((state) => ({
+            lastEditedStep: step,
+            recentSteps: pushRecent(state.recentSteps, step),
+          }));
+        },
+
+        recordGroupFocus: (groupKey) => {
+          set((state) => ({
+            recentGroupKeys: pushRecent(state.recentGroupKeys, groupKey, 10),
+          }));
         },
 
         addCustomTag: ({ text, step, subcategory }) => {
@@ -123,6 +206,114 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
           }));
         },
 
+        saveBundle: (bundle) => {
+          const now = Date.now();
+          set((state) => ({
+            sessionBundles: [
+              {
+                ...bundle,
+                id: `bundle-${now}-${Math.random().toString(36).slice(2, 9)}`,
+                createdAt: now,
+                updatedAt: now,
+              },
+              ...state.sessionBundles,
+            ],
+          }));
+        },
+
+        applyBundle: (bundleId, mode = 'merge') => {
+          set((state) => {
+            const bundle = state.sessionBundles.find((item) => item.id === bundleId);
+            if (!bundle) {
+              return state;
+            }
+            return {
+              selectedTagIds: mode === 'replace'
+                ? uniqueStrings(bundle.tagIds)
+                : uniqueStrings([...state.selectedTagIds, ...bundle.tagIds]),
+            };
+          });
+        },
+
+        removeBundle: (bundleId) => {
+          set((state) => ({
+            sessionBundles: state.sessionBundles.filter((bundle) => bundle.id !== bundleId),
+          }));
+        },
+
+        saveRecipe: (recipe) => {
+          const now = Date.now();
+          set((state) => ({
+            savedRecipes: [
+              {
+                ...recipe,
+                id: `recipe-${now}-${Math.random().toString(36).slice(2, 9)}`,
+                createdAt: now,
+                updatedAt: now,
+              },
+              ...state.savedRecipes,
+            ],
+          }));
+        },
+
+        applyRecipe: (recipeId, mode = 'merge') => {
+          set((state) => {
+            const recipe = state.savedRecipes.find((item) => item.id === recipeId);
+            if (!recipe) {
+              return state;
+            }
+            return {
+              selectedTagIds: mode === 'replace'
+                ? uniqueStrings(recipe.tagIds)
+                : uniqueStrings([...state.selectedTagIds, ...recipe.tagIds]),
+              activeProfileId: recipe.profileId,
+            };
+          });
+        },
+
+        removeRecipe: (recipeId) => {
+          set((state) => ({
+            savedRecipes: state.savedRecipes.filter((recipe) => recipe.id !== recipeId),
+          }));
+        },
+
+        saveStateSnapshot: (snapshot) => {
+          const now = Date.now();
+          set((state) => ({
+            savedStates: [
+              {
+                ...snapshot,
+                id: `state-${now}-${Math.random().toString(36).slice(2, 9)}`,
+                createdAt: now,
+                updatedAt: now,
+              },
+              ...state.savedStates,
+            ],
+          }));
+        },
+
+        loadStateSnapshot: (snapshotId) => {
+          set((state) => {
+            const snapshot = state.savedStates.find((item) => item.id === snapshotId);
+            if (!snapshot) {
+              return state;
+            }
+            return {
+              selectedTagIds: uniqueStrings(snapshot.selectedTagIds),
+              manualNegativeTexts: uniqueStrings(snapshot.manualNegativeTexts),
+              activeProfileId: snapshot.profileId,
+              activeStep: snapshot.activeStep,
+              recentSteps: pushRecent(state.recentSteps, snapshot.activeStep),
+            };
+          });
+        },
+
+        removeStateSnapshot: (snapshotId) => {
+          set((state) => ({
+            savedStates: state.savedStates.filter((snapshot) => snapshot.id !== snapshotId),
+          }));
+        },
+
         setMigrationVersion: (version) => {
           set({ migrationVersion: version });
         },
@@ -131,9 +322,16 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
         name: 'swarmui-prompt-wizard-v1',
         partialize: (state) => ({
           selectedTagIds: state.selectedTagIds,
+          manualNegativeTexts: state.manualNegativeTexts,
           activeProfileId: state.activeProfileId,
+          lastEditedStep: state.lastEditedStep,
+          recentSteps: state.recentSteps,
+          recentGroupKeys: state.recentGroupKeys,
           customTags: state.customTags,
           customPresets: state.customPresets,
+          sessionBundles: state.sessionBundles,
+          savedRecipes: state.savedRecipes,
+          savedStates: state.savedStates,
           migrationVersion: state.migrationVersion,
         }),
       }

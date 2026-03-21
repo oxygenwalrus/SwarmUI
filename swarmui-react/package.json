@@ -15,6 +15,7 @@
     "build:linux": "npm run build:electron && electron-builder --linux",
     "test": "vitest run",
     "lint": "eslint .",
+    "audit:prompt-wizard": "node scripts/prompt-wizard-audit.mjs",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "prepare": "husky"
   },

@@ -2,14 +2,19 @@ import { memo, useMemo, useState } from 'react';
 import { Box, Group, ScrollArea, Stack, Text } from '@mantine/core';
 import { SwarmBadge, ElevatedCard } from './ui';
 import { PromptWizardTagChip } from './PromptWizardTagChip';
+import { buildNegativePairCandidates, buildRecommendedGroups, buildStepGuidance } from '../features/promptWizard/wizardInsights';
 import type { BuilderStep, PromptTag, StepMeta } from '../features/promptWizard/types';
 
 interface PromptWizardStepContentProps {
   stepMeta: StepMeta;
   tags: PromptTag[];
+  allTags: PromptTag[];
   selectedTagIds: Set<string>;
+  manualNegativeTexts: string[];
   searchQuery: string;
   onToggleTag: (tagId: string) => void;
+  onAddNegativePair: (text: string) => void;
+  onFocusGroup: (groupKey: string) => void;
 }
 
 type SelectionFilter = 'all' | 'selected' | 'unselected';
@@ -102,9 +107,13 @@ function getGroupMeta(step: BuilderStep, groupName: string, stepTone: StepMeta['
 export const PromptWizardStepContent = memo(function PromptWizardStepContent({
   stepMeta,
   tags,
+  allTags,
   selectedTagIds,
+  manualNegativeTexts,
   searchQuery,
   onToggleTag,
+  onAddNegativePair,
+  onFocusGroup,
 }: PromptWizardStepContentProps) {
   const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
   const [activeMajorGroup, setActiveMajorGroup] = useState<string | null>(null);
@@ -209,6 +218,26 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
   const resolvedActiveSubcategory = activeSubcategory && sortedSubcategories.includes(activeSubcategory)
     ? activeSubcategory
     : null;
+
+  const selectedTags = useMemo(
+    () => allTags.filter((tag) => selectedTagIds.has(tag.id)),
+    [allTags, selectedTagIds]
+  );
+
+  const guidanceSets = useMemo(
+    () => buildStepGuidance(stepMeta, allTags, selectionFilteredTags, selectedTags, selectedTagIds),
+    [allTags, selectedTagIds, selectedTags, selectionFilteredTags, stepMeta]
+  );
+
+  const recommendedGroups = useMemo(
+    () => buildRecommendedGroups(selectionFilteredTags.filter((tag) => tag.step === stepMeta.step), selectedTagIds),
+    [selectedTagIds, selectionFilteredTags, stepMeta.step]
+  );
+
+  const negativePairCandidates = useMemo(
+    () => buildNegativePairCandidates(selectedTags.filter((tag) => tag.step === stepMeta.step), manualNegativeTexts),
+    [manualNegativeTexts, selectedTags, stepMeta.step]
+  );
 
   const sections = useMemo(() => {
     const sectionNames = resolvedActiveSubcategory ? [resolvedActiveSubcategory] : sortedSubcategories;
@@ -426,7 +455,10 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                   tone={isActive ? stepMeta.tone : 'secondary'}
                   emphasis={isActive ? 'solid' : 'soft'}
                   style={{ cursor: 'pointer' }}
-                  onClick={() => setActiveSubcategory(subcat)}
+                  onClick={() => {
+                    setActiveSubcategory(subcat);
+                    onFocusGroup(`${stepMeta.label}: ${subcat}`);
+                  }}
                 >
                   {subcat} ({count})
                 </SwarmBadge>
@@ -454,7 +486,10 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                   tone={resolvedActiveMajorGroup === group.name ? group.tone : 'secondary'}
                   emphasis={resolvedActiveMajorGroup === group.name ? 'solid' : 'soft'}
                   style={{ cursor: 'pointer' }}
-                  onClick={() => setActiveMajorGroup(group.name)}
+                  onClick={() => {
+                    setActiveMajorGroup(group.name);
+                    onFocusGroup(`${stepMeta.label}: ${group.name}`);
+                  }}
                 >
                   {group.name} ({group.count})
                 </SwarmBadge>
@@ -466,18 +501,101 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
 
       <ScrollArea offsetScrollbars scrollbarSize={10} type="scroll" style={{ flex: 1, minHeight: 0, height: 0 }}>
         <Box p="lg">
-          {filteredSections.length === 0 ? (
-            <ElevatedCard elevation="floor" withBorder>
-              <Stack align="center" gap="sm" py="xl">
-                <Text fw={600} size="lg">No tags{query ? ' match your search' : ' match these filters'}</Text>
-                <Text size="md" c="dimmed">
-                  {query ? 'Try a different search term or broaden the filters.' : 'Try switching groups or showing available tags.'}
-                </Text>
-              </Stack>
-            </ElevatedCard>
-          ) : (
-            <Stack gap="lg">
-              {filteredSections.map((section) => (
+          <Stack gap="lg">
+            {(guidanceSets.length > 0 || recommendedGroups.length > 0 || negativePairCandidates.length > 0) && (
+              <ElevatedCard elevation="floor" withBorder>
+                <Stack gap="md">
+                  <Group justify="space-between" align="center">
+                    <Text fw={700} size="lg">Guided Composition</Text>
+                    <SwarmBadge tone={stepMeta.tone} emphasis="soft">
+                      {stepMeta.label}
+                    </SwarmBadge>
+                  </Group>
+
+                  {recommendedGroups.length > 0 && (
+                    <Stack gap="xs">
+                      <Text fw={600} size="sm">Recommended next groups</Text>
+                      <Group gap="xs">
+                        {recommendedGroups.map((group) => (
+                          <SwarmBadge
+                            key={group}
+                            tone="secondary"
+                            emphasis="soft"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => {
+                              setActiveMajorGroup(group);
+                              onFocusGroup(`${stepMeta.label}: ${group}`);
+                            }}
+                          >
+                            {group}
+                          </SwarmBadge>
+                        ))}
+                      </Group>
+                    </Stack>
+                  )}
+
+                  {negativePairCandidates.length > 0 && (
+                    <Stack gap="xs">
+                      <Text fw={600} size="sm">Negative pair ready</Text>
+                      <Group gap="xs">
+                        {negativePairCandidates.slice(0, 6).map((tag) => (
+                          <SwarmBadge
+                            key={`${tag.id}-negative`}
+                            tone="warning"
+                            emphasis="soft"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => tag.negativeText && onAddNegativePair(tag.negativeText)}
+                          >
+                            {tag.text} {'->'} {tag.negativeText}
+                          </SwarmBadge>
+                        ))}
+                      </Group>
+                    </Stack>
+                  )}
+
+                  <Stack gap="sm">
+                    {guidanceSets.map((set) => (
+                      <Box
+                        key={set.title}
+                        p="sm"
+                        style={{
+                          borderRadius: 'var(--mantine-radius-md)',
+                          border: '1px solid var(--mantine-color-default-border)',
+                          background: 'color-mix(in srgb, var(--elevation-paper) 86%, transparent)',
+                        }}
+                      >
+                        <Stack gap="xs">
+                          <Text fw={600} size="sm">{set.title}</Text>
+                          <Text size="sm" c="dimmed">{set.description}</Text>
+                          <Group gap="sm">
+                            {set.tags.map((tag) => (
+                              <PromptWizardTagChip
+                                key={`guided-${set.title}-${tag.id}`}
+                                text={tag.text}
+                                selected={selectedTagIds.has(tag.id)}
+                                onToggle={() => onToggleTag(tag.id)}
+                              />
+                            ))}
+                          </Group>
+                        </Stack>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Stack>
+              </ElevatedCard>
+            )}
+
+            {filteredSections.length === 0 ? (
+              <ElevatedCard elevation="floor" withBorder>
+                <Stack align="center" gap="sm" py="xl">
+                  <Text fw={600} size="lg">No tags{query ? ' match your search' : ' match these filters'}</Text>
+                  <Text size="md" c="dimmed">
+                    {query ? 'Try a different search term or broaden the filters.' : 'Try switching groups or showing available tags.'}
+                  </Text>
+                </Stack>
+              </ElevatedCard>
+            ) : (
+              filteredSections.map((section) => (
                 <ElevatedCard
                   key={section.name}
                   elevation="floor"
@@ -502,7 +620,10 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                           tone="secondary"
                           emphasis="ghost"
                           style={{ cursor: 'pointer' }}
-                          onClick={() => setActiveSubcategory(section.name)}
+                          onClick={() => {
+                            setActiveSubcategory(section.name);
+                            onFocusGroup(`${stepMeta.label}: ${section.name}`);
+                          }}
                         >
                           Focus group
                         </SwarmBadge>
@@ -575,9 +696,9 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                     </Stack>
                   </Stack>
                 </ElevatedCard>
-              ))}
-            </Stack>
-          )}
+              ))
+            )}
+          </Stack>
         </Box>
       </ScrollArea>
     </Stack>
