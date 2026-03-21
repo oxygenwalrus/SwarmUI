@@ -49,6 +49,24 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   'cowboy shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
   'face close-up': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
   'drone shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Angles & Perspective', groupOrder: 10, minorOrder: 10 },
+  'environment focus': { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Subject Emphasis', groupOrder: 50, minorOrder: 20 },
+  'focus on subject': { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Subject Emphasis', groupOrder: 50, minorOrder: 20 },
+  'tiny details': { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Scale & Detail Emphasis', groupOrder: 50, minorOrder: 30 },
+  'distorted view': { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Stylized Scene Concepts', groupOrder: 50, minorOrder: 40 },
+  'surface view': { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Scale & Detail Emphasis', groupOrder: 50, minorOrder: 30 },
+  'romantic city': { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
+  cozy: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Romantic & Tender', groupOrder: 20, minorOrder: 10 },
+  'warm lighting': { step: 'atmosphere', subcategory: 'Lighting', majorGroup: 'Lighting', minorGroup: 'Warm & Intimate Light', groupOrder: 10, minorOrder: 10 },
+  scholarly: { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
+  dystopian: { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
+  mythical: { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
+  mysterious: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
+  peaceful: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Calm & Serene', groupOrder: 20, minorOrder: 20 },
+  rustic: { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
+  'dark atmosphere': { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
+  crowd: { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
+  'dramatic scale': { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Scale & Detail Emphasis', groupOrder: 50, minorOrder: 30 },
+  'ornate interior': { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Stylized Scene Concepts', groupOrder: 50, minorOrder: 40 },
   'comic book style': { step: 'style', subcategory: 'Graphic', majorGroup: 'Aesthetic & Genre', minorGroup: 'Comic & Pop', groupOrder: 20, minorOrder: 10 },
   'dark pact': { step: 'subject', subcategory: 'Theme', majorGroup: 'Scenes & Themes', minorGroup: 'Narrative & Concepts', groupOrder: 40, minorOrder: 40 },
   performace: { text: 'performance', step: 'subject', subcategory: 'Character', majorGroup: 'People & Roles', minorGroup: 'Professions & Roles', groupOrder: 10, minorOrder: 20 },
@@ -326,6 +344,24 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   'massive tits': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Chest & Curves', groupOrder: 20, minorOrder: 20 },
   'flat chest': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Chest & Curves', groupOrder: 20, minorOrder: 20 },
   'warm smile': { step: 'action', subcategory: 'Expression', majorGroup: 'Interaction & Expression', minorGroup: 'Emotion & Presence', groupOrder: 40, minorOrder: 10 },
+  dramatic: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
+  serene: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Calm & Serene', groupOrder: 20, minorOrder: 20 },
+  fantasy: { step: 'style', subcategory: 'Cinematic', majorGroup: 'Aesthetic & Genre', minorGroup: 'Epic & Genre', groupOrder: 20, minorOrder: 20 },
+  cute: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Expressive Mood', groupOrder: 20, minorOrder: 40 },
+  elegant: { step: 'style', subcategory: 'Finish', majorGroup: 'Surface & Finish', minorGroup: 'Abstract & Decorative', groupOrder: 40, minorOrder: 30 },
+  detailed: { step: 'quality', subcategory: 'Positive Quality', majorGroup: 'Positive Quality', minorGroup: 'Detail & Fidelity', groupOrder: 10, minorOrder: 20 },
+  intense: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
+  gritty: { step: 'style', subcategory: 'Cinematic', majorGroup: 'Aesthetic & Genre', minorGroup: 'Dark & Gothic', groupOrder: 20, minorOrder: 30 },
+  dark: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
+  whimsical: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Expressive Mood', groupOrder: 20, minorOrder: 40 },
+  scenic: { step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
+  vibrant: { step: 'atmosphere', subcategory: 'Color Palette', majorGroup: 'Color & Palette', minorGroup: 'Bold & Stylized', groupOrder: 30, minorOrder: 40 },
+  victorian: { step: 'style', subcategory: 'Retro', majorGroup: 'Aesthetic & Genre', minorGroup: 'Vintage & Period', groupOrder: 20, minorOrder: 30 },
+  ornate: { step: 'style', subcategory: 'Finish', majorGroup: 'Surface & Finish', minorGroup: 'Abstract & Decorative', groupOrder: 40, minorOrder: 30 },
+  minimal: { step: 'style', subcategory: 'Graphic', majorGroup: 'Aesthetic & Genre', minorGroup: 'Graphic & Flat', groupOrder: 20, minorOrder: 20 },
+  stylized: { step: 'style', subcategory: 'Finish', majorGroup: 'Surface & Finish', minorGroup: 'Abstract & Decorative', groupOrder: 40, minorOrder: 30 },
+  'gothic atmosphere': { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
+  'ominous grandeur': { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
   zombie: { step: 'subject', subcategory: 'Creature', majorGroup: 'Creatures & Beings', minorGroup: 'Cosmic & Undead Beings', groupOrder: 20, minorOrder: 15 },
   'waist up': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
 };
@@ -789,6 +825,8 @@ function classifyAction(tag: PromptTag, text: string): PromptTag {
 function classifySetting(tag: PromptTag, text: string): PromptTag {
   const subcategory = includesAny(text, CAMERA_KEYWORDS)
     ? 'Camera'
+    : includesAny(text, ['cozy', 'scholarly', 'dystopian', 'mythical', 'rustic', 'environment focus', 'focus on subject', 'tiny details', 'surface view', 'crowd', 'dramatic scale', 'ornate interior', 'scenic'])
+      ? 'Scene'
     : includesAny(text, ['city', 'metropolitan', 'shibuya', 'manhattan', 'paris', 'metro', 'underground', 'architecture', 'eiffel tower'])
       ? 'Urban'
       : includesAny(text, ['trees', 'woodland', 'nature', 'foliage', 'sand', 'waves', 'tropical', 'coastal', 'peaks', 'alpine', 'dunes', 'oasis', 'underwater', 'coral', 'flowers', 'plants', 'wildflowers', 'grass', 'spring', 'winter landscape', 'ice peaks', 'blizzard', 'forest', 'garden'])
@@ -859,6 +897,24 @@ function classifySetting(tag: PromptTag, text: string): PromptTag {
     });
   }
 
+  if (subcategory === 'Scene') {
+    const minorGroup = includesAny(text, ['romantic', 'scholarly', 'dystopian', 'mythical', 'rustic', 'scenic', 'crowd'])
+      ? 'Narrative Scene Concepts'
+      : includesAny(text, ['environment focus', 'focus on subject'])
+        ? 'Subject Emphasis'
+        : includesAny(text, ['tiny details', 'surface view', 'dramatic scale'])
+          ? 'Scale & Detail Emphasis'
+          : 'Stylized Scene Concepts';
+    const minorOrder = minorGroup === 'Narrative Scene Concepts' ? 10 : minorGroup === 'Subject Emphasis' ? 20 : minorGroup === 'Scale & Detail Emphasis' ? 30 : 40;
+    return applyTaxonomy(tag, {
+      subcategory,
+      majorGroup: 'Scenes & Concepts',
+      minorGroup,
+      groupOrder: 50,
+      minorOrder,
+    });
+  }
+
   const minorGroup = includesAny(text, ['galaxy', 'stars', 'nebula', 'cosmic', 'viewport looking at earth']) ? 'Space & Cosmic' : includesAny(text, ['medical facility', 'sterile', 'high tech equipment', 'lab']) ? 'Labs & Facilities' : 'Futuristic Worlds';
   const minorOrder = minorGroup === 'Space & Cosmic' ? 10 : minorGroup === 'Labs & Facilities' ? 20 : 30;
   return applyTaxonomy(tag, {
@@ -876,7 +932,7 @@ function classifyStyle(tag: PromptTag, text: string): PromptTag {
       : includesAny(text, ['style', 'studio', 'madhouse', 'tite kubo', 'kishimoto', 'akira toriyama', 'warhol', 'monet']) ? 'Reference'
         : includesAny(text, ['vector art', 'flat design', 'line art', 'clean linework', 'graphic', 'halftone', 'screentones', 'pop art', 'comic book']) ? 'Graphic'
         : includesAny(text, ['old camera', 'sepia', '1920s', 'victorian', 'art deco', 'retro', 'gothic']) ? 'Retro'
-          : includesAny(text, ['dramatic', 'serene', 'fantasy', 'ninja', 'shinobi', 'martial arts', 'cute', 'stylized', 'ominous grandeur', 'gothic atmosphere']) ? 'Cinematic'
+          : includesAny(text, ['fantasy', 'ninja', 'shinobi', 'martial arts', 'gritty']) ? 'Cinematic'
             : 'Finish');
 
   if (subcategory === 'Anime' || subcategory === 'Reference') {
@@ -967,6 +1023,8 @@ function classifyAtmosphere(tag: PromptTag, text: string): PromptTag {
     ? 'Color Palette'
     : includesAny(text, ['fog', 'smoke', 'steam', 'sparkle', 'glow', 'particles'])
       ? 'Effects'
+      : includesAny(text, ['warm', 'moonlight', 'daylight', 'sunlight', 'lighting', 'light ', 'backlit', 'rim lighting', 'spotlight', 'glow', 'rays', 'shadows', 'contrast', 'caustics', 'aurora', 'eclipse'])
+        ? 'Lighting'
       : tag.subcategory ?? 'Mood';
 
   if (subcategory === 'Lighting') {
