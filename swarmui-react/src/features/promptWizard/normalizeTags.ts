@@ -9,6 +9,62 @@ interface TagTaxonomy {
   minorOrder: number;
 }
 
+const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
+  'acoustic guitar': { subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Instruments & Audio Gear', groupOrder: 30, minorOrder: 30 },
+  'electric guitar': { subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Instruments & Audio Gear', groupOrder: 30, minorOrder: 30 },
+  'guitar': { subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Instruments & Audio Gear', groupOrder: 30, minorOrder: 30 },
+  'musical instrument': { subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Instruments & Audio Gear', groupOrder: 30, minorOrder: 30 },
+  'microphone': { subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Instruments & Audio Gear', groupOrder: 30, minorOrder: 30 },
+  'headphones': { subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Devices & Tech', groupOrder: 30, minorOrder: 20 },
+  'camera': { subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Devices & Tech', groupOrder: 30, minorOrder: 20 },
+  'vintage camera': { subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Devices & Tech', groupOrder: 30, minorOrder: 20 },
+  'smartphone': { subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Devices & Tech', groupOrder: 30, minorOrder: 20 },
+  'mobile phone': { subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Devices & Tech', groupOrder: 30, minorOrder: 20 },
+  'holding phone': { step: 'action', subcategory: 'Gesture', majorGroup: 'Interaction & Expression', minorGroup: 'Prop Interaction', groupOrder: 40, minorOrder: 20 },
+  'holding books': { step: 'action', subcategory: 'Gesture', majorGroup: 'Interaction & Expression', minorGroup: 'Prop Interaction', groupOrder: 40, minorOrder: 20 },
+  'smoking cigarette': { step: 'action', subcategory: 'Gesture', majorGroup: 'Interaction & Expression', minorGroup: 'Prop Interaction', groupOrder: 40, minorOrder: 20 },
+  'close embrace': { step: 'action', subcategory: 'Explicit', majorGroup: 'Explicit Actions', minorGroup: 'Intimate Contact', groupOrder: 50, minorOrder: 20 },
+  'intimate eye contact': { step: 'action', subcategory: 'Explicit', majorGroup: 'Explicit Actions', minorGroup: 'Intimate Contact', groupOrder: 50, minorOrder: 20 },
+  'aftercare': { step: 'atmosphere', subcategory: 'Explicit', majorGroup: 'Intimacy & Explicit Tone', minorGroup: 'Aftercare & Recovery', groupOrder: 50, minorOrder: 20 },
+  'seductive charm': { step: 'atmosphere', subcategory: 'Explicit', majorGroup: 'Intimacy & Explicit Tone', minorGroup: 'Seductive & Boudoir', groupOrder: 50, minorOrder: 10 },
+  'intimate glow': { step: 'atmosphere', subcategory: 'Explicit', majorGroup: 'Intimacy & Explicit Tone', minorGroup: 'Seductive & Boudoir', groupOrder: 50, minorOrder: 10 },
+  'intimate post-romance atmosphere': { step: 'atmosphere', subcategory: 'Explicit', majorGroup: 'Intimacy & Explicit Tone', minorGroup: 'Aftercare & Recovery', groupOrder: 50, minorOrder: 20 },
+  'intimate glamour photography': { step: 'subject', subcategory: 'Explicit', majorGroup: 'Explicit Content', minorGroup: 'Boudoir & Glamour', groupOrder: 50, minorOrder: 20 },
+  'polished boudoir styling': { step: 'subject', subcategory: 'Explicit', majorGroup: 'Explicit Content', minorGroup: 'Boudoir & Glamour', groupOrder: 50, minorOrder: 20 },
+  'upscale intimate setting': { step: 'atmosphere', subcategory: 'Explicit', majorGroup: 'Intimacy & Explicit Tone', minorGroup: 'Private & Romantic', groupOrder: 50, minorOrder: 30 },
+  'towering bookshelves': { step: 'setting', subcategory: 'Indoor', majorGroup: 'Architecture & Urban', minorGroup: 'Learning & Culture', groupOrder: 20, minorOrder: 20 },
+  'eiffel tower': { step: 'setting', subcategory: 'Urban', majorGroup: 'Architecture & Urban', minorGroup: 'Landmarks & Travel', groupOrder: 20, minorOrder: 20 },
+  'tilted camera': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Angles & Perspective', groupOrder: 10, minorOrder: 10 },
+  'ots': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'POV & Focus', groupOrder: 10, minorOrder: 30 },
+  'over the shoulder shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'POV & Focus', groupOrder: 10, minorOrder: 30 },
+  'macro photography': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
+  'extreme close up': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
+  'extreme wide shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
+  'eye level shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Angles & Perspective', groupOrder: 10, minorOrder: 10 },
+  'ground level shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Angles & Perspective', groupOrder: 10, minorOrder: 10 },
+  'wide shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
+  'medium shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
+  'establishing shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
+  'cowboy shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
+  'face close-up': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
+  'drone shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Angles & Perspective', groupOrder: 10, minorOrder: 10 },
+  'comic book style': { step: 'style', subcategory: 'Graphic', majorGroup: 'Aesthetic & Genre', minorGroup: 'Comic & Pop', groupOrder: 20, minorOrder: 10 },
+  'dark pact': { step: 'subject', subcategory: 'Theme', majorGroup: 'Scenes & Themes', minorGroup: 'Narrative & Concepts', groupOrder: 40, minorOrder: 40 },
+  performace: { step: 'subject', subcategory: 'Character', majorGroup: 'People & Roles', minorGroup: 'Professions & Roles', groupOrder: 10, minorOrder: 20 },
+};
+
+const EXPLICIT_THEME_KEYWORDS = ['nsfw', 'r-18', 'adult content', 'explicit content', 'erotic', 'porn', 'sex scene', 'boudoir', 'pin-up', 'romantic intimacy'];
+const EXPLICIT_APPEARANCE_KEYWORDS = ['nude', 'naked', 'unclothed', 'nipple', 'underboob', 'cleavage', 'thong', 'crotchless', 'panties', 'panty', 'lingerie', 'pasties', 'intimates', 'intimate apparel', 'exposing cleavage', 'garter', 'translucent clothing'];
+const EXPLICIT_ACTION_KEYWORDS = ['sex', 'cum', 'cumshot', 'bondage', 'orgasm', 'penetration', 'oral sex', 'forced oral', 'mutual oral sex', 'anal sex', 'anal penetration', 'breast smother', 'vibrator', 'sex toy', 'cumming', 'swallowing cum', 'kissing ass'];
+const INTIMATE_ACTION_KEYWORDS = ['embrace', 'kiss', 'kissing', 'bedroom eyes', 'intimate eye contact', 'touching own breasts', 'pressing breasts together', 'squeezing breasts', 'breasts resting on object', 'heavy breasts supported'];
+const EXPLICIT_ATMOSPHERE_KEYWORDS = ['seductive', 'boudoir', 'aftercare', 'post-romance', 'private bedroom mood', 'intimate', 'playful allure', 'tender closeness', 'gentle vulnerability'];
+const SUBJECT_OBJECT_KEYWORDS = ['weapon', 'gun', 'handgun', 'pistol', 'rifle', 'sword', 'shield', 'blade', 'axe', 'spear', 'polearm', 'scythe', 'bow', 'quiver', 'staff', 'book', 'tome', 'grimoire', 'spellbook', 'orb', 'crystal ball', 'lantern', 'lamp', 'camera', 'phone', 'smartphone', 'microphone', 'headphone', 'headset', 'instrument', 'guitar', 'lute', 'umbrella', 'flower', 'bouquet', 'box', 'chest', 'vial', 'potion', 'artifact', 'holy symbol', 'backpack', 'badge', 'dagger', 'helmet', 'monitor', 'lockpick', 'net', 'trident', 'patrol car', 'tools', 'stethoscope', 'jetpack', 'katana'];
+const SUBJECT_ACTION_KEYWORDS = ['holding ', 'smoking ', 'reading ', 'casting ', 'walking ', 'running ', 'kneeling', 'reclining', 'lounging', 'prayer', 'pose', 'stance', 'battle ready', 'combat', 'cuddle', 'embrace', 'kiss', 'hug', 'body language', 'posture', 'twist', 'over shoulder look', 'fire breathing', 'transformation'];
+const SUBJECT_SETTING_KEYWORDS = ['background', 'room', 'bedroom', 'cockpit', 'campus', 'street', 'city', 'forest', 'nature', 'nightlife', 'setting', 'bubble bath', 'changing area', 'hotel suite', 'lounge', 'bedding', 'mirror', 'seating', 'vip', 'night', 'shadows', 'clouds', 'wilderness', 'vines', 'full moon'];
+const SUBJECT_ATMOSPHERE_KEYWORDS = ['mood', 'glow', 'charm', 'allure', 'confidence', 'vulnerability', 'warm water', 'tender', 'intimate', 'seductive', 'atmosphere', 'energy', 'light', 'steam', 'warmth', 'chemistry', 'affection', 'comfort', 'vibe', 'presence', 'sensual', 'rage'];
+const CREATURE_KEYWORDS = ['dragon', 'demon', 'angel', 'elf', 'mermaid', 'succubus', 'werewolf', 'wolfman', 'monster', 'beast', 'fox', 'bird', 'cat', 'dog', 'creature', 'griffon', 'fairy', 'centaur', 'parrot', 'animal companion', 'vampire', 'zombie', 'undead', 'half human', 'alien', 'extraterrestrial'];
+const CAMERA_KEYWORDS = ['shot', 'angle', 'view', 'perspective', 'pov', 'focus', 'lens', 'close-up', 'close up', 'framing', 'diorama', 'camera', 'ots', 'macro photography', 'macro', 'over the shoulder'];
+
 function normalizeText(text: string): string {
   return text.toLowerCase();
 }
@@ -29,59 +85,120 @@ function applyTaxonomy(tag: PromptTag, taxonomy: TagTaxonomy): PromptTag {
   };
 }
 
+function findExactTaxonomy(text: string): TagTaxonomy | undefined {
+  return EXACT_TAXONOMY[text];
+}
+
+function isExplicitTheme(text: string): boolean {
+  return includesAny(text, EXPLICIT_THEME_KEYWORDS);
+}
+
+function isExplicitAppearance(text: string): boolean {
+  return includesAny(text, EXPLICIT_APPEARANCE_KEYWORDS);
+}
+
+function isExplicitAction(text: string): boolean {
+  return includesAny(text, EXPLICIT_ACTION_KEYWORDS);
+}
+
+function isIntimateAction(text: string): boolean {
+  return includesAny(text, INTIMATE_ACTION_KEYWORDS);
+}
+
+function isExplicitAtmosphere(text: string): boolean {
+  return includesAny(text, EXPLICIT_ATMOSPHERE_KEYWORDS);
+}
+
 function rerouteSubjectGeneral(tag: PromptTag, text: string): PromptTag {
   if (tag.step !== 'subject') {
     return tag;
   }
 
-  if (includesAny(text, ['nsfw', 'r-18', 'adult content'])) {
-    return { ...tag, step: 'subject', subcategory: 'Theme' };
+  if (isExplicitTheme(text)) {
+    return { ...tag, step: 'subject', subcategory: 'Explicit' };
   }
-  if (includesAny(text, ['nude', 'naked', 'unclothed', 'flushed skin', 'oiled skin', 'glossy highlights', 'body sheen', 'curves', 'silhouette'])) {
-    return { ...tag, step: 'appearance', subcategory: 'Body' };
+  if (isExplicitAppearance(text)) {
+    return { ...tag, step: 'appearance', subcategory: 'Explicit' };
   }
-  if (includesAny(text, ['lingerie', 'apparel', 'fabric', 'clothing', 'robe', 'loungewear', 'attire', 'garter', 'shirt', 'fashion', 'intimates'])) {
+  if (isExplicitAction(text) || isIntimateAction(text)) {
+    return { ...tag, step: 'action', subcategory: 'Explicit' };
+  }
+  if (isExplicitAtmosphere(text)) {
+    return { ...tag, step: 'atmosphere', subcategory: 'Explicit' };
+  }
+  if (includesAny(text, ['hair', 'bang', 'ponytail', 'braid', 'eye', 'iris', 'pupil', 'face', 'lip', 'makeup', 'blush', 'war paint'])) {
+    return { ...tag, step: 'appearance', subcategory: includesAny(text, ['hair', 'bang', 'ponytail', 'braid']) ? 'Hair' : includesAny(text, ['eye', 'iris', 'pupil']) ? 'Eyes' : 'Face' };
+  }
+  if (includesAny(text, ['dress', 'shirt', 'skirt', 'jacket', 'uniform', 'outfit', 'armor', 'swimsuit', 'bikini', 'corset', 'robe', 'coat', 'leotard', 'kimono', 'cloak', 'hoodie', 'gown', 'apron', 'attire', 'fabric', 'loungewear', 'clothes', 'fashion', 'gear', 'top', 'plugsuit', 'costume', 'blankets', 'suit and tie', 'camouflage', 'hooded', 'seams'])) {
     return { ...tag, step: 'appearance', subcategory: 'Clothing' };
   }
-  if (includesAny(text, ['heels', 'stilettos', 'footwear'])) {
+  if (includesAny(text, ['shoe', 'heels', 'boots', 'sandals', 'footwear', 'stilettos'])) {
     return { ...tag, step: 'appearance', subcategory: 'Footwear' };
   }
-  if (includesAny(text, ['body chain', 'jewelry', 'adornment'])) {
+  if (includesAny(text, ['jewelry', 'necklace', 'earring', 'bracelet', 'body chain', 'crown', 'hat', 'glasses', 'mask', 'headband', 'tiara', 'visor', 'eyewear', 'face covering', 'halo', 'fedora'])) {
     return { ...tag, step: 'appearance', subcategory: 'Accessories' };
   }
-  if (includesAny(text, ['expression', 'gaze', 'eye contact', 'smile', 'eyes', 'glance'])) {
+  if (includesAny(text, ['waist', 'hips', 'curves', 'silhouette', 'figure', 'build', 'petite', 'tall', 'legs', 'thigh', 'feet', 'breast', 'chest', 'bust', 'skin', 'muscular', 'tail', 'wings', 'horns', 'fangs', 'scales', 'gills', 'claws', 'fur', 'pointed ears', 'antlers', 'eagle head', 'lion body', 'body sheen', 'satin sheen', 'mechanical joints', 'mechanical limbs', 'tiny', 'rugged'])) {
+    return { ...tag, step: 'appearance', subcategory: 'Body' };
+  }
+  if (includesAny(text, ['film noir'])) {
+    return { ...tag, step: 'style', subcategory: 'Cinematic' };
+  }
+  if (includesAny(text, ['stealth', 'stealthy', 'sneaky', 'lethal', 'tracker', 'tease'])) {
+    return { ...tag, step: 'action', subcategory: includesAny(text, ['tease']) ? 'Expression' : 'Pose' };
+  }
+  if (includesAny(text, SUBJECT_ACTION_KEYWORDS)) {
+    return { ...tag, step: 'action', subcategory: includesAny(text, ['holding ', 'reading ', 'smoking ', 'prayer', 'casting ']) ? 'Gesture' : 'Pose' };
+  }
+  if (includesAny(text, ['magic', 'dust', 'heavenly', 'hellfire', 'neon code', 'soot'])) {
+    return { ...tag, step: 'atmosphere', subcategory: includesAny(text, ['heavenly', 'hellfire']) ? 'Mood' : 'Effects' };
+  }
+  if (includesAny(text, ['expression', 'gaze', 'eye contact', 'smile', 'glance', 'charming', 'charismatic'])) {
     return { ...tag, step: 'action', subcategory: 'Expression' };
   }
-  if (includesAny(text, ['pose', 'posture', 'stance', 'body language', 'kneeling', 'reclining', 'lounging', 'twist'])) {
-    return { ...tag, step: 'action', subcategory: 'Pose' };
+  if (includesAny(text, SUBJECT_SETTING_KEYWORDS)) {
+    return {
+      ...tag,
+      step: 'setting',
+      subcategory: includesAny(text, CAMERA_KEYWORDS)
+        ? 'Camera'
+        : includesAny(text, ['city', 'street', 'nightlife'])
+          ? 'Urban'
+          : includesAny(text, ['forest', 'nature'])
+            ? 'Outdoor'
+            : 'Indoor',
+    };
   }
-  if (includesAny(text, ['dressing room', 'vanity', 'changing area', 'hotel suite', 'bedding', 'city lights', 'vip lounge', 'velvet seating', 'bubble bath', 'spa'])) {
-    return { ...tag, step: 'setting', subcategory: includesAny(text, ['city lights', 'vip lounge']) ? 'Urban' : 'Indoor' };
+  if (includesAny(text, SUBJECT_ATMOSPHERE_KEYWORDS)) {
+    return { ...tag, step: 'atmosphere', subcategory: isExplicitAtmosphere(text) ? 'Explicit' : 'Mood' };
   }
-  if (includesAny(text, ['lighting', 'light', 'glow', 'steam'])) {
-    return { ...tag, step: 'atmosphere', subcategory: 'Lighting' };
+  if (includesAny(text, SUBJECT_OBJECT_KEYWORDS)) {
+    return { ...tag, step: 'subject', subcategory: 'Object' };
   }
-  if (includesAny(text, ['romantic', 'sensual', 'chemistry', 'warmth', 'dominant vibe', 'commanding presence', 'energy', 'submissive vibe', 'comfort', 'affection', 'recovery'])) {
-    return { ...tag, step: 'atmosphere', subcategory: 'Mood' };
-  }
-  return { ...tag, subcategory: 'Theme' };
+  return tag;
 }
 
 function classifySubject(tag: PromptTag, text: string): PromptTag {
-  if (includesAny(text, ['nsfw', 'r-18', 'adult content', 'boudoir', 'pin-up', 'romantic intimacy'])) {
+  if (tag.subcategory === 'Explicit' || isExplicitTheme(text)) {
+    const minorGroup = includesAny(text, ['nsfw', 'r-18', 'adult content', 'explicit content'])
+      ? 'Rating & Content Flags'
+      : includesAny(text, ['boudoir', 'pin-up', 'glamour'])
+        ? 'Boudoir & Glamour'
+        : 'Erotic Themes';
+    const minorOrder = minorGroup === 'Rating & Content Flags' ? 10 : minorGroup === 'Boudoir & Glamour' ? 20 : 30;
     return applyTaxonomy(tag, {
-      subcategory: 'Theme',
-      majorGroup: 'Scenes & Themes',
-      minorGroup: 'Content & Themes',
-      groupOrder: 40,
-      minorOrder: 10,
+      subcategory: 'Explicit',
+      majorGroup: 'Explicit Content',
+      minorGroup,
+      groupOrder: 50,
+      minorOrder,
     });
   }
 
-  if (includesAny(text, ['dragon', 'demon', 'angel', 'elf', 'mermaid', 'succubus', 'werewolf', 'wolfman', 'monster', 'beast', 'fox', 'bird', 'cat', 'dog', 'creature'])) {
-    const minorGroup = includesAny(text, ['dragon', 'angel', 'demon', 'succubus', 'mermaid', 'elf'])
+  if (includesAny(text, CREATURE_KEYWORDS)) {
+    const minorGroup = includesAny(text, ['dragon', 'angel', 'demon', 'succubus', 'mermaid', 'elf', 'fairy'])
       ? 'Mythic & Supernatural'
-      : includesAny(text, ['werewolf', 'wolfman', 'half human', 'monster', 'beast'])
+      : includesAny(text, ['werewolf', 'wolfman', 'half human', 'monster', 'beast', 'centaur'])
         ? 'Hybrids & Monsters'
         : 'Animals & Companions';
     const minorOrder = minorGroup === 'Mythic & Supernatural' ? 10 : minorGroup === 'Hybrids & Monsters' ? 20 : 30;
@@ -94,15 +211,19 @@ function classifySubject(tag: PromptTag, text: string): PromptTag {
     });
   }
 
-  if (includesAny(text, ['weapon', 'sword', 'shield', 'rifle', 'axe', 'book', 'books', 'tools', 'badge', 'backpack', 'car', 'vehicle', 'machine', 'artifact'])) {
-    const minorGroup = includesAny(text, ['weapon', 'sword', 'shield', 'rifle', 'axe'])
+  if (tag.subcategory === 'Object' || includesAny(text, SUBJECT_OBJECT_KEYWORDS)) {
+    const minorGroup = includesAny(text, ['weapon', 'gun', 'handgun', 'pistol', 'rifle', 'sword', 'shield', 'blade', 'axe', 'spear', 'polearm', 'scythe', 'bow'])
       ? 'Weapons & Armor'
-      : includesAny(text, ['car', 'vehicle', 'machine'])
-        ? 'Vehicles & Machines'
-        : includesAny(text, ['book', 'books', 'tools'])
-          ? 'Books & Tools'
-          : 'Artifacts & Props';
-    const minorOrder = minorGroup === 'Weapons & Armor' ? 10 : minorGroup === 'Vehicles & Machines' ? 20 : minorGroup === 'Books & Tools' ? 30 : 40;
+      : includesAny(text, ['phone', 'smartphone', 'camera', 'headphone', 'headset', 'tech', 'monitor'])
+        ? 'Devices & Tech'
+        : includesAny(text, ['instrument', 'guitar', 'lute', 'microphone', 'audio'])
+          ? 'Instruments & Audio Gear'
+          : includesAny(text, ['book', 'books', 'tome', 'grimoire', 'spellbook', 'tools', 'vial', 'potion'])
+            ? 'Books & Tools'
+            : includesAny(text, ['car', 'vehicle', 'machine', 'mech', 'jetpack'])
+              ? 'Vehicles & Machines'
+              : 'Artifacts & Props';
+    const minorOrder = minorGroup === 'Weapons & Armor' ? 10 : minorGroup === 'Devices & Tech' ? 20 : minorGroup === 'Instruments & Audio Gear' ? 30 : minorGroup === 'Books & Tools' ? 40 : minorGroup === 'Vehicles & Machines' ? 50 : 60;
     return applyTaxonomy(tag, {
       subcategory: 'Object',
       majorGroup: 'Objects & Props',
@@ -112,24 +233,42 @@ function classifySubject(tag: PromptTag, text: string): PromptTag {
     });
   }
 
-  if (includesAny(text, ['arena', 'battlefield', 'cityscape', 'landscape', 'scene', 'nightlife', 'setting'])) {
+  if (includesAny(text, ['arena', 'battlefield', 'cityscape', 'landscape', 'scene', 'nightlife', 'setting', 'background'])) {
+    const minorGroup = includesAny(text, ['battlefield', 'arena'])
+      ? 'Conflict & Adventure Scenes'
+      : includesAny(text, ['cityscape', 'nightlife', 'background'])
+        ? 'Backdrop Concepts'
+        : 'Scene Concepts';
+    const minorOrder = minorGroup === 'Scene Concepts' ? 10 : minorGroup === 'Backdrop Concepts' ? 20 : 30;
     return applyTaxonomy(tag, {
       subcategory: 'Scene',
       majorGroup: 'Scenes & Themes',
-      minorGroup: 'Scene Concepts',
+      minorGroup,
       groupOrder: 40,
-      minorOrder: 20,
+      minorOrder,
     });
   }
 
-  const minorGroup = includesAny(text, ['princess', 'queen', 'king', 'knight', 'holy knight', 'noble', 'warrior'])
+  if (includesAny(text, ['theme', 'concept', 'romance', 'divine', 'mythological', 'sci-fi'])) {
+    return applyTaxonomy(tag, {
+      subcategory: 'Theme',
+      majorGroup: 'Scenes & Themes',
+      minorGroup: 'Narrative & Concepts',
+      groupOrder: 40,
+      minorOrder: 40,
+    });
+  }
+
+  const minorGroup = includesAny(text, ['princess', 'queen', 'king', 'knight', 'holy knight', 'noble', 'warrior', 'paladin', 'prince', 'valkyrie'])
     ? 'Heroes & Nobility'
-    : includesAny(text, ['business', 'person', 'maid', 'nurse', 'alchemist', 'scholar', 'archer', 'assassin'])
+    : includesAny(text, ['business', 'person', 'maid', 'nurse', 'alchemist', 'scholar', 'archer', 'assassin', 'doctor', 'performer', 'musician', 'photographer', 'police officer', 'student', 'firefighter', 'bard', 'bounty hunter', 'geisha', 'gladiator', 'healer', 'idol singer', 'corporate'])
       ? 'Professions & Roles'
-      : includesAny(text, ['necromancer', 'barbarian', 'roman armor', 'mandalorian', 'orc'])
+      : includesAny(text, ['necromancer', 'barbarian', 'roman armor', 'mandalorian', 'orc', 'witch', 'wizard', 'warlock', 'samurai', 'rogue', 'ranger', 'cleric', 'druid', 'mage', 'spellcaster', 'pirate', 'thief'])
         ? 'Fantasy Archetypes'
-        : 'General Characters';
-  const minorOrder = minorGroup === 'Heroes & Nobility' ? 10 : minorGroup === 'Professions & Roles' ? 20 : minorGroup === 'Fantasy Archetypes' ? 30 : 40;
+        : includesAny(text, ['android', 'cyborg', 'robot', 'hacker', 'mecha pilot', 'sci-fi pilot', 'modern soldier', 'cyberpunk', 'artificial intelligence', 'space marine'])
+          ? 'Tech & Sci-Fi Personas'
+          : 'General Characters';
+  const minorOrder = minorGroup === 'Heroes & Nobility' ? 10 : minorGroup === 'Professions & Roles' ? 20 : minorGroup === 'Fantasy Archetypes' ? 30 : minorGroup === 'Tech & Sci-Fi Personas' ? 40 : 50;
   return applyTaxonomy(tag, {
     subcategory: 'Character',
     majorGroup: 'People & Roles',
@@ -140,6 +279,22 @@ function classifySubject(tag: PromptTag, text: string): PromptTag {
 }
 
 function classifyAppearance(tag: PromptTag, text: string): PromptTag {
+  if (tag.subcategory === 'Explicit' || isExplicitAppearance(text) || includesAny(text, ['sexy', 'seductive'])) {
+    const minorGroup = includesAny(text, ['nude', 'naked', 'unclothed'])
+      ? 'Nudity & Exposure'
+      : includesAny(text, ['lingerie', 'thong', 'panties', 'pasties', 'intimates', 'crotchless', 'intimate apparel'])
+        ? 'Intimate Apparel'
+        : 'Erotic Anatomy';
+    const minorOrder = minorGroup === 'Nudity & Exposure' ? 10 : minorGroup === 'Intimate Apparel' ? 20 : 30;
+    return applyTaxonomy(tag, {
+      subcategory: 'Explicit',
+      majorGroup: 'Explicit Appearance',
+      minorGroup,
+      groupOrder: 50,
+      minorOrder,
+    });
+  }
+
   const subcategory = includesAny(text, ['shoe', 'heels', 'boots', 'sandals', 'footwear', 'stilettos'])
     ? 'Footwear'
     : includesAny(text, ['hair', 'bang', 'ponytail', 'braid', 'curl', 'bob cut', 'long hair', 'short hair'])
@@ -148,9 +303,9 @@ function classifyAppearance(tag: PromptTag, text: string): PromptTag {
         ? 'Eyes'
         : includesAny(text, ['face', 'lip', 'makeup', 'smile', 'gaze', 'freckles', 'blush'])
           ? 'Face'
-          : includesAny(text, ['dress', 'shirt', 'skirt', 'jacket', 'uniform', 'outfit', 'armor', 'swimsuit', 'bikini', 'corset', 'robe', 'coat', 'leotard'])
+          : includesAny(text, ['dress', 'shirt', 'skirt', 'jacket', 'uniform', 'outfit', 'armor', 'swimsuit', 'bikini', 'corset', 'robe', 'coat', 'leotard', 'kimono', 'cloak', 'hoodie', 'gown', 'apron', 'attire', 'fabric', 'loungewear', 'clothes', 'fashion', 'gear', 'top', 'plugsuit', 'costume', 'blankets'])
             ? 'Clothing'
-            : includesAny(text, ['jewelry', 'necklace', 'earring', 'bracelet', 'body chain', 'crown', 'hat', 'glasses', 'mask'])
+            : includesAny(text, ['jewelry', 'necklace', 'earring', 'bracelet', 'body chain', 'crown', 'hat', 'glasses', 'mask', 'headband', 'tiara', 'visor', 'eyewear', 'face covering', 'halo'])
               ? 'Accessories'
               : tag.subcategory ?? 'Body';
 
@@ -179,10 +334,12 @@ function classifyAppearance(tag: PromptTag, text: string): PromptTag {
       ? 'Shape & Build'
       : includesAny(text, ['legs', 'thigh', 'feet'])
         ? 'Legs & Lower Body'
+        : includesAny(text, ['tail', 'wings', 'horns', 'fangs', 'scales', 'gills', 'claws', 'fur', 'pointed ears'])
+          ? 'Mythic & Nonhuman Traits'
         : includesAny(text, ['breast', 'chest', 'bust'])
           ? 'Chest & Curves'
           : 'Skin & Surface';
-    const minorOrder = minorGroup === 'Shape & Build' ? 10 : minorGroup === 'Chest & Curves' ? 20 : minorGroup === 'Legs & Lower Body' ? 30 : 40;
+    const minorOrder = minorGroup === 'Shape & Build' ? 10 : minorGroup === 'Chest & Curves' ? 20 : minorGroup === 'Legs & Lower Body' ? 30 : minorGroup === 'Mythic & Nonhuman Traits' ? 40 : 50;
     return applyTaxonomy(tag, {
       subcategory,
       majorGroup: 'Body & Silhouette',
@@ -195,12 +352,12 @@ function classifyAppearance(tag: PromptTag, text: string): PromptTag {
   if (subcategory === 'Clothing') {
     const minorGroup = includesAny(text, ['uniform', 'maid', 'nurse', 'school', 'cheerleader'])
       ? 'Uniforms & Roleplay'
-      : includesAny(text, ['bikini', 'lingerie', 'corset', 'garter', 'intimates', 'swimsuit'])
-        ? 'Intimate & Revealing'
-        : includesAny(text, ['armor', 'robe', 'habit', 'nun', 'fantasy'])
-          ? 'Fantasy & Costume'
+      : includesAny(text, ['armor', 'plate', 'chainmail', 'mail armor', 'cloak', 'robe', 'habit', 'nun', 'fantasy', 'kimono'])
+        ? 'Fantasy & Armor'
+        : includesAny(text, ['coat', 'jacket', 'hoodie', 'cape', 'trench coat'])
+          ? 'Outerwear & Layers'
           : 'Everyday & Formal Wear';
-    const minorOrder = minorGroup === 'Uniforms & Roleplay' ? 10 : minorGroup === 'Intimate & Revealing' ? 20 : minorGroup === 'Fantasy & Costume' ? 30 : 40;
+    const minorOrder = minorGroup === 'Uniforms & Roleplay' ? 10 : minorGroup === 'Fantasy & Armor' ? 20 : minorGroup === 'Outerwear & Layers' ? 30 : 40;
     return applyTaxonomy(tag, {
       subcategory,
       majorGroup: 'Clothing & Uniforms',
@@ -222,8 +379,14 @@ function classifyAppearance(tag: PromptTag, text: string): PromptTag {
     });
   }
 
-  const minorGroup = includesAny(text, ['jewelry', 'necklace', 'earring', 'bracelet', 'body chain']) ? 'Jewelry & Chains' : includesAny(text, ['hat', 'crown', 'headband']) ? 'Headwear' : 'Wearable Details';
-  const minorOrder = minorGroup === 'Jewelry & Chains' ? 10 : minorGroup === 'Headwear' ? 20 : 30;
+  const minorGroup = includesAny(text, ['jewelry', 'necklace', 'earring', 'bracelet', 'body chain'])
+    ? 'Jewelry & Chains'
+    : includesAny(text, ['hat', 'crown', 'headband', 'tiara'])
+      ? 'Headwear'
+      : includesAny(text, ['glasses', 'mask', 'visor', 'eyewear', 'face covering'])
+        ? 'Facewear & Vision'
+        : 'Wearable Details';
+  const minorOrder = minorGroup === 'Jewelry & Chains' ? 10 : minorGroup === 'Headwear' ? 20 : minorGroup === 'Facewear & Vision' ? 30 : 40;
   return applyTaxonomy(tag, {
     subcategory: 'Accessories',
     majorGroup: 'Accessories & Finish',
@@ -234,18 +397,36 @@ function classifyAppearance(tag: PromptTag, text: string): PromptTag {
 }
 
 function classifyAction(tag: PromptTag, text: string): PromptTag {
-  const subcategory = includesAny(text, ['portrait', 'headshot', 'close-up', 'full body', 'upper body', 'profile view', 'back view', 'pov', 'shot', 'view', 'angle', 'focus'])
+  if (tag.subcategory === 'Explicit' || isExplicitAction(text) || isIntimateAction(text)) {
+    const minorGroup = includesAny(text, ['cum', 'cumshot', 'cumming'])
+      ? 'Fluids & Aftermath'
+      : includesAny(text, ['sex', 'oral', 'anal', 'bondage', 'penetration', 'vibrator', 'sex toy'])
+        ? 'Sex Acts'
+        : includesAny(text, ['kiss', 'kissing', 'embrace', 'eye contact'])
+          ? 'Intimate Contact'
+          : 'Erotic Touch';
+    const minorOrder = minorGroup === 'Sex Acts' ? 10 : minorGroup === 'Intimate Contact' ? 20 : minorGroup === 'Fluids & Aftermath' ? 30 : 40;
+    return applyTaxonomy(tag, {
+      subcategory: 'Explicit',
+      majorGroup: 'Explicit Actions',
+      minorGroup,
+      groupOrder: 50,
+      minorOrder,
+    });
+  }
+
+  const subcategory = includesAny(text, ['portrait', 'headshot', 'close-up', 'close up', 'full body', 'upper body', 'profile view', 'back view', 'pov', 'shot', 'view', 'angle', 'focus'])
     ? 'Framing'
-    : includesAny(text, ['smile', 'cry', 'laugh', 'angry', 'blush', 'teasing', 'orgasm face', 'blank eyes', 'gaze', 'expression'])
+    : includesAny(text, ['smile', 'cry', 'laugh', 'angry', 'blush', 'teasing', 'blank eyes', 'gaze', 'expression', 'rage'])
       ? 'Expression'
-      : includesAny(text, ['hand', 'touching', 'pointing', 'holding', 'crossed', 'gesture', 'grabbing', 'hands on'])
+      : includesAny(text, ['hand', 'touching', 'pointing', 'holding', 'crossed', 'gesture', 'grabbing', 'hands on', 'reading', 'smoking', 'prayer', 'casting'])
         ? 'Gesture'
         : includesAny(text, ['walking', 'running', 'jumping', 'motion', 'movement', 'sprinting', 'airborne', 'dynamic', 'flying'])
           ? 'Motion'
           : 'Pose';
 
   if (subcategory === 'Framing') {
-    const minorGroup = includesAny(text, ['portrait', 'headshot', 'close-up', 'upper body', 'full body'])
+    const minorGroup = includesAny(text, ['portrait', 'headshot', 'close-up', 'close up', 'upper body', 'full body'])
       ? 'Framing & Crop'
       : includesAny(text, ['angle', 'profile view', 'back view'])
         ? 'View Direction'
@@ -269,8 +450,10 @@ function classifyAction(tag: PromptTag, text: string): PromptTag {
           ? 'Grounded Poses'
           : includesAny(text, ['fighting', 'combat'])
             ? 'Combat Poses'
-            : 'Presenting & Intimate';
-    const minorOrder = minorGroup === 'Standing & Power' ? 10 : minorGroup === 'Seated & Reclining' ? 20 : minorGroup === 'Grounded Poses' ? 30 : minorGroup === 'Combat Poses' ? 40 : 50;
+            : includesAny(text, ['presenting', 'over shoulder', 'battle ready'])
+              ? 'Display & Presentation'
+              : 'Relaxed & Neutral';
+    const minorOrder = minorGroup === 'Standing & Power' ? 10 : minorGroup === 'Seated & Reclining' ? 20 : minorGroup === 'Grounded Poses' ? 30 : minorGroup === 'Combat Poses' ? 40 : minorGroup === 'Display & Presentation' ? 50 : 60;
     return applyTaxonomy(tag, {
       subcategory,
       majorGroup: 'Pose & Stance',
@@ -293,8 +476,14 @@ function classifyAction(tag: PromptTag, text: string): PromptTag {
   }
 
   if (subcategory === 'Gesture') {
-    const minorGroup = includesAny(text, ['hand', 'hands', 'arms', 'crossed']) ? 'Hands & Arms' : includesAny(text, ['holding', 'touching', 'grabbing']) ? 'Touch & Contact' : 'Object Interaction';
-    const minorOrder = minorGroup === 'Hands & Arms' ? 10 : minorGroup === 'Touch & Contact' ? 20 : 30;
+    const minorGroup = includesAny(text, ['hand', 'hands', 'arms', 'crossed'])
+      ? 'Hands & Arms'
+      : includesAny(text, ['holding', 'reading', 'smoking'])
+        ? 'Prop Interaction'
+        : includesAny(text, ['touching', 'grabbing'])
+          ? 'Touch & Contact'
+          : 'Ritual & Spellwork';
+    const minorOrder = minorGroup === 'Hands & Arms' ? 10 : minorGroup === 'Prop Interaction' ? 20 : minorGroup === 'Touch & Contact' ? 30 : 40;
     return applyTaxonomy(tag, {
       subcategory,
       majorGroup: 'Interaction & Expression',
@@ -304,8 +493,8 @@ function classifyAction(tag: PromptTag, text: string): PromptTag {
     });
   }
 
-  const minorGroup = includesAny(text, ['smile', 'teasing', 'flirty']) ? 'Playful & Confident' : includesAny(text, ['blank eyes', 'angry', 'cry', 'orgasm']) ? 'Intense Reactions' : 'Soft & Romantic';
-  const minorOrder = minorGroup === 'Playful & Confident' ? 10 : minorGroup === 'Soft & Romantic' ? 20 : 30;
+  const minorGroup = includesAny(text, ['smile', 'teasing', 'flirty']) ? 'Playful & Confident' : includesAny(text, ['blank eyes', 'angry', 'cry', 'rage']) ? 'Intense Reactions' : includesAny(text, ['gaze', 'soft', 'tender']) ? 'Soft & Romantic' : 'Stoic & Serious';
+  const minorOrder = minorGroup === 'Playful & Confident' ? 10 : minorGroup === 'Soft & Romantic' ? 20 : minorGroup === 'Intense Reactions' ? 30 : 40;
   return applyTaxonomy(tag, {
     subcategory: 'Expression',
     majorGroup: 'Interaction & Expression',
@@ -316,20 +505,20 @@ function classifyAction(tag: PromptTag, text: string): PromptTag {
 }
 
 function classifySetting(tag: PromptTag, text: string): PromptTag {
-  const subcategory = includesAny(text, ['shot', 'angle', 'view', 'perspective', 'pov', 'focus', 'lens', 'close-up', 'framing', 'diorama'])
+  const subcategory = includesAny(text, CAMERA_KEYWORDS)
     ? 'Camera'
-    : includesAny(text, ['city', 'metropolitan', 'shibuya', 'manhattan', 'paris', 'metro', 'underground', 'architecture'])
+    : includesAny(text, ['city', 'metropolitan', 'shibuya', 'manhattan', 'paris', 'metro', 'underground', 'architecture', 'eiffel tower'])
       ? 'Urban'
-      : includesAny(text, ['trees', 'woodland', 'nature', 'foliage', 'sand', 'waves', 'tropical', 'coastal', 'peaks', 'alpine', 'dunes', 'oasis', 'underwater', 'coral', 'flowers', 'plants', 'wildflowers', 'grass', 'spring', 'winter landscape', 'ice peaks', 'blizzard'])
+      : includesAny(text, ['trees', 'woodland', 'nature', 'foliage', 'sand', 'waves', 'tropical', 'coastal', 'peaks', 'alpine', 'dunes', 'oasis', 'underwater', 'coral', 'flowers', 'plants', 'wildflowers', 'grass', 'spring', 'winter landscape', 'ice peaks', 'blizzard', 'forest', 'garden'])
         ? 'Outdoor'
-        : includesAny(text, ['medieval', 'torii', 'sacred', 'mythical', 'atlantis', 'haunted', 'graveyard', 'palace', 'cathedral', 'holy', 'colosseum'])
-          ? 'Fantasy'
-          : includesAny(text, ['science fiction', 'futuristic technology', 'high tech equipment', 'sterile', 'medical facility', 'white halls', 'viewport looking at earth', 'galaxy', 'stars', 'nebula', 'cosmic', 'astronomical'])
+      : includesAny(text, ['medieval', 'torii', 'sacred', 'mythical', 'atlantis', 'haunted', 'graveyard', 'palace', 'cathedral', 'holy', 'colosseum'])
+        ? 'Fantasy'
+          : includesAny(text, ['science fiction', 'futuristic technology', 'high tech equipment', 'sterile', 'medical facility', 'white halls', 'viewport looking at earth', 'galaxy', 'stars', 'nebula', 'cosmic', 'astronomical', 'lab'])
             ? 'Sci-Fi'
             : tag.subcategory ?? 'Indoor';
 
   if (subcategory === 'Camera') {
-    const minorGroup = includesAny(text, ['angle', 'perspective', 'top down', 'ground level', 'low perspective', 'aerial']) ? 'Angles & Perspective' : includesAny(text, ['wide shot', 'extreme wide shot', 'close up', 'medium shot', 'cowboy shot']) ? 'Shot Scale' : 'POV & Focus';
+    const minorGroup = includesAny(text, ['angle', 'perspective', 'top down', 'ground level', 'low perspective', 'aerial', 'drone', 'tilted', 'eye level']) ? 'Angles & Perspective' : includesAny(text, ['wide shot', 'extreme wide shot', 'close up', 'close-up', 'medium shot', 'cowboy shot', 'establishing shot', 'macro']) ? 'Shot Scale' : 'POV & Focus';
     const minorOrder = minorGroup === 'Angles & Perspective' ? 10 : minorGroup === 'Shot Scale' ? 20 : 30;
     return applyTaxonomy(tag, {
       subcategory,
@@ -341,7 +530,7 @@ function classifySetting(tag: PromptTag, text: string): PromptTag {
   }
 
   if (subcategory === 'Indoor') {
-    const minorGroup = includesAny(text, ['room', 'bedroom', 'tables', 'bookshelves', 'books', 'desks']) ? 'Domestic & Lifestyle' : includesAny(text, ['reading room', 'scholarly', 'chalkboard', 'educational']) ? 'Learning & Culture' : includesAny(text, ['hotel', 'lounge', 'cozy', 'warm lighting']) ? 'Leisure & Luxury' : 'Institutional & Interior';
+    const minorGroup = includesAny(text, ['reading room', 'scholarly', 'chalkboard', 'educational', 'library', 'bookshelves']) ? 'Learning & Culture' : includesAny(text, ['room', 'bedroom', 'tables', 'books', 'desks']) ? 'Domestic & Lifestyle' : includesAny(text, ['hotel', 'lounge', 'cozy', 'warm lighting', 'vip']) ? 'Leisure & Luxury' : 'Institutional & Interior';
     const minorOrder = minorGroup === 'Domestic & Lifestyle' ? 10 : minorGroup === 'Learning & Culture' ? 20 : minorGroup === 'Leisure & Luxury' ? 30 : 40;
     return applyTaxonomy(tag, {
       subcategory,
@@ -353,7 +542,7 @@ function classifySetting(tag: PromptTag, text: string): PromptTag {
   }
 
   if (subcategory === 'Urban') {
-    const minorGroup = includesAny(text, ['shibuya', 'manhattan', 'paris']) ? 'Landmarks & Travel' : includesAny(text, ['metro', 'underground']) ? 'Transit & Infrastructure' : 'City & Nightlife';
+    const minorGroup = includesAny(text, ['shibuya', 'manhattan', 'paris', 'eiffel tower']) ? 'Landmarks & Travel' : includesAny(text, ['metro', 'underground']) ? 'Transit & Infrastructure' : 'City & Nightlife';
     const minorOrder = minorGroup === 'City & Nightlife' ? 10 : minorGroup === 'Landmarks & Travel' ? 20 : 30;
     return applyTaxonomy(tag, {
       subcategory,
@@ -401,8 +590,9 @@ function classifySetting(tag: PromptTag, text: string): PromptTag {
 
 function classifyStyle(tag: PromptTag, text: string): PromptTag {
   const subcategory = tag.subcategory
-    ?? (includesAny(text, ['style', 'studio', 'madhouse', 'tite kubo', 'kishimoto', 'akira toriyama', 'warhol', 'monet']) ? 'Reference'
-      : includesAny(text, ['vector art', 'flat design', 'line art', 'clean linework', 'graphic', 'halftone', 'screentones', 'pop art']) ? 'Graphic'
+    ?? (includesAny(text, ['manga', 'anime']) ? 'Anime'
+      : includesAny(text, ['style', 'studio', 'madhouse', 'tite kubo', 'kishimoto', 'akira toriyama', 'warhol', 'monet']) ? 'Reference'
+        : includesAny(text, ['vector art', 'flat design', 'line art', 'clean linework', 'graphic', 'halftone', 'screentones', 'pop art', 'comic book']) ? 'Graphic'
         : includesAny(text, ['old camera', 'sepia', '1920s', 'victorian', 'art deco', 'retro', 'gothic']) ? 'Retro'
           : includesAny(text, ['dramatic', 'serene', 'fantasy', 'ninja', 'shinobi', 'martial arts', 'cute', 'stylized', 'ominous grandeur', 'gothic atmosphere']) ? 'Cinematic'
             : 'Finish');
@@ -479,6 +669,18 @@ function classifyStyle(tag: PromptTag, text: string): PromptTag {
 }
 
 function classifyAtmosphere(tag: PromptTag, text: string): PromptTag {
+  if (tag.subcategory === 'Explicit' || isExplicitAtmosphere(text)) {
+    const minorGroup = includesAny(text, ['seductive', 'boudoir', 'allure', 'glamour']) ? 'Seductive & Boudoir' : includesAny(text, ['aftercare', 'post-romance', 'recovery']) ? 'Aftercare & Recovery' : 'Private & Romantic';
+    const minorOrder = minorGroup === 'Seductive & Boudoir' ? 10 : minorGroup === 'Aftercare & Recovery' ? 20 : 30;
+    return applyTaxonomy(tag, {
+      subcategory: 'Explicit',
+      majorGroup: 'Intimacy & Explicit Tone',
+      minorGroup,
+      groupOrder: 50,
+      minorOrder,
+    });
+  }
+
   const subcategory = includesAny(text, ['color', 'palette', 'pink and blue', 'sepia', 'monochrome', 'gold accents'])
     ? 'Color Palette'
     : includesAny(text, ['fog', 'smoke', 'steam', 'sparkle', 'glow', 'particles'])
@@ -580,6 +782,10 @@ function classifyByStep(tag: PromptTag, text: string): PromptTag {
 
 function normalizeTag(tag: PromptTag): PromptTag {
   const text = normalizeText(tag.text);
+  const exactTaxonomy = findExactTaxonomy(text);
+  if (exactTaxonomy) {
+    return applyTaxonomy(tag, exactTaxonomy);
+  }
   const rerouted = rerouteSubjectGeneral(tag, text);
   return classifyByStep(rerouted, text);
 }

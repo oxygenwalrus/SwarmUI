@@ -6,21 +6,21 @@ export const STEP_META: StepMeta[] = [
     step: 'subject',
     label: 'Subject',
     description: 'What are you generating?',
-    subcategories: ['Character', 'Creature', 'Object', 'Scene', 'Theme'],
+    subcategories: ['Character', 'Creature', 'Object', 'Scene', 'Theme', 'Explicit'],
     tone: 'info',
   },
   {
     step: 'appearance',
     label: 'Appearance',
     description: 'How does the subject look?',
-    subcategories: ['Hair', 'Eyes', 'Face', 'Body', 'Clothing', 'Footwear', 'Accessories'],
+    subcategories: ['Hair', 'Eyes', 'Face', 'Body', 'Clothing', 'Footwear', 'Accessories', 'Explicit'],
     tone: 'warning',
   },
   {
     step: 'action',
     label: 'Action & Pose',
     description: 'What is the subject doing?',
-    subcategories: ['Framing', 'Pose', 'Motion', 'Gesture', 'Expression'],
+    subcategories: ['Framing', 'Pose', 'Motion', 'Gesture', 'Expression', 'Explicit'],
     tone: 'success',
   },
   {
@@ -41,7 +41,7 @@ export const STEP_META: StepMeta[] = [
     step: 'atmosphere',
     label: 'Atmosphere',
     description: 'Mood, lighting, and color?',
-    subcategories: ['Lighting', 'Mood', 'Color Palette', 'Effects'],
+    subcategories: ['Lighting', 'Mood', 'Color Palette', 'Effects', 'Explicit'],
     tone: 'warning',
   },
   {

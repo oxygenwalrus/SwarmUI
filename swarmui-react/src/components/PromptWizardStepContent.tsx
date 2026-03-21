@@ -41,18 +41,21 @@ const STEP_GROUP_META: Record<BuilderStep, Record<string, { description: string;
     'Creatures & Beings': { description: 'Animals, hybrids, mythic beings, and monsters.', tone: 'warning', order: 20 },
     'Objects & Props': { description: 'Weapons, tools, artifacts, vehicles, and object subjects.', tone: 'secondary', order: 30 },
     'Scenes & Themes': { description: 'Scene-led concepts, narrative themes, and content framing.', tone: 'secondary', order: 40 },
+    'Explicit Content': { description: 'Adult tags, erotic concepts, and explicit content framing.', tone: 'danger', order: 50 },
   },
   appearance: {
     'Face & Hair': { description: 'Hair, eyes, facial styling, and head details.', tone: 'warning', order: 10 },
     'Body & Silhouette': { description: 'Build, proportions, skin, curves, and body finish.', tone: 'warning', order: 20 },
     'Clothing & Uniforms': { description: 'Outfits, uniforms, intimate wear, costumes, and armor.', tone: 'secondary', order: 30 },
     'Accessories & Finish': { description: 'Footwear, jewelry, headwear, and worn finishing details.', tone: 'secondary', order: 40 },
+    'Explicit Appearance': { description: 'Nudity, revealing details, and adult appearance tags.', tone: 'danger', order: 50 },
   },
   action: {
     'Framing & View': { description: 'Shot framing, crop, point of view, and camera direction.', tone: 'success', order: 10 },
     'Pose & Stance': { description: 'Static pose families, posture, and presenting body language.', tone: 'warning', order: 20 },
     'Motion & Energy': { description: 'Locomotion, action beats, and movement-driven language.', tone: 'secondary', order: 30 },
     'Interaction & Expression': { description: 'Gestures, contact, and emotional or reactive cues.', tone: 'secondary', order: 40 },
+    'Explicit Actions': { description: 'Adult interactions, intimacy, and explicit action tags.', tone: 'danger', order: 50 },
   },
   setting: {
     'Composition & Camera': { description: 'Camera language, shot construction, and perspective.', tone: 'primary', order: 10 },
@@ -71,6 +74,7 @@ const STEP_GROUP_META: Record<BuilderStep, Record<string, { description: string;
     'Mood & Emotion': { description: 'Emotional tone, intimacy, tension, calm, and scene feeling.', tone: 'warning', order: 20 },
     'Color & Palette': { description: 'Palette shaping, stylized color direction, and tonal bias.', tone: 'secondary', order: 30 },
     'Scene Effects': { description: 'Fog, steam, particles, glow, and environmental atmosphere.', tone: 'secondary', order: 40 },
+    'Intimacy & Explicit Tone': { description: 'Seductive, private, and adult-coded mood language.', tone: 'danger', order: 50 },
   },
   quality: {
     'Positive Quality': { description: 'Quality boosters, detail cues, and positive render guidance.', tone: 'secondary', order: 10 },
