@@ -2,6 +2,7 @@ import type { BuilderStep, PromptTag } from './types';
 
 interface TagTaxonomy {
   step?: BuilderStep;
+  text?: string;
   subcategory: string;
   majorGroup: string;
   minorGroup: string;
@@ -50,8 +51,8 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   'drone shot': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Angles & Perspective', groupOrder: 10, minorOrder: 10 },
   'comic book style': { step: 'style', subcategory: 'Graphic', majorGroup: 'Aesthetic & Genre', minorGroup: 'Comic & Pop', groupOrder: 20, minorOrder: 10 },
   'dark pact': { step: 'subject', subcategory: 'Theme', majorGroup: 'Scenes & Themes', minorGroup: 'Narrative & Concepts', groupOrder: 40, minorOrder: 40 },
-  performace: { step: 'subject', subcategory: 'Character', majorGroup: 'People & Roles', minorGroup: 'Professions & Roles', groupOrder: 10, minorOrder: 20 },
-  archery: { step: 'subject', subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Weapons & Armor', groupOrder: 30, minorOrder: 10 },
+  performace: { text: 'performance', step: 'subject', subcategory: 'Character', majorGroup: 'People & Roles', minorGroup: 'Professions & Roles', groupOrder: 10, minorOrder: 20 },
+  archery: { step: 'action', subcategory: 'Gesture', majorGroup: 'Interaction & Expression', minorGroup: 'Prop Interaction', groupOrder: 40, minorOrder: 20 },
   cape: { step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Outerwear & Layers', groupOrder: 30, minorOrder: 30 },
   chainmail: { step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Fantasy & Armor', groupOrder: 30, minorOrder: 20 },
   cool: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Calm & Serene', groupOrder: 20, minorOrder: 20 },
@@ -68,6 +69,7 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   'leather bound': { step: 'subject', subcategory: 'Object', majorGroup: 'Objects & Props', minorGroup: 'Books & Tools', groupOrder: 30, minorOrder: 40 },
   'metal suit': { step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Fantasy & Armor', groupOrder: 30, minorOrder: 20 },
   photographer: { step: 'subject', subcategory: 'Character', majorGroup: 'People & Roles', minorGroup: 'Professions & Roles', groupOrder: 10, minorOrder: 20 },
+  'relaxed intimacy': { step: 'atmosphere', subcategory: 'Explicit', majorGroup: 'Intimacy & Explicit Tone', minorGroup: 'Private & Romantic', groupOrder: 50, minorOrder: 30 },
   'rain protection': { step: 'appearance', subcategory: 'Accessories', majorGroup: 'Accessories & Finish', minorGroup: 'Wearable Details', groupOrder: 40, minorOrder: 40 },
   royal: { step: 'subject', subcategory: 'Theme', majorGroup: 'Scenes & Themes', minorGroup: 'Narrative & Concepts', groupOrder: 40, minorOrder: 40 },
   shades: { step: 'appearance', subcategory: 'Accessories', majorGroup: 'Accessories & Finish', minorGroup: 'Facewear & Vision', groupOrder: 40, minorOrder: 30 },
@@ -101,6 +103,7 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   tears: { step: 'action', subcategory: 'Expression', majorGroup: 'Interaction & Expression', minorGroup: 'Intense Reactions', groupOrder: 40, minorOrder: 30 },
   'wrapped in blankets': { step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Outerwear & Layers', groupOrder: 30, minorOrder: 30 },
   adorable: { step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Expressive Mood', groupOrder: 20, minorOrder: 40 },
+  alien: { step: 'subject', subcategory: 'Creature', majorGroup: 'Creatures & Beings', minorGroup: 'Cosmic & Undead Beings', groupOrder: 20, minorOrder: 15 },
   'angry expression': { step: 'action', subcategory: 'Expression', majorGroup: 'Interaction & Expression', minorGroup: 'Intense Reactions', groupOrder: 40, minorOrder: 30 },
   'animal ears': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Mythic & Nonhuman Traits', groupOrder: 20, minorOrder: 40 },
   anthropomorphic: { step: 'subject', subcategory: 'Creature', majorGroup: 'Creatures & Beings', minorGroup: 'Hybrids & Monsters', groupOrder: 20, minorOrder: 20 },
@@ -167,6 +170,7 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   'vanity mirror lights': { step: 'setting', subcategory: 'Indoor', majorGroup: 'Architecture & Urban', minorGroup: 'Leisure & Luxury', groupOrder: 20, minorOrder: 30 },
   'vast landscape': { step: 'setting', subcategory: 'Outdoor', majorGroup: 'Nature & Outdoor', minorGroup: 'Mountains & Desert', groupOrder: 30, minorOrder: 30 },
   'velvet seating': { step: 'setting', subcategory: 'Indoor', majorGroup: 'Architecture & Urban', minorGroup: 'Leisure & Luxury', groupOrder: 20, minorOrder: 30 },
+  zombie: { step: 'subject', subcategory: 'Creature', majorGroup: 'Creatures & Beings', minorGroup: 'Cosmic & Undead Beings', groupOrder: 20, minorOrder: 15 },
   'waist up': { step: 'setting', subcategory: 'Camera', majorGroup: 'Composition & Camera', minorGroup: 'Shot Scale', groupOrder: 10, minorOrder: 20 },
 };
 
@@ -193,6 +197,7 @@ function includesAny(text: string, keywords: string[]): boolean {
 function applyTaxonomy(tag: PromptTag, taxonomy: TagTaxonomy): PromptTag {
   return {
     ...tag,
+    text: taxonomy.text ?? tag.text,
     step: taxonomy.step ?? tag.step,
     subcategory: taxonomy.subcategory,
     majorGroup: taxonomy.majorGroup,
