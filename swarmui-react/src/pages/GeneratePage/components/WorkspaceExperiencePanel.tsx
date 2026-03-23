@@ -90,6 +90,7 @@ export function WorkspaceExperiencePanel({
                                     { value: 'quick', label: 'Quick' },
                                     { value: 'guided', label: 'Guided' },
                                     { value: 'advanced', label: 'Advanced' },
+                                    { value: 'video', label: 'Video' },
                                 ]}
                             />
                         </Box>
