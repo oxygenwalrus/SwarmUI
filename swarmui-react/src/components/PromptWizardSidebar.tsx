@@ -1,6 +1,6 @@
 import { memo, useMemo, useState } from 'react';
-import { Box, Group, ScrollArea, Stack, Text, TextInput, Textarea } from '@mantine/core';
-import { IconBookmark, IconHistory, IconLayersIntersect, IconPlus, IconRoute, IconWand } from '@tabler/icons-react';
+import { Box, Group, ScrollArea, Stack, Text, TextInput, Textarea, ThemeIcon, UnstyledButton } from '@mantine/core';
+import { IconBookmark, IconChevronLeft, IconChevronRight, IconHistory, IconLayersIntersect, IconPlus, IconRoute, IconWand } from '@tabler/icons-react';
 import { ElevatedCard, SwarmBadge, SwarmButton, SwarmSegmentedControl } from './ui';
 import type { StepSelectionSummary } from '../features/promptWizard/wizardInsights';
 import type {
@@ -15,6 +15,9 @@ import type {
 interface PromptWizardSidebarProps {
   steps: StepMeta[];
   activeStep: BuilderStep;
+  stacked?: boolean;
+  collapsed?: boolean;
+  onToggleCollapsed?: () => void;
   stepSummaries: Record<BuilderStep, StepSelectionSummary>;
   lastEditedStep: BuilderStep;
   recentSteps: BuilderStep[];
@@ -48,6 +51,9 @@ function formatStepLabel(steps: StepMeta[], step: BuilderStep): string {
 export const PromptWizardSidebar = memo(function PromptWizardSidebar({
   steps,
   activeStep,
+  stacked = false,
+  collapsed = false,
+  onToggleCollapsed,
   stepSummaries,
   lastEditedStep,
   recentSteps,
@@ -98,13 +104,90 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
     setDraftDescription('');
   };
 
+  if (collapsed && !stacked) {
+    return (
+      <Box
+        style={{
+          width: 82,
+          minWidth: 82,
+          height: '100%',
+          borderRight: '1px solid var(--mantine-color-default-border)',
+          background: 'color-mix(in srgb, var(--elevation-raised) 70%, transparent)',
+          flexShrink: 0,
+          overflow: 'hidden',
+        }}
+      >
+        <Stack gap="sm" p="sm" align="center">
+          <UnstyledButton
+            onClick={onToggleCollapsed}
+            aria-label="Expand prompt wizard sidebar"
+            style={{ borderRadius: 'var(--mantine-radius-md)' }}
+          >
+            <ThemeIcon size={36} radius="md" variant="light" color="gray">
+              <IconChevronRight size={18} />
+            </ThemeIcon>
+          </UnstyledButton>
+
+          <SwarmBadge tone="secondary" emphasis="soft" size="lg">
+            {profileName.split(/\s+/)[0] ?? 'Profile'}
+          </SwarmBadge>
+
+          <Stack gap="xs" align="center" w="100%">
+            {steps.map((step) => {
+              const summary = stepSummaries[step.step];
+              const tone = step.step === activeStep
+                ? step.tone
+                : summary.completion === 'strong'
+                  ? 'success'
+                  : summary.completion === 'started'
+                    ? step.tone
+                    : 'secondary';
+              return (
+                <UnstyledButton
+                  key={step.step}
+                  onClick={() => onJumpStep(step.step)}
+                  title={`${step.label}: ${summary.count} selected`}
+                  style={{ width: '100%' }}
+                >
+                  <Box
+                    p={6}
+                    style={{
+                      borderRadius: 'var(--mantine-radius-md)',
+                      border: '1px solid var(--mantine-color-default-border)',
+                      background: step.step === activeStep ? `color-mix(in srgb, var(--mantine-color-${step.tone}-light) 55%, transparent)` : 'transparent',
+                    }}
+                  >
+                    <Stack gap={2} align="center">
+                      <SwarmBadge tone={tone} emphasis={step.step === activeStep ? 'solid' : 'soft'}>
+                        {step.label.slice(0, 2).toUpperCase()}
+                      </SwarmBadge>
+                      <Text size="xs" c="dimmed">
+                        {summary.count}
+                      </Text>
+                    </Stack>
+                  </Box>
+                </UnstyledButton>
+              );
+            })}
+          </Stack>
+        </Stack>
+      </Box>
+    );
+  }
+
   return (
     <Box
       style={{
-        width: 332,
-        minWidth: 332,
-        borderRight: '1px solid var(--mantine-color-default-border)',
+        width: stacked ? '100%' : 356,
+        minWidth: stacked ? 0 : 356,
+        maxHeight: stacked ? 296 : 'none',
+        minHeight: 0,
+        height: stacked ? 296 : '100%',
+        borderRight: stacked ? 'none' : '1px solid var(--mantine-color-default-border)',
+        borderBottom: stacked ? '1px solid var(--mantine-color-default-border)' : 'none',
         background: 'color-mix(in srgb, var(--elevation-raised) 62%, transparent)',
+        flexShrink: 0,
+        overflow: 'hidden',
       }}
     >
       <ScrollArea offsetScrollbars scrollbarSize={8} style={{ height: '100%' }}>
@@ -113,9 +196,18 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
             <Stack gap="sm">
               <Group justify="space-between" align="center">
                 <Text fw={700} size="md">Build Flow</Text>
-                <SwarmBadge tone="secondary" emphasis="soft">{profileName}</SwarmBadge>
+                <Group gap="xs" align="center">
+                  <SwarmBadge tone="secondary" emphasis="soft">{profileName}</SwarmBadge>
+                  {!stacked && onToggleCollapsed && (
+                    <UnstyledButton onClick={onToggleCollapsed} aria-label="Collapse prompt wizard sidebar" style={{ borderRadius: 'var(--mantine-radius-sm)' }}>
+                      <ThemeIcon size={30} radius="md" variant="light" color="gray">
+                        <IconChevronLeft size={16} />
+                      </ThemeIcon>
+                    </UnstyledButton>
+                  )}
+                </Group>
               </Group>
-              <Group grow>
+              <Group grow wrap={stacked ? 'wrap' : 'nowrap'}>
                 <SwarmButton
                   tone="primary"
                   emphasis="soft"

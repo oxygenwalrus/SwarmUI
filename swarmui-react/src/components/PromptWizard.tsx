@@ -1,6 +1,6 @@
 import { memo, useCallback, useMemo, useState } from 'react';
 import { Box, Center, Group, Loader, Modal, Stack, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconChevronRight, IconSparkles } from '@tabler/icons-react';
 import { ElevatedCard, ResizeHandle, SwarmBadge, SwarmButton } from './ui';
@@ -51,20 +51,22 @@ export const PromptWizard = memo(function PromptWizard({
   const [opened, { open, close }] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchScope, setSearchScope] = useState<'global' | 'step'>('global');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [defaultTags, setDefaultTags] = useState<PromptTag[]>([]);
   const [defaultPresets, setDefaultPresets] = useState<PromptPreset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const viewport = useViewportSize();
   const widthPanel = useResizablePanel({
-    initialSize: 1160,
-    minSize: 880,
-    maxSize: 1600,
+    initialSize: 1480,
+    minSize: 980,
+    maxSize: 1880,
     direction: 'horizontal',
   });
   const heightPanel = useResizablePanel({
-    initialSize: 900,
-    minSize: 680,
-    maxSize: 1200,
+    initialSize: 1040,
+    minSize: 760,
+    maxSize: 1400,
     direction: 'vertical',
   });
 
@@ -194,6 +196,14 @@ export const PromptWizard = memo(function PromptWizard({
 
   const totalSelected = selectedTagIds.length;
   const stepMeta = getStepMeta(activeStep)!;
+  const modalWidth = useMemo(
+    () => Math.min(widthPanel.size, viewport.width > 0 ? Math.floor(viewport.width * 0.96) : widthPanel.size),
+    [viewport.width, widthPanel.size]
+  );
+  const modalHeight = useMemo(
+    () => Math.min(heightPanel.size, viewport.height > 0 ? Math.floor(viewport.height * 0.92) : heightPanel.size),
+    [heightPanel.size, viewport.height]
+  );
   const profileStepSummary = useMemo(
     () => (profile?.stepOrder ?? []).map((step) => getStepMeta(step)?.label ?? step).join(' -> '),
     [profile]
@@ -205,6 +215,8 @@ export const PromptWizard = memo(function PromptWizard({
     () => profileStepOrder.map((step) => getStepMeta(step)).filter(Boolean) as typeof STEP_META,
     [profileStepOrder]
   );
+  const isStackedLayout = modalWidth < 1180;
+  const resolvedSidebarCollapsed = !isStackedLayout && sidebarCollapsed;
   const currentStepIndex = profileStepOrder.indexOf(activeStep);
   const canGoPrev = currentStepIndex > 0;
   const canGoNext = currentStepIndex < profileStepOrder.length - 1;
@@ -282,7 +294,7 @@ export const PromptWizard = memo(function PromptWizard({
       <Modal
         opened={opened}
         onClose={close}
-        size={widthPanel.size}
+        size={modalWidth}
         padding={0}
         centered
         styles={{
@@ -292,9 +304,9 @@ export const PromptWizard = memo(function PromptWizard({
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
-            width: `min(${widthPanel.size}px, 96vw)`,
+            width: `${modalWidth}px`,
             maxWidth: '96vw',
-            height: `min(${heightPanel.size}px, 92vh)`,
+            height: `${modalHeight}px`,
             maxHeight: '92vh',
           },
           header: { display: 'none' },
@@ -322,17 +334,30 @@ export const PromptWizard = memo(function PromptWizard({
             />
 
             <PromptWizardSteps
-              steps={STEP_META}
+              steps={orderedStepMeta}
               activeStep={activeStep}
               tagCountsByStep={tagCountsByStep}
               completionByStep={completionByStep}
               onStepClick={setActiveStep}
             />
 
-            <Group gap={0} style={{ flex: 1, minHeight: 0, alignItems: 'stretch' }}>
+            <Box
+              style={{
+                display: 'flex',
+                flex: 1,
+                minHeight: 0,
+                minWidth: 0,
+                overflow: 'hidden',
+                alignItems: 'stretch',
+                flexDirection: isStackedLayout ? 'column' : 'row',
+              }}
+            >
               <PromptWizardSidebar
                 steps={orderedStepMeta}
                 activeStep={activeStep}
+                stacked={isStackedLayout}
+                collapsed={resolvedSidebarCollapsed}
+                onToggleCollapsed={() => setSidebarCollapsed((value) => !value)}
                 stepSummaries={stepSummaries}
                 lastEditedStep={lastEditedStep}
                 recentSteps={recentSteps}
@@ -357,18 +382,20 @@ export const PromptWizard = memo(function PromptWizard({
                 onSaveState={handleSaveState}
               />
 
-              <PromptWizardStepContent
-                stepMeta={stepMeta}
-                tags={stepTags}
-                allTags={allTags}
-                selectedTagIds={selectedTagIdSet}
-                manualNegativeTexts={manualNegativeTexts}
-                searchQuery={searchQuery}
-                onToggleTag={handleToggleTag}
-                onAddNegativePair={toggleManualNegativeText}
-                onFocusGroup={recordGroupFocus}
-              />
-            </Group>
+              <Box style={{ flex: 1, minWidth: 0, minHeight: 0, height: '100%', overflow: 'hidden' }}>
+                <PromptWizardStepContent
+                  stepMeta={stepMeta}
+                  tags={stepTags}
+                  allTags={allTags}
+                  selectedTagIds={selectedTagIdSet}
+                  manualNegativeTexts={manualNegativeTexts}
+                  searchQuery={searchQuery}
+                  onToggleTag={handleToggleTag}
+                  onAddNegativePair={toggleManualNegativeText}
+                  onFocusGroup={recordGroupFocus}
+                />
+              </Box>
+            </Box>
 
             {/* Next / Previous navigation */}
             <Group
@@ -413,11 +440,29 @@ export const PromptWizard = memo(function PromptWizard({
               />
             </Box>
 
+            <Box style={{ position: 'absolute', top: 0, left: 0, bottom: 12, zIndex: 8 }}>
+              <ResizeHandle
+                direction="horizontal"
+                onPointerDown={(event) => widthPanel.handlePointerDown(event, true)}
+                onNudge={(delta) => widthPanel.nudgeSize(-delta)}
+                isResizing={widthPanel.isResizing}
+              />
+            </Box>
+
             <Box style={{ position: 'absolute', left: 0, right: 12, bottom: 0, zIndex: 8 }}>
               <ResizeHandle
                 direction="vertical"
                 onPointerDown={heightPanel.handlePointerDown}
                 onNudge={heightPanel.nudgeSize}
+                isResizing={heightPanel.isResizing}
+              />
+            </Box>
+
+            <Box style={{ position: 'absolute', left: 0, right: 12, top: 0, zIndex: 8 }}>
+              <ResizeHandle
+                direction="vertical"
+                onPointerDown={(event) => heightPanel.handlePointerDown(event, true)}
+                onNudge={(delta) => heightPanel.nudgeSize(-delta)}
                 isResizing={heightPanel.isResizing}
               />
             </Box>
