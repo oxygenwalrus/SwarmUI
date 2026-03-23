@@ -59,6 +59,7 @@ import {
 import { useAllModelData } from '../../hooks/useModels';
 import { WorkspaceSidebar } from './components/WorkspaceSidebar';
 import { WorkspaceModeDeck } from './components/WorkspaceModeDeck';
+import { VideoSidebar } from './components/VideoSidebar';
 import { useWebSocketStore } from '../../stores/websocketStore';
 import { DEFAULT_FORM_VALUES } from './hooks/useParameterForm';
 import { getModelMediaCapabilities } from '../../utils/modelCapabilities';
@@ -642,7 +643,7 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
         }
     };
 
-    const usesAdvancedRail = currentMode === 'advanced';
+    const usesAdvancedRail = currentMode === 'advanced' || currentMode === 'video';
     const showSidebar = !workspaceLayout.focusMode;
     const showGalleryRail = galleryPinned && usesAdvancedRail && !workspaceLayout.focusMode && !isGalleryDrawer;
     const supportingSidebarWidth = currentMode === 'quick' ? 336 : 352;
@@ -686,7 +687,9 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
         ? 'A minimal run path with the canvas front and center.'
         : currentMode === 'guided'
             ? 'Curated controls on the left, with the stage ready for review and iteration.'
-            : 'Full studio workspace with the canvas leading and support tools around it.';
+            : currentMode === 'video'
+                ? 'Focused video generation with text-to-video and image-to-video controls.'
+                : 'Full studio workspace with the canvas leading and support tools around it.';
 
     useEffect(() => {
         if (!usesAdvancedRail || isGalleryDrawer || workspaceLayout.focusMode) {
@@ -903,7 +906,29 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
                                 maxWidth: resolvedSidebarWidth,
                             }}
                         >
-                            {usesAdvancedRail ? (
+                            {currentMode === 'video' ? (
+                                <VideoSidebar
+                                    form={paramForm.form}
+                                    onGenerate={handleGenerateWithBuilder}
+                                    models={dataLoaders.models}
+                                    loadingModels={dataLoaders.loadingModels}
+                                    loadingModel={paramForm.loadingModel}
+                                    onModelSelect={paramForm.handleModelSelect}
+                                    modelMediaCapabilities={modelMediaCapabilities}
+                                    generating={generating}
+                                    onStop={handleInterrupt}
+                                    onOpenSchedule={modals.openScheduleModal}
+                                    onOpenHistory={modals.openHistoryDrawer}
+                                    initImagePreview={
+                                        paramForm.form.values.initimage || paramForm.initImagePreview || null
+                                    }
+                                    onInitImageUpload={paramForm.handleInitImageUpload}
+                                    onClearInitImage={paramForm.clearInitImage}
+                                    activeLoras={activeLoras}
+                                    onLoraChange={paramForm.handleLoraChange}
+                                    onOpenLoraBrowser={modals.openLoraModal}
+                                />
+                            ) : usesAdvancedRail ? (
                                 <WorkspaceSidebar
                                     form={paramForm.form}
                                     onGenerate={handleGenerateWithBuilder}
@@ -1021,7 +1046,10 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
                                         Canvas Stage
                                     </Text>
                                     <SwarmBadge tone="brand" emphasis="soft">
-                                        {currentMode === 'quick' ? 'Quick' : currentMode === 'guided' ? 'Guided' : 'Advanced'}
+                                        {currentMode === 'quick' ? 'Quick'
+                                          : currentMode === 'guided' ? 'Guided'
+                                          : currentMode === 'video' ? 'Video'
+                                          : 'Advanced'}
                                     </SwarmBadge>
                                     <SwarmBadge tone={generating ? 'info' : 'success'} emphasis="soft" contrast="strong">
                                         {generating ? 'Generating' : 'Ready'}

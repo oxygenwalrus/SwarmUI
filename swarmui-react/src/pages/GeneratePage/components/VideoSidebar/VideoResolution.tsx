@@ -57,7 +57,7 @@ export function VideoResolution({ form }: VideoResolutionProps) {
                         key={preset.label}
                         size="xs"
                         tone={activePreset === preset.label ? 'primary' : 'secondary'}
-                        emphasis={activePreset === preset.label ? 'filled' : 'soft'}
+                        emphasis={activePreset === preset.label ? 'solid' : 'soft'}
                         onClick={() => applyPreset(preset)}
                     >
                         {preset.label}
@@ -66,7 +66,7 @@ export function VideoResolution({ form }: VideoResolutionProps) {
                 <SwarmButton
                     size="xs"
                     tone={activePreset === 'Custom' ? 'primary' : 'secondary'}
-                    emphasis={activePreset === 'Custom' ? 'filled' : 'soft'}
+                    emphasis={activePreset === 'Custom' ? 'solid' : 'soft'}
                 >
                     Custom
                 </SwarmButton>

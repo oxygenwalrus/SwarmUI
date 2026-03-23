@@ -3,7 +3,6 @@ import {
     Box,
     Divider,
     FileButton,
-    Group,
     Image,
     ScrollArea,
     Select,
@@ -79,7 +78,7 @@ export const VideoSidebar = memo(function VideoSidebar({
     onLoraChange,
     onOpenLoraBrowser,
 }: VideoSidebarProps) {
-    const { samplers, schedulers } = useT2IParams();
+    const { samplerOptions, schedulerOptions } = useT2IParams();
     const [workflow, setWorkflow] = useState<VideoWorkflow>(
         () => resolveInitialWorkflow(initImagePreview),
     );
@@ -115,7 +114,6 @@ export const VideoSidebar = memo(function VideoSidebar({
             <Box p="sm" style={{ borderBottom: 'var(--elevation-border)', flexShrink: 0 }}>
                 <SectionHero
                     title="Video Workspace"
-                    generating={generating}
                     rightSection={
                         <SwarmActionIcon
                             tone="secondary"
@@ -248,14 +246,16 @@ export const VideoSidebar = memo(function VideoSidebar({
                         <Stack gap="sm">
                             <Text size="xs" fw={600} c="invokeGray.2" tt="uppercase">Sampler</Text>
                             <SamplingSelect
+                                kind="sampler"
                                 label="Sampler"
-                                data={samplers}
+                                data={samplerOptions}
                                 size="sm"
                                 {...form.getInputProps('sampler')}
                             />
                             <SamplingSelect
+                                kind="scheduler"
                                 label="Schedule"
-                                data={schedulers}
+                                data={schedulerOptions}
                                 size="sm"
                                 {...form.getInputProps('scheduler')}
                             />
