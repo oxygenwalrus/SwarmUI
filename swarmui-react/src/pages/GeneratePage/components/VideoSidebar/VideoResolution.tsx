@@ -67,7 +67,6 @@ export function VideoResolution({ form }: VideoResolutionProps) {
                     size="xs"
                     tone={activePreset === 'Custom' ? 'primary' : 'secondary'}
                     emphasis={activePreset === 'Custom' ? 'filled' : 'soft'}
-                    onClick={() => {/* manual edit activates Custom automatically */}}
                 >
                     Custom
                 </SwarmButton>
