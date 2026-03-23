@@ -63,13 +63,9 @@ export function VideoResolution({ form }: VideoResolutionProps) {
                         {preset.label}
                     </SwarmButton>
                 ))}
-                <SwarmButton
-                    size="xs"
-                    tone={activePreset === 'Custom' ? 'primary' : 'secondary'}
-                    emphasis={activePreset === 'Custom' ? 'solid' : 'soft'}
-                >
-                    Custom
-                </SwarmButton>
+                {activePreset === 'Custom' && (
+                    <Text size="xs" c="dimmed">Custom</Text>
+                )}
             </Group>
             <Group gap="xs" align="center">
                 <NumberInput
