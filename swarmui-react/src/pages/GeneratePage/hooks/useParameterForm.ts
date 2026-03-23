@@ -54,12 +54,12 @@ export const DEFAULT_FORM_VALUES: GenerateParams = {
     videomodel: '',
     videoframes: 25,
     videosteps: 20,
-    videocfg: 7,
+    videocfg: 3.5,          // aligns with video model CFG expectations
     videofps: 24,
     videoformat: 'h264-mp4',
     videoboomerang: false,
     // Text2Video
-    text2videoframes: 25,
+    text2videoframes: 97,   // aligns with LTX-Video T2V recommended frame count
     text2videofps: 24,
     text2videoformat: 'h264-mp4',
     // ControlNet

@@ -100,7 +100,7 @@ export const VideoAccordion = memo(function VideoAccordion({
 
                                     <SliderWithInput
                                         label="Video CFG Scale"
-                                        value={form.values.videocfg || 7}
+                                        value={form.values.videocfg ?? 3.5}
                                         onChange={(value) => form.setFieldValue('videocfg', value)}
                                         min={1}
                                         max={20}
@@ -168,7 +168,7 @@ export const VideoAccordion = memo(function VideoAccordion({
 
                                     <SliderWithInput
                                         label="Text2Video Frames"
-                                        value={form.values.text2videoframes || 25}
+                                        value={form.values.text2videoframes ?? 97}
                                         onChange={(value) => form.setFieldValue('text2videoframes', value)}
                                         min={1}
                                         max={257}

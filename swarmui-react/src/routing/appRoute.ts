@@ -1,6 +1,6 @@
 export type AppPage = 'generate' | 'history' | 'queue' | 'workflows' | 'server' | 'roleplay';
 
-export type GenerateWorkspaceMode = 'quick' | 'guided' | 'advanced';
+export type GenerateWorkspaceMode = 'quick' | 'guided' | 'advanced' | 'video';
 
 export interface GenerateRouteState {
     mode?: GenerateWorkspaceMode;
