@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { normalizeRoute, parseHashRoute, serializeRoute } from './appRoute';
+import type { GenerateWorkspaceMode } from './appRoute';
 
 describe('appRoute', () => {
     it('serializes and parses history route state', () => {
@@ -45,5 +46,26 @@ describe('appRoute', () => {
         expect(route.history?.sortBy).toBe('Date');
         expect(route.queue?.view).toBe('all');
         expect(route.server?.tab).toBe('backends');
+    });
+
+    it('round-trips video mode through serialise → parse', () => {
+        const serialized = serializeRoute({
+            page: 'generate',
+            generate: { mode: 'video' as GenerateWorkspaceMode },
+        });
+
+        expect(serialized).toContain('mode=video');
+
+        const parsed = parseHashRoute(serialized);
+        expect(parsed.generate?.mode).toBe('video');
+    });
+
+    it('normalizes video mode without altering it', () => {
+        const route = normalizeRoute({
+            page: 'generate',
+            generate: { mode: 'video' as GenerateWorkspaceMode },
+        });
+
+        expect(route.generate?.mode).toBe('video');
     });
 });
