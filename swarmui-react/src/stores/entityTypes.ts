@@ -26,7 +26,7 @@ export interface JobProvenance {
     source: 'generate' | 'history' | 'workflow';
     recipeId?: string;
     recipeName?: string;
-    workspaceMode?: 'quick' | 'guided' | 'advanced';
+    workspaceMode?: 'quick' | 'guided' | 'advanced' | 'video';
     historyImagePath?: string;
     workflowMode?: 'wizard' | 'comfy';
 }

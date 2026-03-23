@@ -964,7 +964,7 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
                                 />
                             ) : (
                                 <WorkspaceModeDeck
-                                    mode={currentMode}
+                                    mode={currentMode as Extract<GenerateWorkspaceMode, 'quick' | 'guided'>}
                                     form={paramForm.form}
                                     onGenerate={handleGenerateWithBuilder}
                                     backends={dataLoaders.backends}
