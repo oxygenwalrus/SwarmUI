@@ -400,18 +400,18 @@ export const PromptWizard = memo(function PromptWizard({
             {/* Next / Previous navigation */}
             <Group
               justify="space-between"
-              px="md"
-              py="xs"
+              px="sm"
+              py={6}
               style={{
                 borderTop: '1px solid var(--mantine-color-default-border)',
                 flexShrink: 0,
               }}
             >
-              <SwarmButton tone="secondary" emphasis="ghost" onClick={goToPrev} disabled={!canGoPrev}>
+              <SwarmButton tone="secondary" emphasis="ghost" size="compact-sm" onClick={goToPrev} disabled={!canGoPrev}>
                 Previous
               </SwarmButton>
-              <Text size="sm" c="dimmed">{stepMeta.label} ({currentStepIndex + 1}/{profileStepOrder.length})</Text>
-              <SwarmButton tone="secondary" emphasis="ghost" onClick={goToNext} disabled={!canGoNext}>
+              <Text size="xs" c="dimmed">{stepMeta.label} ({currentStepIndex + 1}/{profileStepOrder.length})</Text>
+              <SwarmButton tone="secondary" emphasis="ghost" size="compact-sm" onClick={goToNext} disabled={!canGoNext}>
                 Next
               </SwarmButton>
             </Group>

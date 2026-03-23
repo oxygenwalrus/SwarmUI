@@ -20,7 +20,7 @@ export const PromptWizardSteps = memo(function PromptWizardSteps({
 }: PromptWizardStepsProps) {
   return (
     <ScrollArea offsetScrollbars>
-      <Group gap="sm" wrap="nowrap" px="lg" py="md">
+      <Group gap="xs" wrap="nowrap" px="lg" py="xs">
         {steps.map((meta, index) => {
           const isActive = meta.step === activeStep;
           const count = tagCountsByStep[meta.step] ?? 0;
@@ -29,17 +29,17 @@ export const PromptWizardSteps = memo(function PromptWizardSteps({
           return (
             <UnstyledButton key={meta.step} onClick={() => onStepClick(meta.step)}>
               <Group
-                gap={6}
+                gap={5}
                 wrap="nowrap"
                 style={{
-                  padding: '9px 14px',
+                  padding: '6px 10px',
                   borderRadius: 'var(--mantine-radius-md)',
                   background: isActive ? `color-mix(in srgb, var(--mantine-color-${meta.tone}-light) 75%, var(--elevation-raised))` : undefined,
                   border: isActive ? `1px solid color-mix(in srgb, var(--mantine-color-${meta.tone}-filled) 28%, var(--theme-gray-5))` : '1px solid transparent',
                 }}
               >
-                <Text size="sm" c={isActive ? `${meta.tone}.6` : 'dimmed'} fw={700}>{index + 1}</Text>
-                <Text size="md" fw={isActive ? 600 : 500}>{meta.label}</Text>
+                <Text size="xs" c={isActive ? `${meta.tone}.6` : 'dimmed'} fw={700}>{index + 1}</Text>
+                <Text size="sm" fw={isActive ? 600 : 500}>{meta.label}</Text>
                 <SwarmBadge tone={completionTone} emphasis="soft" size="sm">{completion}</SwarmBadge>
                 {count > 0 && (
                   <SwarmBadge tone={isActive ? meta.tone : 'primary'} emphasis="solid" size="sm">{count}</SwarmBadge>

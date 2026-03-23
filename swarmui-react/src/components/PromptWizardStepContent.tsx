@@ -1,5 +1,5 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { Accordion, Box, Group, ScrollArea, Stack, Text } from '@mantine/core';
+import { Accordion, Box, Group, Select, Stack, Text } from '@mantine/core';
 import { SwarmBadge, ElevatedCard } from './ui';
 import { PromptWizardTagChip } from './PromptWizardTagChip';
 import { buildNegativePairCandidates, buildRecommendedGroups, buildStepGuidance } from '../features/promptWizard/wizardInsights';
@@ -53,6 +53,12 @@ const WORD_GROUP_STOP_WORDS = new Set([
   'render', 'rendering', 'group', 'subject', 'subjects', 'look', 'looks', 'color', 'colors', 'effect', 'effects',
   'body', 'face', 'hair', 'eyes', 'clothes', 'clothing', 'art', 'design', 'background', 'atmosphere',
 ]);
+
+const SEARCH_MODE_OPTIONS: { value: SearchMode; label: string }[] = [
+  { value: 'broad', label: 'Broad match' },
+  { value: 'prefix', label: 'Starts with' },
+  { value: 'exact', label: 'Exact phrase' },
+];
 
 function toTitleCase(value: string): string {
   return value
@@ -214,7 +220,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
   const [activeMajorGroup, setActiveMajorGroup] = useState<string | null>(null);
   const [selectionFilter, setSelectionFilter] = useState<SelectionFilter>('all');
   const [searchMode, setSearchMode] = useState<SearchMode>('broad');
-  const [openPanels, setOpenPanels] = useState<string[]>(['guided-composition']);
+  const [openPanels, setOpenPanels] = useState<string[]>([]);
   const [activeWordBuckets, setActiveWordBuckets] = useState<Record<string, string | null>>({});
   const initializedPanelsRef = useRef(false);
 
@@ -383,6 +389,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                 name: 'Chosen Tags',
                 order: 0,
                 tags: selectedTags.sort((left, right) => left.text.localeCompare(right.text)),
+                wordBuckets: [],
               },
             ],
           });
@@ -443,6 +450,34 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
       .map(([name, meta]) => ({ name, count: meta.count, tone: meta.tone, order: meta.order }))
       .sort((left, right) => left.order - right.order || left.name.localeCompare(right.name));
   }, [sections]);
+  const totalMajorGroupCount = useMemo(
+    () => majorGroupTabs.reduce((total, group) => total + group.count, 0),
+    [majorGroupTabs]
+  );
+  const selectionFilterOptions = useMemo(
+    () => ([
+      { value: 'all', label: `All tags (${selectionCounts.all})` },
+      { value: 'selected', label: `Selected only (${selectionCounts.selected})` },
+      { value: 'unselected', label: `Available only (${selectionCounts.unselected})` },
+    ]),
+    [selectionCounts]
+  );
+  const subcategoryFilterOptions = useMemo(
+    () => [
+      { value: '__all__', label: `All section groups (${selectionCounts.all})` },
+      ...sortedSubcategories
+        .filter((subcat) => (subcatCounts[subcat] ?? 0) > 0)
+        .map((subcat) => ({ value: subcat, label: `${subcat} (${subcatCounts[subcat] ?? 0})` })),
+    ],
+    [selectionCounts.all, sortedSubcategories, subcatCounts]
+  );
+  const majorGroupFilterOptions = useMemo(
+    () => [
+      { value: '__all__', label: `All major groups (${totalMajorGroupCount})` },
+      ...majorGroupTabs.map((group) => ({ value: group.name, label: `${group.name} (${group.count})` })),
+    ],
+    [majorGroupTabs, totalMajorGroupCount]
+  );
 
   const resolvedActiveMajorGroup = activeMajorGroup && majorGroupTabs.some((group) => group.name === activeMajorGroup)
     ? activeMajorGroup
@@ -465,7 +500,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
     setOpenPanels((current) => {
       if (!initializedPanelsRef.current) {
         initializedPanelsRef.current = true;
-        return Array.from(new Set(['guided-composition', ...nextSectionValues]));
+        return Array.from(new Set(nextSectionValues));
       }
       const merged = [...current];
       for (const value of nextSectionValues) {
@@ -489,140 +524,90 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
       }}
     >
       <Box
-        px="lg"
-        py="md"
+        px="md"
+        py="xs"
         style={{
           borderBottom: '1px solid var(--mantine-color-default-border)',
           background: `linear-gradient(180deg, color-mix(in srgb, var(--mantine-color-${stepMeta.tone}-light) 55%, transparent), transparent)`,
           flexShrink: 0,
         }}
       >
-        <Stack gap="sm">
-          <Group justify="space-between" align="center">
-            <Stack gap={4}>
-              <Text size="sm" tt="uppercase" fw={700} c={`${stepMeta.tone}.6`}>
+        <Stack gap={6}>
+          <Group justify="space-between" align="flex-start" gap="xs">
+            <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+              <Text size="xs" tt="uppercase" fw={700} c={`${stepMeta.tone}.6`}>
                 {stepMeta.label}
               </Text>
-              <Text size="md" c="dimmed">
+              <Text size="sm" c="dimmed">
                 {query ? 'Search results stay grouped so matching tags are easier to scan.' : stepMeta.description}
               </Text>
             </Stack>
-            <SwarmBadge tone={stepMeta.tone} emphasis="soft" size="lg">
-              {selectionCounts.all} visible
-            </SwarmBadge>
-          </Group>
-
-          <Group gap="xs">
-            {(['all', 'selected', 'unselected'] as SelectionFilter[]).map((filterName) => {
-              const isActive = selectionFilter === filterName;
-              const count = selectionCounts[filterName];
-              const label = filterName === 'all' ? 'All' : filterName === 'selected' ? 'Selected' : 'Available';
-              return (
-                <SwarmBadge
-                  key={filterName}
-                  tone={isActive ? stepMeta.tone : 'secondary'}
-                  emphasis={isActive ? 'solid' : 'soft'}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => setSelectionFilter(filterName)}
-                >
-                  {label} ({count})
+            <Group gap={6} wrap="wrap" justify="flex-end">
+              <SwarmBadge tone={stepMeta.tone} emphasis="soft">
+                {selectionCounts.all} visible
+              </SwarmBadge>
+              {selectionCounts.selected > 0 && (
+                <SwarmBadge tone="secondary" emphasis="soft">
+                  {selectionCounts.selected} selected
                 </SwarmBadge>
-              );
-            })}
+              )}
+            </Group>
           </Group>
 
-          {query && (
-            <Group gap="xs">
-              {([
-                { value: 'broad', label: 'Broad match', hint: 'Match all typed terms anywhere' },
-                { value: 'prefix', label: 'Starts with', hint: 'Match the start of words' },
-                { value: 'exact', label: 'Exact phrase', hint: 'Only exact tag, alias, or group names' },
-              ] as { value: SearchMode; label: string; hint: string }[]).map((mode) => {
-                const isActive = searchMode === mode.value;
-                return (
-                  <SwarmBadge
-                    key={mode.value}
-                    tone={isActive ? stepMeta.tone : 'secondary'}
-                    emphasis={isActive ? 'solid' : 'soft'}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => setSearchMode(mode.value)}
-                    title={mode.hint}
-                  >
-                    {mode.label}
-                  </SwarmBadge>
-                );
-              })}
-            </Group>
-          )}
+          <Group gap="xs" wrap="wrap" align="flex-end">
+            <Select
+              aria-label="Show tags"
+              value={selectionFilter}
+              onChange={(value) => value && setSelectionFilter(value as SelectionFilter)}
+              data={selectionFilterOptions}
+              size="xs"
+              style={{ flex: '0 0 180px' }}
+            />
+            {query && (
+              <Select
+                aria-label="Search match mode"
+                value={searchMode}
+                onChange={(value) => value && setSearchMode(value as SearchMode)}
+                data={SEARCH_MODE_OPTIONS}
+                size="xs"
+                style={{ flex: '0 0 168px' }}
+              />
+            )}
+            <Select
+              aria-label="Filter by section group"
+              value={resolvedActiveSubcategory ?? '__all__'}
+              onChange={(value) => {
+                if (!value || value === '__all__') {
+                  setActiveSubcategory(null);
+                  return;
+                }
+                setActiveSubcategory(value);
+                onFocusGroup(`${stepMeta.label}: ${value}`);
+              }}
+              data={subcategoryFilterOptions}
+              size="xs"
+              style={{ flex: '1 1 220px', minWidth: 220 }}
+            />
+            {majorGroupTabs.length > 0 && (
+              <Select
+                aria-label="Filter by major group"
+                value={resolvedActiveMajorGroup ?? '__all__'}
+                onChange={(value) => {
+                  if (!value || value === '__all__') {
+                    setActiveMajorGroup(null);
+                    return;
+                  }
+                  setActiveMajorGroup(value);
+                  onFocusGroup(`${stepMeta.label}: ${value}`);
+                }}
+                data={majorGroupFilterOptions}
+                size="xs"
+                style={{ flex: '1 1 240px', minWidth: 220 }}
+              />
+            )}
+          </Group>
         </Stack>
       </Box>
-
-      <Box px="lg" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-default-border)', flexShrink: 0 }}>
-        <ScrollArea offsetScrollbars>
-          <Group gap="xs" wrap="nowrap">
-            <SwarmBadge
-              tone={resolvedActiveSubcategory === null ? stepMeta.tone : 'secondary'}
-              emphasis={resolvedActiveSubcategory === null ? 'solid' : 'soft'}
-              style={{ cursor: 'pointer' }}
-              onClick={() => setActiveSubcategory(null)}
-            >
-              All Groups ({selectionCounts.all})
-            </SwarmBadge>
-            {sortedSubcategories.map((subcat) => {
-              const isActive = subcat === resolvedActiveSubcategory;
-              const count = subcatCounts[subcat] ?? 0;
-              if (count === 0) {
-                return null;
-              }
-              return (
-                <SwarmBadge
-                  key={subcat}
-                  tone={isActive ? stepMeta.tone : 'secondary'}
-                  emphasis={isActive ? 'solid' : 'soft'}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setActiveSubcategory(subcat);
-                    onFocusGroup(`${stepMeta.label}: ${subcat}`);
-                  }}
-                >
-                  {subcat} ({count})
-                </SwarmBadge>
-              );
-            })}
-          </Group>
-        </ScrollArea>
-      </Box>
-
-      {majorGroupTabs.length > 0 && (
-        <Box px="lg" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-default-border)', flexShrink: 0 }}>
-          <ScrollArea offsetScrollbars>
-            <Group gap="xs" wrap="nowrap">
-              <SwarmBadge
-                tone={resolvedActiveMajorGroup === null ? stepMeta.tone : 'secondary'}
-                emphasis={resolvedActiveMajorGroup === null ? 'solid' : 'soft'}
-                style={{ cursor: 'pointer' }}
-                onClick={() => setActiveMajorGroup(null)}
-              >
-                All Major Groups ({majorGroupTabs.reduce((total, group) => total + group.count, 0)})
-              </SwarmBadge>
-              {majorGroupTabs.map((group) => (
-                <SwarmBadge
-                  key={group.name}
-                  tone={resolvedActiveMajorGroup === group.name ? group.tone : 'secondary'}
-                  emphasis={resolvedActiveMajorGroup === group.name ? 'solid' : 'soft'}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setActiveMajorGroup(group.name);
-                    onFocusGroup(`${stepMeta.label}: ${group.name}`);
-                  }}
-                >
-                  {group.name} ({group.count})
-                </SwarmBadge>
-              ))}
-            </Group>
-          </ScrollArea>
-        </Box>
-      )}
 
       <Box
         style={{
@@ -635,27 +620,28 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
           overscrollBehavior: 'contain',
         }}
       >
-        <Box p="lg">
-          <Stack gap="lg">
+        <Box p="md">
+          <Stack gap="md">
             {(guidanceSets.length > 0 || recommendedGroups.length > 0 || negativePairCandidates.length > 0) && (
               <Accordion
                 multiple
                 value={openPanels}
                 onChange={setOpenPanels}
                 variant="separated"
+                styles={{ control: { padding: '8px 12px' } }}
               >
                 <Accordion.Item value="guided-composition">
                   <Accordion.Control>
                     <Group justify="space-between" align="center" wrap="nowrap" style={{ width: '100%' }}>
-                      <Text fw={700} size="lg">Guided Composition</Text>
+                      <Text fw={700} size="md">Guided Composition</Text>
                       <SwarmBadge tone={stepMeta.tone} emphasis="soft">
                         {stepMeta.label}
                       </SwarmBadge>
                     </Group>
                   </Accordion.Control>
                   <Accordion.Panel>
-                    <ElevatedCard elevation="floor" withBorder>
-                      <Stack gap="md">
+                    <ElevatedCard elevation="floor" withBorder style={{ padding: '12px 14px' }}>
+                      <Stack gap="sm">
                         {recommendedGroups.length > 0 && (
                           <Stack gap="xs">
                             <Text fw={600} size="sm">Recommended next groups</Text>
@@ -697,11 +683,11 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                           </Stack>
                         )}
 
-                        <Stack gap="sm">
+                        <Stack gap="xs">
                           {guidanceSets.map((set) => (
                             <Box
                               key={set.title}
-                              p="sm"
+                              p="xs"
                               style={{
                                 borderRadius: 'var(--mantine-radius-md)',
                                 border: '1px solid var(--mantine-color-default-border)',
@@ -710,8 +696,8 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                             >
                               <Stack gap="xs">
                                 <Text fw={600} size="sm">{set.title}</Text>
-                                <Text size="sm" c="dimmed">{set.description}</Text>
-                                <Group gap="sm">
+                                <Text size="xs" c="dimmed">{set.description}</Text>
+                                <Group gap="xs">
                                   {set.tags.map((tag) => (
                                     <PromptWizardTagChip
                                       key={`guided-${set.title}-${tag.id}`}
@@ -747,16 +733,17 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                 value={openPanels}
                 onChange={setOpenPanels}
                 variant="separated"
+                styles={{ control: { padding: '8px 12px' } }}
               >
                 {filteredSections.map((section) => (
                   <Accordion.Item key={section.name} value={`section:${section.name}`}>
                     <Accordion.Control>
-                      <Group justify="space-between" align="center" wrap="wrap" gap="sm" style={{ width: '100%' }}>
+                      <Group justify="space-between" align="center" wrap="wrap" gap="xs" style={{ width: '100%' }}>
                         <Group gap="xs" align="center">
-                          <SwarmBadge tone={stepMeta.tone} emphasis="soft" size="lg">
+                          <SwarmBadge tone={stepMeta.tone} emphasis="soft">
                             {section.name}
                           </SwarmBadge>
-                          <Text size="md" c="dimmed">
+                          <Text size="sm" c="dimmed">
                             {section.groups.reduce((total, group) => total + group.count, 0)} tag{section.groups.reduce((total, group) => total + group.count, 0) === 1 ? '' : 's'}
                           </Text>
                         </Group>
@@ -781,7 +768,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                         elevation="floor"
                         withBorder
                         style={{
-                          padding: '18px 20px',
+                          padding: '14px 16px',
                           borderColor: `color-mix(in srgb, var(--mantine-color-${stepMeta.tone}-filled) 18%, var(--mantine-color-default-border))`,
                         }}
                       >
@@ -789,7 +776,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                           {section.groups.map((group) => (
                             <Box
                               key={`${section.name}-${group.name}`}
-                              p="md"
+                              p="sm"
                               style={{
                                 borderRadius: 'var(--mantine-radius-md)',
                                 background: `color-mix(in srgb, var(--mantine-color-${group.tone}-light) 50%, transparent)`,
@@ -799,14 +786,14 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                               <Stack gap="sm">
                                 <Group justify="space-between" align="flex-start" gap="sm" wrap="wrap">
                                   <Group gap="xs" align="center">
-                                    <SwarmBadge tone={group.tone} emphasis="soft" size="lg">
+                                    <SwarmBadge tone={group.tone} emphasis="soft">
                                       {group.name}
                                     </SwarmBadge>
-                                    <Text size="md" c="dimmed">
+                                    <Text size="sm" c="dimmed">
                                       {group.count}
                                     </Text>
                                   </Group>
-                                  <Text size="sm" c="dimmed" style={{ flex: '1 1 280px', maxWidth: 420 }}>
+                                  <Text size="xs" c="dimmed" style={{ flex: '1 1 280px', maxWidth: 420 }}>
                                     {group.description}
                                   </Text>
                                 </Group>
@@ -823,7 +810,7 @@ export const PromptWizardStepContent = memo(function PromptWizardStepContent({
                                       return (
                                         <Box
                                           key={`${group.name}-${minorGroup.name}`}
-                                          p="sm"
+                                          p="xs"
                                           style={{
                                             borderRadius: 'var(--mantine-radius-sm)',
                                             background: 'color-mix(in srgb, var(--elevation-paper) 86%, transparent)',

@@ -1,7 +1,7 @@
 import { memo } from 'react';
-import { Box, Group, SimpleGrid, Stack, Text, Textarea } from '@mantine/core';
+import { Box, Group, Stack, Text, Textarea } from '@mantine/core';
 import { IconAlertTriangle, IconPlus, IconSparkles, IconTrash } from '@tabler/icons-react';
-import { StatTile, SwarmBadge, SwarmButton } from './ui';
+import { SwarmBadge, SwarmButton } from './ui';
 import type { PromptHealthIssue } from '../features/promptWizard/types';
 
 interface PromptWizardPreviewProps {
@@ -35,8 +35,8 @@ export const PromptWizardPreview = memo(function PromptWizardPreview({
 }: PromptWizardPreviewProps) {
   return (
     <Box
-      px="lg"
-      py="md"
+      px="md"
+      py="xs"
       style={{
         borderTop: '1px solid var(--mantine-color-default-border)',
         background: 'color-mix(in srgb, var(--elevation-table) 92%, transparent)',
@@ -44,17 +44,25 @@ export const PromptWizardPreview = memo(function PromptWizardPreview({
         flexShrink: 0,
       }}
     >
-      <Stack gap="sm">
-        <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="sm">
-          <StatTile label="Positive Tags" value={positiveCount} tone="neutral" />
-          <StatTile label="Negative Tags" value={negativeCount} tone={negativeCount > 0 ? 'warning' : 'neutral'} />
-          <StatTile label="Explicit Tags" value={explicitCount} tone={explicitCount > 0 ? 'error' : 'neutral'} />
-          <StatTile label="Profile" value={profileName} hint={profileStepSummary} icon={<IconSparkles size={12} />} tone="brand" />
-        </SimpleGrid>
+      <Stack gap="xs">
+        <Group gap="xs" wrap="wrap">
+          <SwarmBadge tone="primary" emphasis="soft">Positive {positiveCount}</SwarmBadge>
+          <SwarmBadge tone={negativeCount > 0 ? 'warning' : 'secondary'} emphasis="soft">Negative {negativeCount}</SwarmBadge>
+          <SwarmBadge tone={explicitCount > 0 ? 'danger' : 'secondary'} emphasis="soft">Explicit {explicitCount}</SwarmBadge>
+          <SwarmBadge tone="secondary" emphasis="soft">
+            <Group gap={4} wrap="nowrap">
+              <IconSparkles size={11} />
+              <span>{profileName}</span>
+            </Group>
+          </SwarmBadge>
+          <Text size="xs" c="dimmed">
+            {profileStepSummary}
+          </Text>
+        </Group>
 
         {healthIssues.length > 0 && (
           <Stack gap="xs">
-            <Text fw={600} size="sm">Prompt Health</Text>
+            <Text fw={600} size="xs">Prompt Health</Text>
             <Group gap="xs">
               {healthIssues.map((issue) => (
                 <SwarmBadge key={issue.id} tone={issue.tone} emphasis="soft" title={issue.detail}>
@@ -86,10 +94,10 @@ export const PromptWizardPreview = memo(function PromptWizardPreview({
           value={positivePreview}
           readOnly
           autosize
-          minRows={2}
-          maxRows={4}
+          minRows={1}
+          maxRows={2}
           placeholder="Select tags to preview the assembled prompt..."
-          styles={{ input: { fontFamily: 'monospace', fontSize: 'var(--mantine-font-size-md)' } }}
+          styles={{ input: { fontFamily: 'monospace', fontSize: 'var(--mantine-font-size-sm)' } }}
         />
 
         {negativePreview && (
@@ -100,7 +108,7 @@ export const PromptWizardPreview = memo(function PromptWizardPreview({
             minRows={1}
             maxRows={2}
             placeholder="No negative tags selected"
-            styles={{ input: { fontFamily: 'monospace', fontSize: 'var(--mantine-font-size-md)', color: 'var(--mantine-color-red-text)' } }}
+            styles={{ input: { fontFamily: 'monospace', fontSize: 'var(--mantine-font-size-sm)', color: 'var(--mantine-color-red-text)' } }}
           />
         )}
 

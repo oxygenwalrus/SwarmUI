@@ -26,34 +26,34 @@ export const PromptWizardHeader = memo(function PromptWizardHeader({
   onClose,
 }: PromptWizardHeaderProps) {
   return (
-    <Stack gap="lg" px="xl" py="lg" style={{ borderBottom: '1px solid var(--mantine-color-default-border)', background: 'linear-gradient(180deg, color-mix(in srgb, var(--elevation-raised) 82%, transparent), transparent)' }}>
-      <Group justify="space-between" align="flex-start">
-        <Group align="flex-start" gap="md">
-          <ThemeIcon size={48} radius="md" variant="light" color="gray" style={{ backgroundColor: 'var(--elevation-paper)' }}>
-            <IconSparkles size={22} />
+    <Stack gap="sm" px="lg" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-default-border)', background: 'linear-gradient(180deg, color-mix(in srgb, var(--elevation-raised) 82%, transparent), transparent)' }}>
+      <Group justify="space-between" align="flex-start" gap="md" wrap="wrap">
+        <Group align="flex-start" gap="sm" wrap="nowrap">
+          <ThemeIcon size={40} radius="md" variant="light" color="gray" style={{ backgroundColor: 'var(--elevation-paper)' }}>
+            <IconSparkles size={18} />
           </ThemeIcon>
-          <Stack gap={4}>
+          <Stack gap={2}>
             <Group gap="xs">
-              <Text fw={700} size="xl">Prompt Wizard</Text>
-              <SwarmBadge tone={totalSelected > 0 ? 'primary' : 'secondary'} emphasis="soft" size="lg">
+              <Text fw={700} size="lg">Prompt Wizard</Text>
+              <SwarmBadge tone={totalSelected > 0 ? 'primary' : 'secondary'} emphasis="soft">
                 {totalSelected > 0 ? `${totalSelected} tags` : 'Ready'}
               </SwarmBadge>
             </Group>
-            <Text size="md" c="dimmed">Build prompts step by step with model-appropriate tag ordering.</Text>
+            <Text size="sm" c="dimmed">Build prompts step by step with model-appropriate tag ordering.</Text>
           </Stack>
         </Group>
         <SwarmActionIcon tone="secondary" emphasis="ghost" onClick={onClose} label="Close prompt wizard">
           <IconX size={18} />
         </SwarmActionIcon>
       </Group>
-      <Group align="stretch" gap="md">
+      <Group align="stretch" gap="xs" wrap="wrap">
         <TextInput
           placeholder={searchScope === 'global' ? 'Search tags across all steps...' : 'Search only in the current step...'}
           leftSection={<IconSearch size={16} />}
           value={searchQuery}
           onChange={(event) => onSearchChange(event.currentTarget.value)}
-          size="md"
-          style={{ flex: 1 }}
+          size="sm"
+          style={{ flex: '1 1 360px', minWidth: 280 }}
         />
         <SwarmSegmentedControl
           value={searchScope}
@@ -62,14 +62,14 @@ export const PromptWizardHeader = memo(function PromptWizardHeader({
             { label: 'Global', value: 'global' },
             { label: 'This Step', value: 'step' },
           ]}
-          style={{ minWidth: 180 }}
+          style={{ flex: '0 0 176px' }}
         />
         <Select
           data={PROFILES.map((p) => ({ value: p.id, label: p.name }))}
           value={activeProfileId}
           onChange={(value) => value && onProfileChange(value)}
-          size="md"
-          style={{ width: 240 }}
+          size="sm"
+          style={{ flex: '0 0 240px', minWidth: 220 }}
         />
       </Group>
     </Stack>
