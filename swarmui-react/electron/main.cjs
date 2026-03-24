@@ -276,13 +276,13 @@ function startSwarmUI() {
       const isWindows = process.platform === 'win32';
 
       if (isWindows) {
-        swarmUIProcess = spawn('cmd.exe', ['/c', SWARMUI_EXECUTABLE], {
+        swarmUIProcess = spawn('cmd.exe', ['/c', SWARMUI_EXECUTABLE, '--launch_mode', 'none'], {
           cwd: SWARMUI_DIR,
           stdio: 'pipe',
           windowsHide: true,
         });
       } else {
-        swarmUIProcess = spawn('bash', [SWARMUI_EXECUTABLE], {
+        swarmUIProcess = spawn('bash', [SWARMUI_EXECUTABLE, '--launch_mode', 'none'], {
           cwd: SWARMUI_DIR,
           stdio: 'pipe',
         });

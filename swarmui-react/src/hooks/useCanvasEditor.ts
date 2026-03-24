@@ -1,5 +1,13 @@
-import { useState, useCallback, useRef } from 'react';
-import { useCanvasEditorStore } from '../stores/canvasEditorStore';
+import {
+    useState,
+    useCallback,
+    useRef,
+    type MouseEvent,
+    type RefObject,
+    type TouchEvent,
+    type WheelEvent,
+} from 'react';
+import { useCanvasEditorStore, type CanvasImageLayer, type CanvasSelection } from '../stores/canvasEditorStore';
 import { usePromptBuilderStore } from '../stores/promptBuilderStore';
 import {
     normalizeRegionFromPixels,
@@ -19,36 +27,69 @@ export interface HistoryEntry {
 }
 
 export interface UseCanvasEditorReturn {
-    canvasRef: React.RefObject<HTMLCanvasElement | null>;
-    maskCanvasRef: React.RefObject<HTMLCanvasElement | null>;
-    containerRef: React.RefObject<HTMLDivElement | null>;
+    canvasRef: RefObject<HTMLCanvasElement | null>;
+    maskCanvasRef: RefObject<HTMLCanvasElement | null>;
+    containerRef: RefObject<HTMLDivElement | null>;
     isDrawing: boolean;
     lastPoint: Point | null;
     history: HistoryEntry[];
     historyIndex: number;
     canUndo: boolean;
     canRedo: boolean;
-    startDrawing: (e: React.MouseEvent | React.TouchEvent) => void;
-    draw: (e: React.MouseEvent | React.TouchEvent) => void;
+    startDrawing: (e: MouseEvent | TouchEvent) => void;
+    draw: (e: MouseEvent | TouchEvent) => void;
     stopDrawing: () => void;
-    getCanvasPoint: (e: React.MouseEvent | React.TouchEvent) => Point;
+    getCanvasPoint: (e: MouseEvent | TouchEvent) => Point;
     clearMask: () => void;
     fillMask: () => void;
     invertMask: () => void;
     getMaskDataUrl: () => string | null;
+    getCompositeImageDataUrl: (selection?: CanvasSelection | null) => string | null;
+    applyMaskImage: (image: CanvasImageSource, destination?: CanvasSelection | null) => void;
     undo: () => void;
     redo: () => void;
     saveToHistory: () => void;
-    handleWheel: (e: React.WheelEvent) => void;
-    handlePanStart: (e: React.MouseEvent) => void;
-    handlePan: (e: React.MouseEvent) => void;
+    handleWheel: (e: WheelEvent) => void;
+    handlePanStart: (e: MouseEvent) => void;
+    handlePan: (e: MouseEvent) => void;
     handlePanEnd: () => void;
     isPanning: boolean;
     regionDraft: { x1: number; y1: number; x2: number; y2: number } | null;
+    selectionDraft: CanvasSelection | null;
 }
 
 function clamp(value: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, value));
+}
+
+function normalizeSelection(start: Point, end: Point, canvasWidth: number, canvasHeight: number): CanvasSelection {
+    const x1 = clamp(Math.min(start.x, end.x), 0, canvasWidth);
+    const y1 = clamp(Math.min(start.y, end.y), 0, canvasHeight);
+    const x2 = clamp(Math.max(start.x, end.x), 0, canvasWidth);
+    const y2 = clamp(Math.max(start.y, end.y), 0, canvasHeight);
+    return {
+        x: x1,
+        y: y1,
+        width: x2 - x1,
+        height: y2 - y1,
+    };
+}
+
+function pointInsideRect(point: Point, rect: CanvasSelection | null): boolean {
+    if (!rect) {
+        return false;
+    }
+    return point.x >= rect.x
+        && point.x <= rect.x + rect.width
+        && point.y >= rect.y
+        && point.y <= rect.y + rect.height;
+}
+
+function pointInsideLayer(point: Point, layer: CanvasImageLayer): boolean {
+    return point.x >= layer.x
+        && point.x <= layer.x + layer.width
+        && point.y >= layer.y
+        && point.y <= layer.y + layer.height;
 }
 
 export function useCanvasEditor(): UseCanvasEditorReturn {
@@ -59,9 +100,12 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
     const [isDrawing, setIsDrawing] = useState(false);
     const [isPanning, setIsPanning] = useState(false);
     const [isDrawingRegion, setIsDrawingRegion] = useState(false);
+    const [isSelecting, setIsSelecting] = useState(false);
     const [lastPoint, setLastPoint] = useState<Point | null>(null);
     const [regionStartPoint, setRegionStartPoint] = useState<Point | null>(null);
+    const [selectionStartPoint, setSelectionStartPoint] = useState<Point | null>(null);
     const [regionDraft, setRegionDraft] = useState<{ x1: number; y1: number; x2: number; y2: number } | null>(null);
+    const [selectionDraft, setSelectionDraft] = useState<CanvasSelection | null>(null);
     const [regionInteraction, setRegionInteraction] = useState<{
         regionId: string;
         handle: RegionResizeHandle;
@@ -69,6 +113,8 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         originalRegion: BuilderRegionRule;
     } | null>(null);
     const [imageInteraction, setImageInteraction] = useState<{
+        target: 'base' | 'layer';
+        layerId: string | null;
         startPoint: Point;
         startOffsetX: number;
         startOffsetY: number;
@@ -95,12 +141,18 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         imageOffsetX,
         imageOffsetY,
         setImageOffset,
+        imageLayers,
+        selection,
+        setSelection,
+        clearSelection,
+        setActiveImageLayer,
+        updateImageLayer,
     } = useCanvasEditorStore();
     const regions = usePromptBuilderStore((state) => state.regions);
     const addRegion = usePromptBuilderStore((state) => state.addRegion);
     const updateRegion = usePromptBuilderStore((state) => state.updateRegion);
 
-    const getCanvasPoint = useCallback((e: React.MouseEvent | React.TouchEvent): Point => {
+    const getCanvasPoint = useCallback((e: MouseEvent | TouchEvent): Point => {
         const container = containerRef.current;
         if (!container) {
             return { x: 0, y: 0 };
@@ -124,39 +176,67 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         };
     }, [panX, panY, zoom]);
 
+    const withSelectionClip = useCallback((ctx: CanvasRenderingContext2D, drawFn: () => void) => {
+        if (selection && selection.width > 0 && selection.height > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(selection.x, selection.y, selection.width, selection.height);
+            ctx.clip();
+            drawFn();
+            ctx.restore();
+            return;
+        }
+        drawFn();
+    }, [selection]);
+
     const drawLine = useCallback((from: Point, to: Point, erase = false) => {
         const ctx = maskCanvasRef.current?.getContext('2d');
         if (!ctx) {
             return;
         }
 
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-        ctx.lineWidth = brushSettings.size;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        withSelectionClip(ctx, () => {
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            ctx.lineTo(to.x, to.y);
+            ctx.lineWidth = brushSettings.size;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
 
-        if (erase) {
-            ctx.globalCompositeOperation = 'destination-out';
-            ctx.strokeStyle = 'rgba(0,0,0,1)';
-        } else {
+            if (erase) {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.strokeStyle = 'rgba(0,0,0,1)';
+            } else {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.globalAlpha = brushSettings.opacity;
+                ctx.strokeStyle = maskColor;
+            }
+
+            ctx.stroke();
+            ctx.globalAlpha = 1;
             ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = brushSettings.opacity;
-            ctx.strokeStyle = maskColor;
-        }
+        });
+    }, [brushSettings.opacity, brushSettings.size, maskColor, withSelectionClip]);
 
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-        ctx.globalCompositeOperation = 'source-over';
-    }, [brushSettings.opacity, brushSettings.size, maskColor]);
-
-    const isPointInsideImage = useCallback((point: Point) => (
+    const isPointInsideBaseImage = useCallback((point: Point) => (
         point.x >= imageOffsetX
         && point.x <= imageOffsetX + originalWidth
         && point.y >= imageOffsetY
         && point.y <= imageOffsetY + originalHeight
     ), [imageOffsetX, imageOffsetY, originalHeight, originalWidth]);
+
+    const findLayerAtPoint = useCallback((point: Point): CanvasImageLayer | null => {
+        for (let i = imageLayers.length - 1; i >= 0; i -= 1) {
+            const layer = imageLayers[i];
+            if (!layer.visible) {
+                continue;
+            }
+            if (pointInsideLayer(point, layer)) {
+                return layer;
+            }
+        }
+        return null;
+    }, [imageLayers]);
 
     const findRegionAtPoint = useCallback((point: Point): string | null => {
         for (let i = regions.length - 1; i >= 0; i -= 1) {
@@ -210,13 +290,29 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         return null;
     }, [activeRegionId, canvasHeight, canvasWidth, regions, zoom]);
 
-    const startDrawing = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    const startDrawing = useCallback((e: MouseEvent | TouchEvent) => {
+        const point = getCanvasPoint(e);
+
         if (currentTool === 'crop') {
-            const point = getCanvasPoint(e);
-            if (!isPointInsideImage(point)) {
+            const hitLayer = findLayerAtPoint(point);
+            if (hitLayer) {
+                setActiveImageLayer(hitLayer.id);
+                setImageInteraction({
+                    target: 'layer',
+                    layerId: hitLayer.id,
+                    startPoint: point,
+                    startOffsetX: hitLayer.x,
+                    startOffsetY: hitLayer.y,
+                });
                 return;
             }
+            if (!isPointInsideBaseImage(point)) {
+                return;
+            }
+            setActiveImageLayer(null);
             setImageInteraction({
+                target: 'base',
+                layerId: null,
                 startPoint: point,
                 startOffsetX: imageOffsetX,
                 startOffsetY: imageOffsetY,
@@ -224,8 +320,14 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
             return;
         }
 
+        if (currentTool === 'select') {
+            setSelectionStartPoint(point);
+            setSelectionDraft({ x: point.x, y: point.y, width: 0, height: 0 });
+            setIsSelecting(true);
+            return;
+        }
+
         if (currentTool === 'region') {
-            const point = getCanvasPoint(e);
             const handleHit = getRegionHandleAtPoint(point);
             if (handleHit) {
                 const targetRegion = regions.find((region) => region.id === handleHit.regionId);
@@ -278,26 +380,53 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
             return;
         }
 
-        const point = getCanvasPoint(e);
+        if (selection && selection.width > 0 && selection.height > 0 && !pointInsideRect(point, selection)) {
+            return;
+        }
+
         setIsDrawing(true);
         setLastPoint(point);
         drawLine(point, point, currentTool === 'eraser');
     }, [
         currentTool,
         drawLine,
+        findLayerAtPoint,
         findRegionAtPoint,
         getCanvasPoint,
         getRegionHandleAtPoint,
         imageOffsetX,
         imageOffsetY,
-        isPointInsideImage,
+        isPointInsideBaseImage,
         regions,
+        selection,
+        setActiveImageLayer,
         setActiveRegion,
     ]);
 
-    const draw = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    const draw = useCallback((e: MouseEvent | TouchEvent) => {
+        const point = getCanvasPoint(e);
+
         if (currentTool === 'crop' && imageInteraction) {
-            const point = getCanvasPoint(e);
+            if (imageInteraction.target === 'layer' && imageInteraction.layerId) {
+                const layer = imageLayers.find((entry) => entry.id === imageInteraction.layerId);
+                if (!layer) {
+                    return;
+                }
+                updateImageLayer(imageInteraction.layerId, {
+                    x: clamp(
+                        imageInteraction.startOffsetX + (point.x - imageInteraction.startPoint.x),
+                        0,
+                        Math.max(0, canvasWidth - layer.width),
+                    ),
+                    y: clamp(
+                        imageInteraction.startOffsetY + (point.y - imageInteraction.startPoint.y),
+                        0,
+                        Math.max(0, canvasHeight - layer.height),
+                    ),
+                });
+                return;
+            }
+
             const nextOffsetX = clamp(
                 imageInteraction.startOffsetX + (point.x - imageInteraction.startPoint.x),
                 0,
@@ -312,8 +441,12 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
             return;
         }
 
+        if (currentTool === 'select' && isSelecting && selectionStartPoint) {
+            setSelectionDraft(normalizeSelection(selectionStartPoint, point, canvasWidth, canvasHeight));
+            return;
+        }
+
         if (currentTool === 'region' && regionInteraction) {
-            const point = getCanvasPoint(e);
             const deltaX = (point.x - regionInteraction.startPoint.x) / canvasWidth;
             const deltaY = (point.y - regionInteraction.startPoint.y) / canvasHeight;
             const nextRegion = resizeNormalizedRegion(
@@ -327,7 +460,6 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         }
 
         if (currentTool === 'region' && isDrawingRegion && regionStartPoint) {
-            const point = getCanvasPoint(e);
             setRegionDraft({
                 x1: regionStartPoint.x,
                 y1: regionStartPoint.y,
@@ -341,7 +473,10 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
             return;
         }
 
-        const point = getCanvasPoint(e);
+        if (selection && selection.width > 0 && selection.height > 0 && !pointInsideRect(point, selection) && !pointInsideRect(lastPoint ?? point, selection)) {
+            return;
+        }
+
         if (lastPoint) {
             drawLine(lastPoint, point, currentTool === 'eraser');
         }
@@ -353,14 +488,19 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         drawLine,
         getCanvasPoint,
         imageInteraction,
+        imageLayers,
         isDrawing,
         isDrawingRegion,
+        isSelecting,
         lastPoint,
         originalHeight,
         originalWidth,
         regionInteraction,
         regionStartPoint,
+        selection,
+        selectionStartPoint,
         setImageOffset,
+        updateImageLayer,
         updateRegion,
     ]);
 
@@ -393,6 +533,18 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
 
         if (regionInteraction) {
             setRegionInteraction(null);
+            return;
+        }
+
+        if (isSelecting) {
+            if (selectionDraft && selectionDraft.width >= 2 && selectionDraft.height >= 2) {
+                setSelection(selectionDraft);
+            } else {
+                clearSelection();
+            }
+            setIsSelecting(false);
+            setSelectionStartPoint(null);
+            setSelectionDraft(null);
             return;
         }
 
@@ -433,16 +585,20 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         addRegion,
         canvasHeight,
         canvasWidth,
+        clearSelection,
         imageInteraction,
         isDrawing,
         isDrawingRegion,
+        isSelecting,
         regionDraft,
         regionInteraction,
         saveToHistory,
+        selectionDraft,
         setActiveRegion,
+        setSelection,
     ]);
 
-    const handleWheel = useCallback((e: React.WheelEvent) => {
+    const handleWheel = useCallback((e: WheelEvent) => {
         e.preventDefault();
         const delta = e.deltaY > 0 ? 0.9 : 1.1;
         const newZoom = Math.max(0.1, Math.min(10, zoom * delta));
@@ -459,14 +615,14 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         setZoom(newZoom);
     }, [panX, panY, setPan, setZoom, zoom]);
 
-    const handlePanStart = useCallback((e: React.MouseEvent) => {
+    const handlePanStart = useCallback((e: MouseEvent) => {
         if (currentTool === 'pan' || e.button === 1 || (e.button === 0 && e.altKey)) {
             setIsPanning(true);
             setPanStartPoint({ x: e.clientX - panX, y: e.clientY - panY });
         }
     }, [currentTool, panX, panY]);
 
-    const handlePan = useCallback((e: React.MouseEvent) => {
+    const handlePan = useCallback((e: MouseEvent) => {
         if (!isPanning || !panStartPoint) {
             return;
         }
@@ -484,9 +640,15 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         if (!ctx || !canvas) {
             return;
         }
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        withSelectionClip(ctx, () => {
+            if (selection && selection.width > 0 && selection.height > 0) {
+                ctx.clearRect(selection.x, selection.y, selection.width, selection.height);
+            } else {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        });
         saveToHistory();
-    }, [saveToHistory]);
+    }, [saveToHistory, selection, withSelectionClip]);
 
     const fillMask = useCallback(() => {
         const ctx = maskCanvasRef.current?.getContext('2d');
@@ -494,10 +656,16 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         if (!ctx || !canvas) {
             return;
         }
-        ctx.fillStyle = maskColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        withSelectionClip(ctx, () => {
+            ctx.fillStyle = maskColor;
+            if (selection && selection.width > 0 && selection.height > 0) {
+                ctx.fillRect(selection.x, selection.y, selection.width, selection.height);
+            } else {
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        });
         saveToHistory();
-    }, [maskColor, saveToHistory]);
+    }, [maskColor, saveToHistory, selection, withSelectionClip]);
 
     const invertMask = useCallback(() => {
         const ctx = maskCanvasRef.current?.getContext('2d');
@@ -506,72 +674,140 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
             return;
         }
 
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const selectionArea = selection && selection.width > 0 && selection.height > 0
+            ? {
+                x: Math.round(selection.x),
+                y: Math.round(selection.y),
+                width: Math.round(selection.width),
+                height: Math.round(selection.height),
+            }
+            : {
+                x: 0,
+                y: 0,
+                width: canvas.width,
+                height: canvas.height,
+            };
+
+        const imageData = ctx.getImageData(selectionArea.x, selectionArea.y, selectionArea.width, selectionArea.height);
         const data = imageData.data;
         for (let i = 3; i < data.length; i += 4) {
             data[i] = 255 - data[i];
         }
-        ctx.putImageData(imageData, 0, 0);
+        ctx.putImageData(imageData, selectionArea.x, selectionArea.y);
+        saveToHistory();
+    }, [saveToHistory, selection]);
+
+    const getCompositeImageDataUrl = useCallback((selectionRect?: CanvasSelection | null): string | null => {
+        const canvas = canvasRef.current;
+        if (!canvas) {
+            return null;
+        }
+        if (!selectionRect || selectionRect.width <= 0 || selectionRect.height <= 0) {
+            return canvas.toDataURL('image/png');
+        }
+
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = Math.max(1, Math.round(selectionRect.width));
+        croppedCanvas.height = Math.max(1, Math.round(selectionRect.height));
+        const croppedCtx = croppedCanvas.getContext('2d');
+        if (!croppedCtx) {
+            return null;
+        }
+        croppedCtx.drawImage(
+            canvas,
+            Math.round(selectionRect.x),
+            Math.round(selectionRect.y),
+            Math.round(selectionRect.width),
+            Math.round(selectionRect.height),
+            0,
+            0,
+            croppedCanvas.width,
+            croppedCanvas.height,
+        );
+        return croppedCanvas.toDataURL('image/png');
+    }, []);
+
+    const applyMaskImage = useCallback((image: CanvasImageSource, destination?: CanvasSelection | null) => {
+        const ctx = maskCanvasRef.current?.getContext('2d');
+        const canvas = maskCanvasRef.current;
+        if (!ctx || !canvas) {
+            return;
+        }
+
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = destination ? Math.max(1, Math.round(destination.width)) : canvas.width;
+        tempCanvas.height = destination ? Math.max(1, Math.round(destination.height)) : canvas.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        if (!tempCtx) {
+            return;
+        }
+
+        tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+        tempCtx.drawImage(image, 0, 0, tempCanvas.width, tempCanvas.height);
+        const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+        for (let i = 0; i < imageData.data.length; i += 4) {
+            const brightness = imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2];
+            const alpha = brightness >= 128 ? 255 : 0;
+            imageData.data[i] = 255;
+            imageData.data[i + 1] = 255;
+            imageData.data[i + 2] = 255;
+            imageData.data[i + 3] = alpha;
+        }
+        tempCtx.putImageData(imageData, 0, 0);
+
+        if (destination && destination.width > 0 && destination.height > 0) {
+            ctx.clearRect(destination.x, destination.y, destination.width, destination.height);
+            ctx.drawImage(
+                tempCanvas,
+                0,
+                0,
+                tempCanvas.width,
+                tempCanvas.height,
+                destination.x,
+                destination.y,
+                destination.width,
+                destination.height,
+            );
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(tempCanvas, 0, 0);
+        }
+
         saveToHistory();
     }, [saveToHistory]);
 
     const getMaskDataUrl = useCallback((): string | null => {
-        const canvas = maskCanvasRef.current;
-        if (!canvas) {
+        const compositeCanvas = canvasRef.current;
+        const maskCanvas = maskCanvasRef.current;
+        if (!compositeCanvas || !maskCanvas) {
             return null;
         }
 
         const outputCanvas = document.createElement('canvas');
-        outputCanvas.width = canvas.width;
-        outputCanvas.height = canvas.height;
+        outputCanvas.width = maskCanvas.width;
+        outputCanvas.height = maskCanvas.height;
         const outputCtx = outputCanvas.getContext('2d');
-        const maskCtx = canvas.getContext('2d');
-        if (!outputCtx || !maskCtx) {
+        const maskCtx = maskCanvas.getContext('2d');
+        const compositeCtx = compositeCanvas.getContext('2d');
+        if (!outputCtx || !maskCtx || !compositeCtx) {
             return null;
         }
 
-        outputCtx.fillStyle = '#000000';
-        outputCtx.fillRect(0, 0, outputCanvas.width, outputCanvas.height);
-
+        const compositeData = compositeCtx.getImageData(0, 0, compositeCanvas.width, compositeCanvas.height);
+        const maskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+        const outputData = outputCtx.createImageData(outputCanvas.width, outputCanvas.height);
         let hasMaskedPixels = false;
-        const outpaintLeft = clamp(Math.round(imageOffsetX), 0, outputCanvas.width);
-        const outpaintTop = clamp(Math.round(imageOffsetY), 0, outputCanvas.height);
-        const outpaintRight = clamp(Math.round(imageOffsetX + originalWidth), 0, outputCanvas.width);
-        const outpaintBottom = clamp(Math.round(imageOffsetY + originalHeight), 0, outputCanvas.height);
-        outputCtx.fillStyle = '#ffffff';
-        if (outpaintTop > 0) {
-            outputCtx.fillRect(0, 0, outputCanvas.width, outpaintTop);
-            hasMaskedPixels = true;
-        }
-        if (outpaintBottom < outputCanvas.height) {
-            outputCtx.fillRect(0, outpaintBottom, outputCanvas.width, outputCanvas.height - outpaintBottom);
-            hasMaskedPixels = true;
-        }
-        if (outpaintLeft > 0 && outpaintBottom > outpaintTop) {
-            outputCtx.fillRect(0, outpaintTop, outpaintLeft, outpaintBottom - outpaintTop);
-            hasMaskedPixels = true;
-        }
-        if (outpaintRight < outputCanvas.width && outpaintBottom > outpaintTop) {
-            outputCtx.fillRect(
-                outpaintRight,
-                outpaintTop,
-                outputCanvas.width - outpaintRight,
-                outpaintBottom - outpaintTop,
-            );
-            hasMaskedPixels = true;
-        }
 
-        const maskData = maskCtx.getImageData(0, 0, canvas.width, canvas.height);
-        const outputData = outputCtx.getImageData(0, 0, outputCanvas.width, outputCanvas.height);
-        for (let i = 0; i < maskData.data.length; i += 4) {
-            if (maskData.data[i + 3] <= 0) {
-                continue;
+        for (let i = 0; i < outputData.data.length; i += 4) {
+            const compositeAlpha = compositeData.data[i + 3];
+            const maskAlpha = maskData.data[i + 3];
+            if (compositeAlpha <= 0 || maskAlpha > 0) {
+                outputData.data[i] = 255;
+                outputData.data[i + 1] = 255;
+                outputData.data[i + 2] = 255;
+                outputData.data[i + 3] = 255;
+                hasMaskedPixels = true;
             }
-            outputData.data[i] = 255;
-            outputData.data[i + 1] = 255;
-            outputData.data[i + 2] = 255;
-            outputData.data[i + 3] = 255;
-            hasMaskedPixels = true;
         }
 
         if (!hasMaskedPixels) {
@@ -580,7 +816,7 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
 
         outputCtx.putImageData(outputData, 0, 0);
         return outputCanvas.toDataURL('image/png');
-    }, [imageOffsetX, imageOffsetY, originalHeight, originalWidth]);
+    }, []);
 
     const undo = useCallback(() => {
         if (historyIndex <= 0) {
@@ -637,6 +873,8 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         fillMask,
         invertMask,
         getMaskDataUrl,
+        getCompositeImageDataUrl,
+        applyMaskImage,
         undo,
         redo,
         saveToHistory,
@@ -646,5 +884,6 @@ export function useCanvasEditor(): UseCanvasEditorReturn {
         handlePanEnd,
         isPanning,
         regionDraft,
+        selectionDraft,
     };
 }

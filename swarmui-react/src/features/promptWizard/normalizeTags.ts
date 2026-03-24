@@ -314,10 +314,7 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   'robotic parts': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
   'chrome skin': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
   'cybernetic eyes': { step: 'appearance', subcategory: 'Eyes', majorGroup: 'Face & Hair', minorGroup: 'Eye Shape & Color', groupOrder: 10, minorOrder: 10 },
-  'glowing circuitry': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
-  'data lines': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
   'wires connecting to head': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
-  'data cables': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
   'digital interference': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
   'synthetic skin seams': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
   'panel lines': { step: 'appearance', subcategory: 'Body', majorGroup: 'Body & Silhouette', minorGroup: 'Cybernetic & Synthetic Traits', groupOrder: 20, minorOrder: 45 },
@@ -430,23 +427,12 @@ const EXACT_TAXONOMY: Record<string, TagTaxonomy> = {
   painted: { text: 'painted finish', step: 'style', subcategory: 'Finish', majorGroup: 'Surface & Finish', minorGroup: 'Abstract & Decorative', groupOrder: 40, minorOrder: 30 },
   fluid: { text: 'fluid brushwork', step: 'style', subcategory: 'Painting', majorGroup: 'Medium & Rendering', minorGroup: 'Watercolor & Soft Paint', groupOrder: 10, minorOrder: 20 },
   delicate: { text: 'delicate rendering', step: 'style', subcategory: 'Painting', majorGroup: 'Medium & Rendering', minorGroup: 'Traditional Illustration', groupOrder: 10, minorOrder: 30 },
-  scenic: { text: 'scenic composition', step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
-  vibrant: { text: 'vibrant palette', step: 'atmosphere', subcategory: 'Color Palette', majorGroup: 'Color & Palette', minorGroup: 'Bold & Stylized', groupOrder: 30, minorOrder: 40 },
-  intense: { text: 'intense mood', step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
-  fantasy: { text: 'fantasy aesthetic', step: 'style', subcategory: 'Cinematic', majorGroup: 'Aesthetic & Genre', minorGroup: 'Epic & Genre', groupOrder: 20, minorOrder: 20 },
   professional: { text: 'professional polish', step: 'quality', subcategory: 'Positive Quality', majorGroup: 'Positive Quality', minorGroup: 'Refinement & Control', groupOrder: 10, minorOrder: 30 },
   stunning: { text: 'striking presentation', step: 'quality', subcategory: 'Positive Quality', majorGroup: 'Positive Quality', minorGroup: 'Refinement & Control', groupOrder: 10, minorOrder: 30 },
   corporate: { text: 'corporate professional', step: 'subject', subcategory: 'Character', majorGroup: 'People & Roles', minorGroup: 'Professions & Roles', groupOrder: 10, minorOrder: 20 },
   urban: { text: 'urban setting', step: 'setting', subcategory: 'Urban', majorGroup: 'Architecture & Urban', minorGroup: 'City & Nightlife', groupOrder: 20, minorOrder: 10 },
-  sharp: { text: 'sharp detail', step: 'quality', subcategory: 'Positive Quality', majorGroup: 'Positive Quality', minorGroup: 'Detail & Fidelity', groupOrder: 10, minorOrder: 20 },
   soft: { text: 'soft lighting', step: 'atmosphere', subcategory: 'Lighting', majorGroup: 'Lighting', minorGroup: 'Warm & Intimate Light', groupOrder: 10, minorOrder: 10 },
   warm: { text: 'warm palette', step: 'atmosphere', subcategory: 'Color Palette', majorGroup: 'Color & Palette', minorGroup: 'Warm Palette', groupOrder: 30, minorOrder: 10 },
-  dark: { text: 'dark aesthetic', step: 'atmosphere', subcategory: 'Mood', majorGroup: 'Mood & Emotion', minorGroup: 'Dark & Intense', groupOrder: 20, minorOrder: 30 },
-  'romantic city': { text: 'romantic city setting', step: 'setting', subcategory: 'Scene', majorGroup: 'Scenes & Concepts', minorGroup: 'Narrative Scene Concepts', groupOrder: 50, minorOrder: 10 },
-  'cozy affection': { text: 'cozy intimate mood', step: 'atmosphere', subcategory: 'Explicit', majorGroup: 'Intimacy & Explicit Tone', minorGroup: 'Private & Romantic', groupOrder: 50, minorOrder: 30 },
-  dominant: { text: 'dominant demeanor', step: 'action', subcategory: 'Explicit', majorGroup: 'Explicit Actions', minorGroup: 'Erotic Touch', groupOrder: 50, minorOrder: 40 },
-  'submissive pet': { text: 'pet-play submissive styling', step: 'appearance', subcategory: 'Explicit', majorGroup: 'Explicit Appearance', minorGroup: 'Intimate Apparel', groupOrder: 50, minorOrder: 20 },
-  'open crotch': { text: 'open-crotch garment', step: 'appearance', subcategory: 'Explicit', majorGroup: 'Explicit Appearance', minorGroup: 'Nudity & Exposure', groupOrder: 50, minorOrder: 10 },
   'dark  clothes': { text: 'dark clothes', step: 'appearance', subcategory: 'Clothing', majorGroup: 'Clothing & Uniforms', minorGroup: 'Everyday & Formal Wear', groupOrder: 30, minorOrder: 40 },
   'digital painting': { text: 'digital art', step: 'style', subcategory: 'Digital', majorGroup: 'Medium & Rendering', minorGroup: 'Digital Illustration', groupOrder: 10, minorOrder: 30 },
   'warm glow': { text: 'warm lighting', step: 'atmosphere', subcategory: 'Lighting', majorGroup: 'Lighting', minorGroup: 'Warm & Intimate Light', groupOrder: 10, minorOrder: 10 },
@@ -737,18 +723,24 @@ function classifyAppearance(tag: PromptTag, text: string): PromptTag {
   }
 
   if (subcategory === 'Body') {
-    const minorGroup = includesAny(text, ['waist', 'hips', 'curves', 'silhouette', 'figure', 'build', 'petite', 'tall'])
+    const minorGroup = includesAny(text, ['waist', 'hips', 'curves', 'silhouette', 'figure', 'build', 'petite', 'tall', 'stature', 'chubby', 'muscular', 'toned'])
       ? 'Shape & Build'
       : includesAny(text, ['legs', 'thigh', 'feet'])
         ? 'Legs & Lower Body'
-        : includesAny(text, ['cyber', 'robot', 'robotic', 'synthetic', 'artificial', 'holographic', 'hud', 'visor', 'circuit', 'data ', 'wires', 'cables', 'glitch', 'digital', 'mechanical', 'panel', 'chrome skin', 'implant', 'techno-organic', 'protogen'])
-          ? 'Cybernetic & Synthetic Traits'
-        : includesAny(text, ['tail', 'wings', 'horns', 'fangs', 'scales', 'gills', 'claws', 'fur', 'pointed ears'])
-          ? 'Mythic & Nonhuman Traits'
-        : includesAny(text, ['breast', 'chest', 'bust'])
-          ? 'Chest & Curves'
-          : 'Skin & Surface';
-    const minorOrder = minorGroup === 'Shape & Build' ? 10 : minorGroup === 'Chest & Curves' ? 20 : minorGroup === 'Legs & Lower Body' ? 30 : minorGroup === 'Mythic & Nonhuman Traits' ? 40 : minorGroup === 'Cybernetic & Synthetic Traits' ? 45 : 50;
+        : includesAny(text, ['arm', 'arms', 'hand', 'hands', 'fingers', 'wrist', 'webbed fingers'])
+          ? 'Hands & Arms'
+          : includesAny(text, ['back', 'shoulder', 'spine', 'torso', 'neck', 'belly', 'navel', 'stomach', 'ass', 'booty', 'butt', 'clavicle', 'midriff', 'collarbone'])
+            ? 'Torso & Back'
+            : includesAny(text, ['cyber', 'robot', 'robotic', 'synthetic', 'artificial', 'holographic', 'hud', 'visor', 'circuit', 'data ', 'wires', 'cables', 'glitch', 'digital', 'mechanical', 'panel', 'chrome skin', 'implant', 'techno-organic', 'protogen'])
+              ? 'Cybernetic & Synthetic Traits'
+            : includesAny(text, ['tail', 'wings', 'horns', 'fangs', 'scales', 'gills', 'claws', 'fur', 'pointed ears', 'antlers', 'snout', 'whiskers', 'plumage', 'talons'])
+              ? 'Mythic & Nonhuman Traits'
+            : includesAny(text, ['breast', 'chest', 'bust'])
+              ? 'Chest & Curves'
+              : includesAny(text, ['skin', 'tattoo', 'sweat', 'blood', 'scar', 'piercing', 'markings', 'paint', 'sweaty'])
+                ? 'Skin, Marks & Tattoos'
+                : 'General Features';
+    const minorOrder = minorGroup === 'Shape & Build' ? 10 : minorGroup === 'Chest & Curves' ? 20 : minorGroup === 'Torso & Back' ? 25 : minorGroup === 'Legs & Lower Body' ? 30 : minorGroup === 'Hands & Arms' ? 35 : minorGroup === 'Mythic & Nonhuman Traits' ? 40 : minorGroup === 'Cybernetic & Synthetic Traits' ? 45 : minorGroup === 'Skin, Marks & Tattoos' ? 50 : 60;
     return applyTaxonomy(tag, {
       subcategory,
       majorGroup: 'Body & Silhouette',
@@ -759,14 +751,24 @@ function classifyAppearance(tag: PromptTag, text: string): PromptTag {
   }
 
   if (subcategory === 'Clothing') {
-    const minorGroup = includesAny(text, ['uniform', 'maid', 'nurse', 'school', 'cheerleader'])
+    const minorGroup = includesAny(text, ['uniform', 'maid', 'nurse', 'school', 'cheerleader', 'seifuku', 'plugsuit', 'bunny girl', 'playboy bunny'])
       ? 'Uniforms & Roleplay'
       : includesAny(text, ['armor', 'plate', 'chainmail', 'mail armor', 'cloak', 'robe', 'habit', 'nun', 'fantasy', 'kimono'])
         ? 'Fantasy & Armor'
         : includesAny(text, ['coat', 'jacket', 'hoodie', 'cape', 'trench coat'])
           ? 'Outerwear & Layers'
-          : 'Everyday & Formal Wear';
-    const minorOrder = minorGroup === 'Uniforms & Roleplay' ? 10 : minorGroup === 'Fantasy & Armor' ? 20 : minorGroup === 'Outerwear & Layers' ? 30 : 40;
+          : includesAny(text, ['suit', 'tie', 'tuxedo', 'vest', 'formal', 'business suit', 'gown', 'elegant clothes'])
+            ? 'Formal & Suits'
+            : includesAny(text, ['dress', 'skirt', 'sundress', 'pleated skirt', 'mini skirt'])
+              ? 'Dresses & Skirts'
+              : includesAny(text, ['shirt', 'top', 'blouse', 'sweater', 't-shirt', 'tank top', 'camisole'])
+                ? 'Shirts & Tops'
+                : includesAny(text, ['pants', 'shorts', 'jeans', 'trousers', 'leggings', 'sweatpants', 'bloomers'])
+                  ? 'Pants & Shorts'
+                  : includesAny(text, ['swimsuit', 'bikini', 'corset', 'underwear', 'panty', 'bra', 'leotard', 'bodysuit', 'swimwear', 'sukumizu', 'g-string', 'nylons'])
+                    ? 'Swimwear & Intimates'
+                    : 'Everyday Casual Wear';
+    const minorOrder = minorGroup === 'Uniforms & Roleplay' ? 10 : minorGroup === 'Fantasy & Armor' ? 20 : minorGroup === 'Outerwear & Layers' ? 30 : minorGroup === 'Formal & Suits' ? 32 : minorGroup === 'Dresses & Skirts' ? 34 : minorGroup === 'Shirts & Tops' ? 36 : minorGroup === 'Pants & Shorts' ? 38 : minorGroup === 'Swimwear & Intimates' ? 40 : 50;
     return applyTaxonomy(tag, {
       subcategory,
       majorGroup: 'Clothing & Uniforms',
@@ -853,18 +855,22 @@ function classifyAction(tag: PromptTag, text: string): PromptTag {
   }
 
   if (subcategory === 'Pose') {
-    const minorGroup = includesAny(text, ['standing', 'hand on hip', 'arms crossed', 'stance'])
+    const minorGroup = includesAny(text, ['standing', 'hand on hip', 'arms crossed', 'stance', 'leaning', 'confident pose', 'sassy pose', 'assertive'])
       ? 'Standing & Power'
-      : includesAny(text, ['sitting', 'seated', 'reclining', 'lying', 'lounging'])
+      : includesAny(text, ['sitting', 'seated', 'reclining', 'lying', 'lounging', 'flat on stomach', 'resting', 'straddling'])
         ? 'Seated & Reclining'
-        : includesAny(text, ['kneeling', 'on knees'])
+        : includesAny(text, ['kneeling', 'on knees', 'crouched', 'crouching', 'squatting', 'all fours', 'crawling'])
           ? 'Grounded Poses'
-          : includesAny(text, ['fighting', 'combat'])
-            ? 'Combat Poses'
-            : includesAny(text, ['presenting', 'over shoulder', 'battle ready'])
-              ? 'Display & Presentation'
-              : 'Relaxed & Neutral';
-    const minorOrder = minorGroup === 'Standing & Power' ? 10 : minorGroup === 'Seated & Reclining' ? 20 : minorGroup === 'Grounded Poses' ? 30 : minorGroup === 'Combat Poses' ? 40 : minorGroup === 'Display & Presentation' ? 50 : 60;
+          : includesAny(text, ['facing away', 'facing each other', 'facing partner', 'from behind', 'from below', 'from the side', 'looking back', 'looking up', 'rear view', 'showing crotch'])
+            ? 'Viewpoints & Angles'
+            : includesAny(text, ['arching back', 'arms raised', 'arms wrapped around', 'ballet pose', 'bent over', 'dancing', 'doing a split', 'extreme flexibility', 'stretching', 'reaching up', 'legs apart', 'legs bent', 'legs up', 'spread eagle'])
+              ? 'Dynamic & Stretched'
+              : includesAny(text, ['fighting', 'combat', 'ready to fight', 'action pose'])
+                ? 'Combat Poses'
+                : includesAny(text, ['presenting', 'over shoulder', 'battle ready'])
+                  ? 'Display & Presentation'
+                  : 'Relaxed & Neutral';
+    const minorOrder = minorGroup === 'Standing & Power' ? 10 : minorGroup === 'Seated & Reclining' ? 20 : minorGroup === 'Grounded Poses' ? 30 : minorGroup === 'Viewpoints & Angles' ? 35 : minorGroup === 'Dynamic & Stretched' ? 38 : minorGroup === 'Combat Poses' ? 40 : minorGroup === 'Display & Presentation' ? 50 : 60;
     return applyTaxonomy(tag, {
       subcategory,
       majorGroup: 'Pose & Stance',
