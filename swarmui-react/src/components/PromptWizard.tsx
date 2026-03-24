@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { Box, Center, Group, Loader, Modal, Stack, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import { useDisclosure, useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconChevronRight, IconSparkles } from '@tabler/icons-react';
+import { IconChevronRight, IconLibrary, IconSparkles } from '@tabler/icons-react';
 import { ElevatedCard, ResizeHandle, SwarmBadge, SwarmButton } from './ui';
 import { PromptWizardHeader } from './PromptWizardHeader';
 import { PromptWizardSidebar } from './PromptWizardSidebar';
@@ -20,8 +20,8 @@ import { buildPromptHealth, buildStepSummaries, findNextIncompleteStep } from '.
 import type { BuilderStep, PromptPreset, PromptTag } from '../features/promptWizard/types';
 
 interface PromptWizardProps {
-  onApplyToPrompt?: (text: string) => void;
-  onApplyToNegative?: (text: string) => void;
+  onApplyToPrompt?: (text: string, mode?: 'replace' | 'append') => void;
+  onApplyToNegative?: (text: string, mode?: 'replace' | 'append') => void;
   compact?: boolean;
 }
 
@@ -49,9 +49,11 @@ export const PromptWizard = memo(function PromptWizard({
   compact = false,
 }: PromptWizardProps) {
   const [opened, { open, close }] = useDisclosure(false);
+  const [sidebarOpened, sidebarHandlers] = useDisclosure(false);
+  const [canvasVisible, setCanvasVisible] = useState(true);
+  const toggleCanvas = useCallback(() => setCanvasVisible((v) => !v), []);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchScope, setSearchScope] = useState<'global' | 'step'>('global');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [defaultTags, setDefaultTags] = useState<PromptTag[]>([]);
   const [defaultPresets, setDefaultPresets] = useState<PromptPreset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,6 +87,7 @@ export const PromptWizard = memo(function PromptWizard({
     savedStates,
     tagWeights,
     toggleTag,
+    deselectTag,
     toggleManualNegativeText,
     clearSelections,
     setActiveStep,
@@ -105,9 +108,7 @@ export const PromptWizard = memo(function PromptWizard({
 
   const handleOpen = useCallback(() => {
     open();
-    if (hasLoaded || isLoading) {
-      return;
-    }
+    if (hasLoaded || isLoading) return;
     setIsLoading(true);
     Promise.all([loadDefaultTags(), loadDefaultPresets()])
       .then(([tags, presets]) => {
@@ -130,25 +131,16 @@ export const PromptWizard = memo(function PromptWizard({
 
   // When searching, show tags across all steps; otherwise scope to active step
   const hasSearch = searchQuery.trim().length > 0;
-  const stepTags = useMemo(
-    () => {
-      if (!hasSearch) {
-        return allTags.filter((t) => t.step === activeStep);
-      }
-      return searchScope === 'global'
-        ? allTags
-        : allTags.filter((t) => t.step === activeStep);
-    },
-    [activeStep, allTags, hasSearch, searchScope]
-  );
+  const stepTags = useMemo(() => {
+    if (!hasSearch) return allTags.filter((t) => t.step === activeStep);
+    return searchScope === 'global' ? allTags : allTags.filter((t) => t.step === activeStep);
+  }, [activeStep, allTags, hasSearch, searchScope]);
 
   // Tag counts per step
   const tagCountsByStep = useMemo(() => {
     const counts = {} as Record<BuilderStep, number>;
     for (const meta of STEP_META) {
-      counts[meta.step] = selectedTagIds.filter((id) =>
-        allTags.some((t) => t.id === id && t.step === meta.step)
-      ).length;
+      counts[meta.step] = selectedTagIds.filter((id) => allTags.some((t) => t.id === id && t.step === meta.step)).length;
     }
     return counts;
   }, [selectedTagIds, allTags]);
@@ -183,17 +175,37 @@ export const PromptWizard = memo(function PromptWizard({
     [manualNegativeTexts, selectedTags]
   );
 
-  const handleApplyPrompt = useCallback(() => {
+  const handleSendToGenerate = useCallback(() => {
     if (!assembled.positive || !onApplyToPrompt) return;
-    onApplyToPrompt(assembled.positive);
-    notifications.show({ title: 'Prompt Applied', message: 'Tags added to the prompt.', color: 'teal' });
-  }, [assembled.positive, onApplyToPrompt]);
+    onApplyToPrompt(assembled.positive, 'replace');
+    if (mergedNegativePreview && onApplyToNegative) {
+      onApplyToNegative(mergedNegativePreview, 'replace');
+    }
+    notifications.show({ title: 'Sent to Generate', message: 'Prompt and negatives applied.', color: 'teal' });
+  }, [assembled.positive, mergedNegativePreview, onApplyToPrompt, onApplyToNegative]);
 
-  const handleApplyNegative = useCallback(() => {
-    if (!mergedNegativePreview || !onApplyToNegative) return;
-    onApplyToNegative(mergedNegativePreview);
-    notifications.show({ title: 'Negative Applied', message: 'Negative tags added.', color: 'teal' });
-  }, [mergedNegativePreview, onApplyToNegative]);
+  const handleAppendToGenerate = useCallback(() => {
+    if (!assembled.positive || !onApplyToPrompt) return;
+    onApplyToPrompt(assembled.positive, 'append');
+    if (mergedNegativePreview && onApplyToNegative) {
+      onApplyToNegative(mergedNegativePreview, 'append');
+    }
+    notifications.show({ title: 'Appended to Prompt', message: 'Tags appended to existing prompt.', color: 'teal' });
+  }, [assembled.positive, mergedNegativePreview, onApplyToPrompt, onApplyToNegative]);
+
+  const handleCopyPositive = useCallback(() => {
+    if (assembled.positive) {
+      navigator.clipboard.writeText(assembled.positive);
+      notifications.show({ title: 'Copied', message: 'Positive prompt copied to clipboard.', color: 'teal' });
+    }
+  }, [assembled.positive]);
+
+  const handleCopyNegative = useCallback(() => {
+    if (mergedNegativePreview) {
+      navigator.clipboard.writeText(mergedNegativePreview);
+      notifications.show({ title: 'Copied', message: 'Negative prompt copied to clipboard.', color: 'teal' });
+    }
+  }, [mergedNegativePreview]);
 
   const totalSelected = selectedTagIds.length;
   const stepMeta = getStepMeta(activeStep)!;
@@ -216,8 +228,11 @@ export const PromptWizard = memo(function PromptWizard({
     () => profileStepOrder.map((step) => getStepMeta(step)).filter(Boolean) as typeof STEP_META,
     [profileStepOrder]
   );
-  const isStackedLayout = modalWidth < 1180;
-  const resolvedSidebarCollapsed = !isStackedLayout && sidebarCollapsed;
+
+  // Layout breakpoints
+  const isNarrow = modalWidth < 900;
+  const isStackedCanvas = modalWidth < 1180;
+
   const currentStepIndex = profileStepOrder.indexOf(activeStep);
   const canGoPrev = currentStepIndex > 0;
   const canGoNext = currentStepIndex < profileStepOrder.length - 1;
@@ -291,6 +306,36 @@ export const PromptWizard = memo(function PromptWizard({
         </ElevatedCard>
       </UnstyledButton>
 
+      {/* Sidebar drawer */}
+      <PromptWizardSidebar
+        opened={sidebarOpened}
+        onClose={sidebarHandlers.close}
+        steps={orderedStepMeta}
+        activeStep={activeStep}
+        stepSummaries={stepSummaries}
+        lastEditedStep={lastEditedStep}
+        recentSteps={recentSteps}
+        recentGroupKeys={recentGroupKeys}
+        profileName={profile?.name ?? 'Unknown'}
+        nextIncompleteStep={nextIncompleteStep}
+        defaultPresets={defaultPresets}
+        customPresets={customPresets}
+        sessionBundles={sessionBundles}
+        savedRecipes={savedRecipes}
+        savedStates={savedStates}
+        onJumpStep={setActiveStep}
+        onApplyPreset={applyPreset}
+        onApplyBundle={applyBundle}
+        onRemoveBundle={removeBundle}
+        onApplyRecipe={applyRecipe}
+        onRemoveRecipe={removeRecipe}
+        onLoadState={loadStateSnapshot}
+        onRemoveState={removeStateSnapshot}
+        onSaveBundle={handleSaveBundle}
+        onSaveRecipe={handleSaveRecipe}
+        onSaveState={handleSaveState}
+      />
+
       {/* Wizard modal */}
       <Modal
         opened={opened}
@@ -323,6 +368,7 @@ export const PromptWizard = memo(function PromptWizard({
           </Center>
         ) : (
           <Box style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+            {/* Header with library button */}
             <PromptWizardHeader
               activeProfileId={activeProfileId}
               onProfileChange={setActiveProfile}
@@ -332,16 +378,24 @@ export const PromptWizard = memo(function PromptWizard({
               onSearchScopeChange={setSearchScope}
               totalSelected={totalSelected}
               onClose={close}
+              onOpenLibrary={sidebarHandlers.open}
+              canvasVisible={canvasVisible}
+              onToggleCanvas={toggleCanvas}
             />
 
-            <PromptWizardSteps
-              steps={orderedStepMeta}
-              activeStep={activeStep}
-              tagCountsByStep={tagCountsByStep}
-              completionByStep={completionByStep}
-              onStepClick={setActiveStep}
-            />
+            {/* When narrow, show horizontal step tabs */}
+            {isNarrow && (
+              <PromptWizardSteps
+                steps={orderedStepMeta}
+                activeStep={activeStep}
+                tagCountsByStep={tagCountsByStep}
+                completionByStep={completionByStep}
+                onStepClick={setActiveStep}
+                horizontal
+              />
+            )}
 
+            {/* Main 3-column body */}
             <Box
               style={{
                 display: 'flex',
@@ -350,39 +404,20 @@ export const PromptWizard = memo(function PromptWizard({
                 minWidth: 0,
                 overflow: 'hidden',
                 alignItems: 'stretch',
-                flexDirection: isStackedLayout ? 'column' : 'row',
               }}
             >
-              <PromptWizardSidebar
-                steps={orderedStepMeta}
-                activeStep={activeStep}
-                stacked={isStackedLayout}
-                collapsed={resolvedSidebarCollapsed}
-                onToggleCollapsed={() => setSidebarCollapsed((value) => !value)}
-                stepSummaries={stepSummaries}
-                lastEditedStep={lastEditedStep}
-                recentSteps={recentSteps}
-                recentGroupKeys={recentGroupKeys}
-                profileName={profile?.name ?? 'Unknown profile'}
-                nextIncompleteStep={nextIncompleteStep}
-                defaultPresets={defaultPresets}
-                customPresets={customPresets}
-                sessionBundles={sessionBundles}
-                savedRecipes={savedRecipes}
-                savedStates={savedStates}
-                onJumpStep={setActiveStep}
-                onApplyPreset={applyPreset}
-                onApplyBundle={applyBundle}
-                onRemoveBundle={removeBundle}
-                onApplyRecipe={applyRecipe}
-                onRemoveRecipe={removeRecipe}
-                onLoadState={loadStateSnapshot}
-                onRemoveState={removeStateSnapshot}
-                onSaveBundle={handleSaveBundle}
-                onSaveRecipe={handleSaveRecipe}
-                onSaveState={handleSaveState}
-              />
+              {/* Column 1: Vertical step rail (hidden when narrow) */}
+              {!isNarrow && (
+                <PromptWizardSteps
+                  steps={orderedStepMeta}
+                  activeStep={activeStep}
+                  tagCountsByStep={tagCountsByStep}
+                  completionByStep={completionByStep}
+                  onStepClick={setActiveStep}
+                />
+              )}
 
+              {/* Column 2: Tag Palette */}
               <Box style={{ flex: 1, minWidth: 0, minHeight: 0, height: '100%', overflow: 'hidden' }}>
                 <PromptWizardStepContent
                   stepMeta={stepMeta}
@@ -396,9 +431,36 @@ export const PromptWizard = memo(function PromptWizard({
                   onFocusGroup={recordGroupFocus}
                 />
               </Box>
+
+              {/* Column 3: Prompt Canvas (side panel when wide + visible, bottom strip otherwise) */}
+              {!isStackedCanvas && canvasVisible && (
+                <Box style={{ width: 300, minWidth: 280, maxWidth: 340, height: '100%', flexShrink: 0 }}>
+                  <PromptWizardPreview
+                    positivePreview={assembled.positive}
+                    negativePreview={mergedNegativePreview}
+                    positiveCount={selectedTags.length}
+                    negativeCount={mergedNegativePreview ? mergedNegativePreview.split(profile?.tagSeparator ?? ', ').filter(Boolean).length : 0}
+                    explicitCount={explicitCount}
+                    profileName={profile?.name ?? 'Unknown'}
+                    profileStepSummary={profileStepSummary}
+                    healthIssues={promptHealth}
+                    onSendToGenerate={handleSendToGenerate}
+                    onAppendToGenerate={handleAppendToGenerate}
+                    onCopyPositive={handleCopyPositive}
+                    onCopyNegative={handleCopyNegative}
+                    onClear={clearSelections}
+                    hasSelection={totalSelected > 0}
+                    selectedTags={selectedTags}
+                    tagWeights={tagWeights}
+                    onDeselectTag={deselectTag}
+                    activeStep={activeStep}
+                    onJumpStep={setActiveStep}
+                  />
+                </Box>
+              )}
             </Box>
 
-            {/* Next / Previous navigation */}
+            {/* Footer: nav + stacked preview */}
             <Group
               justify="space-between"
               px="sm"
@@ -417,21 +479,32 @@ export const PromptWizard = memo(function PromptWizard({
               </SwarmButton>
             </Group>
 
-            <PromptWizardPreview
-              positivePreview={assembled.positive}
-              negativePreview={mergedNegativePreview}
-              positiveCount={selectedTags.length}
-              negativeCount={mergedNegativePreview ? mergedNegativePreview.split(profile?.tagSeparator ?? ', ').filter(Boolean).length : 0}
-              explicitCount={explicitCount}
-              profileName={profile?.name ?? 'Unknown profile'}
-              profileStepSummary={profileStepSummary}
-              healthIssues={promptHealth}
-              onApplyToPrompt={handleApplyPrompt}
-              onApplyToNegative={handleApplyNegative}
-              onClear={clearSelections}
-              hasSelection={totalSelected > 0}
-            />
+            {/* Bottom preview fallback when canvas is stacked (narrow view) or collapsed */}
+            {(isStackedCanvas || !canvasVisible) && (
+              <Box style={{ maxHeight: 200, flexShrink: 0, borderTop: '1px solid var(--mantine-color-default-border)' }}>
+                <PromptWizardPreview
+                  positivePreview={assembled.positive}
+                  negativePreview={mergedNegativePreview}
+                  positiveCount={selectedTags.length}
+                  negativeCount={mergedNegativePreview ? mergedNegativePreview.split(profile?.tagSeparator ?? ', ').filter(Boolean).length : 0}
+                  explicitCount={explicitCount}
+                  profileName={profile?.name ?? 'Unknown'}
+                  profileStepSummary={profileStepSummary}
+                  healthIssues={promptHealth}
+                  onApplyToPrompt={handleApplyPrompt}
+                  onApplyToNegative={handleApplyNegative}
+                  onClear={clearSelections}
+                  hasSelection={totalSelected > 0}
+                  selectedTags={selectedTags}
+                  tagWeights={tagWeights}
+                  onDeselectTag={deselectTag}
+                  activeStep={activeStep}
+                  onJumpStep={setActiveStep}
+                />
+              </Box>
+            )}
 
+            {/* Resize handles */}
             <Box style={{ position: 'absolute', top: 0, right: 0, bottom: 12, zIndex: 8 }}>
               <ResizeHandle
                 direction="horizontal"
@@ -440,7 +513,6 @@ export const PromptWizard = memo(function PromptWizard({
                 isResizing={widthPanel.isResizing}
               />
             </Box>
-
             <Box style={{ position: 'absolute', top: 0, left: 0, bottom: 12, zIndex: 8 }}>
               <ResizeHandle
                 direction="horizontal"
@@ -449,7 +521,6 @@ export const PromptWizard = memo(function PromptWizard({
                 isResizing={widthPanel.isResizing}
               />
             </Box>
-
             <Box style={{ position: 'absolute', left: 0, right: 12, bottom: 0, zIndex: 8 }}>
               <ResizeHandle
                 direction="vertical"
@@ -458,7 +529,6 @@ export const PromptWizard = memo(function PromptWizard({
                 isResizing={heightPanel.isResizing}
               />
             </Box>
-
             <Box style={{ position: 'absolute', left: 0, right: 12, top: 0, zIndex: 8 }}>
               <ResizeHandle
                 direction="vertical"

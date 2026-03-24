@@ -1,0 +1,51 @@
+
+=== CURATION REPORT ===
+Original tags: 2054
+Deduplicated (removed): 388
+Result tags: 1666
+Tags with majorGroup assigned: 1666
+Tags without majorGroup (fallback): 0
+
+--- Per subcategory ---
+appearance|Body: 296 total, 296 grouped (100%), 0 ungrouped
+subject|Character: 230 total, 230 grouped (100%), 0 ungrouped
+action|Pose: 186 total, 186 grouped (100%), 0 ungrouped
+setting|General: 143 total, 143 grouped (100%), 0 ungrouped
+appearance|Clothing: 108 total, 108 grouped (100%), 0 ungrouped
+subject|Object: 93 total, 93 grouped (100%), 0 ungrouped
+action|Gesture: 90 total, 90 grouped (100%), 0 ungrouped
+subject|General: 70 total, 70 grouped (100%), 0 ungrouped
+style|General: 66 total, 66 grouped (100%), 0 ungrouped
+atmosphere|Lighting: 59 total, 59 grouped (100%), 0 ungrouped
+style|Anime: 55 total, 55 grouped (100%), 0 ungrouped
+atmosphere|Mood: 54 total, 54 grouped (100%), 0 ungrouped
+quality|Positive Quality: 32 total, 32 grouped (100%), 0 ungrouped
+appearance|Hair: 29 total, 29 grouped (100%), 0 ungrouped
+style|Digital: 27 total, 27 grouped (100%), 0 ungrouped
+style|Painting: 22 total, 22 grouped (100%), 0 ungrouped
+setting|Outdoor: 22 total, 22 grouped (100%), 0 ungrouped
+setting|Urban: 20 total, 20 grouped (100%), 0 ungrouped
+appearance|Eyes: 17 total, 17 grouped (100%), 0 ungrouped
+setting|Indoor: 13 total, 13 grouped (100%), 0 ungrouped
+appearance|Accessories: 13 total, 13 grouped (100%), 0 ungrouped
+style|Realistic: 11 total, 11 grouped (100%), 0 ungrouped
+setting|Fantasy: 10 total, 10 grouped (100%), 0 ungrouped
+
+--- Ungrouped tags ---
+
+--- Largest groups (top 15) ---
+  [15] subject|Character|Setting Props>Outfits
+  [15] appearance|Body|Expression>Subtle & Involuntary
+  [15] appearance|Body|Build & Proportion>Frame
+  [15] appearance|Clothing|Lingerie & Intimate>Provocative
+  [14] subject|Object|Armor & Protection>Heavy
+  [13] subject|Character|Character Traits>Weapons
+  [13] subject|Character|Sci-Fi & Modern>Professional
+  [13] appearance|Body|Non-Human>Monster & Fantasy
+  [13] appearance|Body|Body Effects>Tech & Light
+  [13] appearance|Body|Body Effects>Magical
+  [12] style|General|Anime References>Shonen
+  [12] setting|General|Architecture>Grand
+  [12] subject|Character|Fantasy Classes>Magic
+  [12] subject|Character|Sci-Fi & Modern>Cyber
+  [12] subject|Character|Character Traits>Face & Details

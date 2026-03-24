@@ -2,8 +2,8 @@ import { memo } from 'react';
 import { PromptWizard } from './PromptWizard';
 
 interface PromptPresetSelectorProps {
-  onApplyToPrompt?: (text: string) => void;
-  onApplyToNegative?: (text: string) => void;
+  onApplyToPrompt?: (text: string, mode?: 'replace' | 'append') => void;
+  onApplyToNegative?: (text: string, mode?: 'replace' | 'append') => void;
   compact?: boolean;
 }
 

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Group, Select, Stack, Text, TextInput, ThemeIcon } from '@mantine/core';
-import { IconSearch, IconSparkles, IconX } from '@tabler/icons-react';
+import { IconLayoutSidebarRight, IconLayoutSidebarRightCollapse, IconLibrary, IconSearch, IconSparkles, IconX } from '@tabler/icons-react';
 import { SwarmActionIcon, SwarmBadge, SwarmSegmentedControl } from './ui';
 import { PROFILES } from '../features/promptWizard/profiles';
 
@@ -13,6 +13,9 @@ interface PromptWizardHeaderProps {
   onSearchScopeChange: (scope: 'global' | 'step') => void;
   totalSelected: number;
   onClose: () => void;
+  onOpenLibrary?: () => void;
+  canvasVisible?: boolean;
+  onToggleCanvas?: () => void;
 }
 
 export const PromptWizardHeader = memo(function PromptWizardHeader({
@@ -24,6 +27,9 @@ export const PromptWizardHeader = memo(function PromptWizardHeader({
   onSearchScopeChange,
   totalSelected,
   onClose,
+  onOpenLibrary,
+  canvasVisible,
+  onToggleCanvas,
 }: PromptWizardHeaderProps) {
   return (
     <Stack gap="sm" px="lg" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-default-border)', background: 'linear-gradient(180deg, color-mix(in srgb, var(--elevation-raised) 82%, transparent), transparent)' }}>
@@ -42,9 +48,26 @@ export const PromptWizardHeader = memo(function PromptWizardHeader({
             <Text size="sm" c="dimmed">Build prompts step by step with model-appropriate tag ordering.</Text>
           </Stack>
         </Group>
-        <SwarmActionIcon tone="secondary" emphasis="ghost" onClick={onClose} label="Close prompt wizard">
-          <IconX size={18} />
-        </SwarmActionIcon>
+        <Group gap="xs">
+          {onToggleCanvas && (
+            <SwarmActionIcon
+              tone={canvasVisible ? 'primary' : 'secondary'}
+              emphasis={canvasVisible ? 'soft' : 'ghost'}
+              onClick={onToggleCanvas}
+              label={canvasVisible ? 'Hide prompt canvas' : 'Show prompt canvas'}
+            >
+              {canvasVisible ? <IconLayoutSidebarRightCollapse size={18} /> : <IconLayoutSidebarRight size={18} />}
+            </SwarmActionIcon>
+          )}
+          {onOpenLibrary && (
+            <SwarmActionIcon tone="secondary" emphasis="soft" onClick={onOpenLibrary} label="Open build tools & library">
+              <IconLibrary size={18} />
+            </SwarmActionIcon>
+          )}
+          <SwarmActionIcon tone="secondary" emphasis="ghost" onClick={onClose} label="Close prompt wizard">
+            <IconX size={18} />
+          </SwarmActionIcon>
+        </Group>
       </Group>
       <Group align="stretch" gap="xs" wrap="wrap">
         <TextInput

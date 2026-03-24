@@ -75,11 +75,19 @@ export const PromptSection = memo(function PromptSection({
             <Box className="generate-studio__prompt-library-trigger">
                 <PromptPresetSelector
                     compact
-                    onApplyToPrompt={(text) => {
-                        form.setFieldValue('prompt', prependPromptText(form.values.prompt, text));
+                    onApplyToPrompt={(text, mode) => {
+                        if (mode === 'replace') {
+                            form.setFieldValue('prompt', text);
+                        } else {
+                            form.setFieldValue('prompt', prependPromptText(form.values.prompt, text));
+                        }
                     }}
-                    onApplyToNegative={(text) => {
-                        form.setFieldValue('negativeprompt', prependPromptText(form.values.negativeprompt, text));
+                    onApplyToNegative={(text, mode) => {
+                        if (mode === 'replace') {
+                            form.setFieldValue('negativeprompt', text);
+                        } else {
+                            form.setFieldValue('negativeprompt', prependPromptText(form.values.negativeprompt, text));
+                        }
                     }}
                 />
             </Box>
