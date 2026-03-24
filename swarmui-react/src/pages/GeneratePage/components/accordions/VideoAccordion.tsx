@@ -2,7 +2,6 @@ import { memo } from 'react';
 import {
     Accordion,
     Stack,
-    Switch,
     Text,
     Select,
     Divider,
@@ -11,6 +10,7 @@ import {
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams } from '../../../../api/types';
 import { SliderWithInput } from '../../../../components/SliderWithInput';
+import { SwarmSwitch } from '../../../../components/ui';
 import type { ModelMediaCapabilities } from '../../../../utils/modelCapabilities';
 
 export interface VideoAccordionProps {
@@ -42,7 +42,7 @@ export const VideoAccordion = memo(function VideoAccordion({
             <Accordion.Control>Video</Accordion.Control>
             <Accordion.Panel>
                 <Stack gap="md">
-                    <Switch
+                    <SwarmSwitch
                         label="Enable Video Generation"
                         size="xs"
                         checked={enabled}
@@ -136,7 +136,7 @@ export const VideoAccordion = memo(function VideoAccordion({
                                         {...form.getInputProps('videoformat')}
                                     />
 
-                                    <Switch
+                                    <SwarmSwitch
                                         label="Boomerang (Loop back and forth)"
                                         size="xs"
                                         {...form.getInputProps('videoboomerang', { type: 'checkbox' })}

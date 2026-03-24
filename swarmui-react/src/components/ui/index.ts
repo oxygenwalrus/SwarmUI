@@ -17,6 +17,9 @@ export { SwarmActionIcon, type SwarmActionIconProps } from './SwarmActionIcon';
 export { SwarmBadge, type SwarmBadgeProps } from './SwarmBadge';
 export { SwarmStatusPill, type SwarmStatusPillProps } from './SwarmStatusPill';
 export { SwarmSegmentedControl, type SwarmSegmentedControlProps } from './SwarmSegmentedControl';
+export { SwarmSwitch, type SwarmSwitchProps } from './SwarmSwitch';
+export { SwarmSlider, type SwarmSliderProps } from './SwarmSlider';
+export { SwarmSliderField, type SwarmSliderFieldProps } from './SwarmSliderField';
 export { SamplingSelect, type SamplingSelectProps } from './SamplingSelect';
 export { ResizeHandle } from './ResizeHandle';
 export {

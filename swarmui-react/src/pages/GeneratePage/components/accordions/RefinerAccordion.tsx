@@ -3,7 +3,6 @@ import {
     Accordion,
     Stack,
     Group,
-    Switch,
     Text,
     Select,
     Checkbox,
@@ -15,6 +14,7 @@ import {
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams, Model } from '../../../../api/types';
 import { SliderWithInput } from '../../../../components/SliderWithInput';
+import { SwarmSwitch } from '../../../../components/ui';
 
 export interface RefinerAccordionProps {
     form: UseFormReturnType<GenerateParams>;
@@ -260,7 +260,7 @@ export const RefinerAccordion = memo(function RefinerAccordion({
             <Accordion.Control>Refiner / Upscale</Accordion.Control>
             <Accordion.Panel>
                 <Stack gap="md">
-                    <Switch
+                    <SwarmSwitch
                         label="Enable Refiner"
                         size="xs"
                         checked={enabled}
@@ -413,7 +413,7 @@ export const RefinerAccordion = memo(function RefinerAccordion({
                         <Stack gap="md">
                             <Box>
                                 <Group gap="xs" mb="xs">
-                                    <Switch
+                                    <SwarmSwitch
                                         size="xs"
                                         checked={stepsOverrideEnabled}
                                         onChange={(e) => setStepsOverrideEnabled(e.currentTarget.checked)}
@@ -440,7 +440,7 @@ export const RefinerAccordion = memo(function RefinerAccordion({
 
                             <Box>
                                 <Group gap="xs" mb="xs">
-                                    <Switch
+                                    <SwarmSwitch
                                         size="xs"
                                         checked={cfgOverrideEnabled}
                                         onChange={(e) => setCfgOverrideEnabled(e.currentTarget.checked)}

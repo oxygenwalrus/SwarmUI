@@ -7,12 +7,9 @@ import {
   Textarea,
   TextInput,
   Tooltip,
-  Slider,
   Paper,
-  Button,
   Card,
   ScrollArea,
-  Switch,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
@@ -32,7 +29,7 @@ import { useCanvasEditorStore } from '../../stores/canvasEditorStore';
 import { checkLanguage, applyCorrections } from '../../utils/languageCorrection';
 import { autocorrectPromptText } from '../../utils/promptTextTools';
 import { registerPromptTargetHandlers, setActivePromptTarget } from '../../utils/promptContextRegistry';
-import { SwarmActionIcon } from '../ui';
+import { SwarmActionIcon, SwarmButton, SwarmSlider, SwarmSwitch } from '../ui';
 
 interface RegionalPromptEditorProps {
   onRegionSelect?: (regionId: string | null) => void;
@@ -194,7 +191,7 @@ const RegionItem = memo(function RegionItem({
                 {region.strength.toFixed(2)}
               </Text>
             </Group>
-            <Slider
+            <SwarmSlider
               value={region.strength}
               onChange={(value) => onUpdate({ strength: value })}
               onClick={(e) => e.stopPropagation()}
@@ -202,13 +199,12 @@ const RegionItem = memo(function RegionItem({
               max={1}
               step={0.05}
               size="xs"
-              color="invokeBrand"
             />
           </Box>
         )}
 
         {!isBackgroundRegion && (
-          <Switch
+          <SwarmSwitch
             label="Use Object Inpaint (<object:...>)"
             checked={region.useInpaint}
             onChange={(e) => onUpdate({ useInpaint: e.currentTarget.checked })}
@@ -227,7 +223,7 @@ const RegionItem = memo(function RegionItem({
                 {region.inpaintStrength.toFixed(2)}
               </Text>
             </Group>
-            <Slider
+            <SwarmSlider
               value={region.inpaintStrength}
               onChange={(value) => onUpdate({ inpaintStrength: value })}
               onClick={(e) => e.stopPropagation()}
@@ -235,7 +231,6 @@ const RegionItem = memo(function RegionItem({
               max={1}
               step={0.05}
               size="xs"
-              color="invokeBrand"
             />
           </Box>
         )}
@@ -246,7 +241,7 @@ const RegionItem = memo(function RegionItem({
           </Text>
         )}
 
-        <Switch
+        <SwarmSwitch
           label="Enabled"
           checked={region.enabled}
           onChange={(e) => onUpdate({ enabled: e.currentTarget.checked })}
@@ -404,18 +399,19 @@ export const RegionalPromptEditor = memo(function RegionalPromptEditor({
           </Group>
         </Group>
 
-        <Button
+        <SwarmButton
           size="xs"
-          variant="light"
+          emphasis="soft"
           leftSection={<IconPlus size={14} />}
           onClick={handleAddRegion}
         >
           Add Box Region
-        </Button>
+        </SwarmButton>
 
-        <Button
+        <SwarmButton
           size="xs"
-          variant="subtle"
+          emphasis="ghost"
+          tone="secondary"
           leftSection={<IconPlus size={14} />}
           onClick={() => {
             const id = addRegion({
@@ -430,7 +426,7 @@ export const RegionalPromptEditor = memo(function RegionalPromptEditor({
           }}
         >
           Add Background Region
-        </Button>
+        </SwarmButton>
 
         {regions.length === 0 ? (
           <Box

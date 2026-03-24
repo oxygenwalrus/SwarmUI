@@ -1250,8 +1250,10 @@ button[class*="invokeBrand"],
 .mantine-Button-root[data-variant="light"]:hover,
 .mantine-Button-root[data-color*="Brand"]:hover,
 .mantine-Button-root[data-color="invokeBrand"]:hover {
-  filter: brightness(1.15);
-  box-shadow: var(--elevation-shadow-md) !important;
+  filter: brightness(1.06);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--theme-gray-0) 6%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--theme-brand) 22%, transparent) !important;
 }
 
 .mantine-Button-root:hover::before {
@@ -1378,16 +1380,18 @@ button[class*="invokeBrand"],
   background-color: var(--theme-gray-0) !important;
   border: 2px solid var(--theme-brand) !important;
   box-shadow: 0 1px 3px var(--theme-shadow-color) !important;
-  transition: transform 100ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 100ms ease !important;
+  transform: translate(-50%, -50%) !important;
+  transition: none !important;
 }
 
 .mantine-Slider-thumb:hover {
-  transform: scale(1.15);
-  box-shadow: var(--elevation-shadow-sm) !important;
+  transform: translate(-50%, -50%) !important;
+  box-shadow: 0 1px 3px var(--theme-shadow-color) !important;
 }
 
 .mantine-Slider-thumb:active {
-  transform: scale(1.1);
+  transform: translate(-50%, -50%) !important;
+  box-shadow: 0 1px 3px var(--theme-shadow-color) !important;
 }
 
 /* Slider marks (numbers like 1, 20, 50, 150) */
@@ -2151,8 +2155,10 @@ body {
 }
 
 .gradient-button:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--elevation-shadow-md) !important;
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 1px color-mix(in srgb, var(--theme-brand) 24%, transparent) !important;
 }
 
 .gradient-button:active {
@@ -2244,8 +2250,10 @@ body {
 }
 
 .gradient-button-success:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--theme-success) 40%, transparent) !important;
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px color-mix(in srgb, var(--theme-success) 34%, transparent) !important;
 }
 
 /* Gradient button - Danger (red) */
@@ -2272,8 +2280,10 @@ body {
 }
 
 .gradient-button-danger:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--theme-error) 40%, transparent) !important;
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px color-mix(in srgb, var(--theme-error) 34%, transparent) !important;
 }
 
 /* Gradient button - Secondary (subtle accent) */
@@ -2300,9 +2310,11 @@ body {
 }
 
 .gradient-button-secondary:hover {
-  transform: translateY(-1px);
+  transform: none;
   border-color: var(--theme-brand) !important;
-  box-shadow: var(--elevation-shadow-md) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 1px color-mix(in srgb, var(--theme-brand) 24%, transparent) !important;
 }
 
 /* Gradient button - Info (blue) */
@@ -2329,8 +2341,10 @@ body {
 }
 
 .gradient-button-info:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--theme-info) 40%, transparent) !important;
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px color-mix(in srgb, var(--theme-info) 34%, transparent) !important;
 }
 
 /* Gradient button - Warning (orange) */
@@ -2357,8 +2371,10 @@ body {
 }
 
 .gradient-button-warning:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--theme-warning) 40%, transparent) !important;
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px color-mix(in srgb, var(--theme-warning) 34%, transparent) !important;
 }
 
 /* Gradient button - Primary (brand) */
@@ -2385,8 +2401,10 @@ body {
 }
 
 .gradient-button-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--theme-glow-color) !important;
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px color-mix(in srgb, var(--theme-brand) 28%, transparent) !important;
 }
 
 /* Gradient button - Outline variant */
@@ -2403,8 +2421,10 @@ body {
 }
 
 .gradient-button-outline:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--theme-glow-color) !important;
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 1px color-mix(in srgb, var(--theme-brand) 28%, transparent) !important;
 }
 
 /* === SWARM SEMANTIC TONES === */
@@ -2460,10 +2480,10 @@ body {
 .swarm-action-icon,
 .swarm-badge,
 .swarm-status-pill {
-  transition: transform calc(140ms * var(--motion-factor)) var(--theme-family-animation-curve),
-    box-shadow calc(140ms * var(--motion-factor)) var(--theme-family-animation-curve),
+  transition: box-shadow calc(140ms * var(--motion-factor)) var(--theme-family-animation-curve),
     border-color calc(120ms * var(--motion-factor)) var(--theme-family-animation-curve),
-    background-color calc(120ms * var(--motion-factor)) var(--theme-family-animation-curve);
+    background-color calc(120ms * var(--motion-factor)) var(--theme-family-animation-curve),
+    color calc(120ms * var(--motion-factor)) var(--theme-family-animation-curve);
 }
 
 .swarm-button.swarm-emphasis--solid,
@@ -2527,11 +2547,75 @@ body {
 .swarm-action-icon:hover,
 .swarm-badge:hover,
 .swarm-status-pill:hover {
-  box-shadow: 0 6px 18px var(--swarm-tone-glow);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--theme-gray-0) 5%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--swarm-tone-border) 34%, transparent);
 }
 
 .swarm-status-pill {
   border-radius: 999px !important;
+}
+
+[data-swarm-tone].swarm-switch .mantine-Switch-track[data-checked="true"],
+[data-swarm-tone].swarm-switch .mantine-Switch-input:checked + .mantine-Switch-track {
+  background-color: var(--swarm-tone-bg) !important;
+  border-color: var(--swarm-tone-border) !important;
+}
+
+[data-swarm-tone].swarm-switch .mantine-Switch-track {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--theme-gray-0) 4%, transparent);
+}
+
+[data-swarm-tone].swarm-switch .mantine-Switch-thumb {
+  border-color: color-mix(in srgb, var(--swarm-tone-border) 36%, var(--theme-gray-4)) !important;
+}
+
+[data-swarm-tone].swarm-switch .mantine-Switch-input:focus-visible + .mantine-Switch-track {
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--swarm-tone-border) 28%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--theme-gray-0) 5%, transparent) !important;
+}
+
+[data-swarm-tone].swarm-slider .mantine-Slider-bar {
+  border-color: color-mix(in srgb, var(--swarm-tone-border) 88%, transparent) !important;
+}
+
+[data-swarm-tone].swarm-slider .mantine-Slider-thumb {
+  border-color: color-mix(in srgb, var(--swarm-tone-border) 92%, transparent) !important;
+}
+
+[data-swarm-tone].swarm-slider .mantine-Slider-thumb:hover,
+[data-swarm-tone].swarm-slider .mantine-Slider-thumb:active {
+  transform: translate(-50%, -50%) !important;
+  box-shadow: 0 1px 3px var(--theme-shadow-color) !important;
+}
+
+.swarm-slider-field__label {
+  color: var(--theme-gray-0);
+}
+
+.swarm-slider-field__number-input {
+  width: 72px !important;
+  text-align: right !important;
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--theme-brand) !important;
+  background-color: color-mix(in srgb, var(--theme-gray-7) 92%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-gray-4) 30%, transparent) !important;
+  border-radius: 6px !important;
+}
+
+.swarm-slider-field__number-input:focus,
+.swarm-slider-field__number-input:focus-visible {
+  outline: none !important;
+  border-color: color-mix(in srgb, var(--theme-brand) 42%, transparent) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-brand) 18%, transparent) !important;
+}
+
+.swarm-slider-field__description {
+  line-height: 1.4;
+  color: var(--theme-text-secondary);
 }
 
 .swarm-status-pill.swarm-status-pill--pulse {
@@ -3906,8 +3990,11 @@ pre,
 }
 
 .swarm-server-accordion .swarm-button:not(:disabled):hover {
-  transform: translateY(-1px);
-  filter: saturate(1.1) brightness(1.04);
+  transform: none;
+  filter: saturate(1.04) brightness(1.02);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--theme-gray-0) 6%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--theme-gray-1) 20%, transparent) !important;
 }
 
 .swarm-server-accordion .swarm-button:disabled {

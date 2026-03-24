@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, lazy, Suspense, memo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, lazy, Suspense, memo } from 'react';
 import {
     Box,
     Modal,
@@ -10,7 +10,6 @@ import {
     Text,
     TextInput,
     Textarea,
-    Button,
     Badge,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
@@ -28,6 +27,7 @@ import {
 import {
     useActiveLoras,
     useActiveWildcards,
+    useBatchOutputFolder,
     useSelectedBackend,
     useModeToggles,
     useResetGeneration,
@@ -112,6 +112,7 @@ interface GeneratePageProps {
 export const GeneratePage = memo(function GeneratePage({ routeState }: GeneratePageProps) {
     const { activeLoras, setLoras } = useActiveLoras();
     const { wildcardText, setWildcardText } = useActiveWildcards();
+    const { batchOutputFolder, setBatchOutputFolder, clearBatchOutputFolder } = useBatchOutputFolder();
     const { selectedBackend, setSelectedBackend } = useSelectedBackend();
     const resetStore = useResetGeneration();
 
@@ -270,12 +271,6 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
     });
 
     useEffect(() => {
-        if (!isGalleryDrawer) {
-            setGalleryDrawerOpen(false);
-        }
-    }, [isGalleryDrawer]);
-
-    useEffect(() => {
         const previouslySupportedVideo = previousModelSupportRef.current;
 
         if (previouslySupportedVideo && !modelMediaCapabilities.supportsVideo) {
@@ -346,7 +341,7 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
         setEnableRefiner,
     ]);
 
-    const handleGenerateWithBuilder = (values: typeof paramForm.form.values, options?: { forceEnableRefiner?: boolean }) => {
+    const handleGenerateWithBuilder = useCallback((values: typeof paramForm.form.values, options?: { forceEnableRefiner?: boolean }) => {
         const preflightIssues = validateGeneration(values, {
             selectedBackend,
             enableControlNet,
@@ -408,7 +403,16 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
         }
 
         handleGenerate(effectiveValues, options);
-    };
+    }, [
+        enableControlNet,
+        enableInitImage,
+        enableRefiner,
+        enableVideo,
+        handleGenerate,
+        paramForm,
+        selectedBackend,
+        setIssues,
+    ]);
 
     const handleGenerateAndUpscale = () => {
         const currentValues = paramForm.form.values;
@@ -668,14 +672,14 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
             return [null, null] as const;
         }
 
-        return recent.map((src) => ({
+        return recent.map((src, index) => ({
             src,
             metadata: null,
             starred: false,
             canonical_src: src,
             preview_src: src,
             media_type: 'image' as const,
-            created_at: Date.now(),
+            created_at: generatedImages.length - recent.length + index,
             prompt_preview: null,
             model: paramForm.form.values.model || null,
             width: null,
@@ -690,12 +694,6 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
             : currentMode === 'video'
                 ? 'Focused video generation with text-to-video and image-to-video controls.'
                 : 'Full studio workspace with the canvas leading and support tools around it.';
-
-    useEffect(() => {
-        if (!usesAdvancedRail || isGalleryDrawer || workspaceLayout.focusMode) {
-            setGalleryPinned(false);
-        }
-    }, [isGalleryDrawer, usesAdvancedRail, workspaceLayout.focusMode]);
 
     useEffect(() => {
         if (!routeState?.mode) {
@@ -977,11 +975,14 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
                                     loadingControlNets={dataLoaders.loadingControlNets}
                                     upscaleModels={dataLoaders.upscaleModels}
                                     embeddingOptions={dataLoaders.embeddingOptions}
-                                    wildcardOptions={dataLoaders.wildcardOptions}
-                                    wildcardText={wildcardText}
-                                    onWildcardTextChange={setWildcardText}
-                                    quickModules={workspaceLayout.openQuickModules}
-                                    onQuickModulesChange={workspaceActions.setOpenQuickModules}
+                                      wildcardOptions={dataLoaders.wildcardOptions}
+                                      wildcardText={wildcardText}
+                                      onWildcardTextChange={setWildcardText}
+                                      batchOutputFolder={batchOutputFolder}
+                                      onBatchOutputFolderChange={setBatchOutputFolder}
+                                      onClearBatchOutputFolder={clearBatchOutputFolder}
+                                      quickModules={workspaceLayout.openQuickModules}
+                                      onQuickModulesChange={workspaceActions.setOpenQuickModules}
                                     inspectorSections={workspaceLayout.openInspectorSections}
                                     onInspectorSectionsChange={workspaceActions.setOpenInspectorSections}
                                     lastInspectorJumpTarget={workspaceLayout.lastInspectorJumpTarget}
@@ -1008,9 +1009,12 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
                                     onOpenHistory={modals.openHistoryDrawer}
                                     onOpenModelBrowser={modals.openModelBrowser}
                                     onOpenLoraBrowser={modals.openLoraModal}
-                                    onOpenEmbeddingBrowser={modals.openEmbeddingModal}
-                                    onPromoteWorkflow={handlePromoteToWorkflow}
-                                    enableRefiner={enableRefiner}
+                                      onOpenEmbeddingBrowser={modals.openEmbeddingModal}
+                                      onPromoteWorkflow={handlePromoteToWorkflow}
+                                      batchOutputFolder={batchOutputFolder}
+                                      onBatchOutputFolderChange={setBatchOutputFolder}
+                                      onClearBatchOutputFolder={clearBatchOutputFolder}
+                                      enableRefiner={enableRefiner}
                                     setEnableRefiner={setEnableRefiner}
                                     enableInitImage={enableInitImage}
                                     setEnableInitImage={setEnableInitImage}
@@ -1301,8 +1305,9 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
                             This will save all current parameters except prompt and negative prompt.
                         </Text>
                         <Group justify="flex-end">
-                            <Button
-                                variant="subtle"
+                            <SwarmButton
+                                tone="secondary"
+                                emphasis="ghost"
                                 onClick={() => {
                                     modals.closeSavePresetModal();
                                     setPresetName('');
@@ -1310,10 +1315,10 @@ export const GeneratePage = memo(function GeneratePage({ routeState }: GenerateP
                                 }}
                             >
                                 Cancel
-                            </Button>
-                            <Button color="invokeBrand" onClick={handleSavePreset}>
+                            </SwarmButton>
+                            <SwarmButton tone="primary" emphasis="solid" onClick={handleSavePreset}>
                                 Save Preset
-                            </Button>
+                            </SwarmButton>
                         </Group>
                     </Stack>
                 </Modal>

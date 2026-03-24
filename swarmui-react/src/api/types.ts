@@ -510,3 +510,185 @@ export interface ServerResourceInfo {
   }>;
 }
 
+export interface KohyaStatusResponse {
+  installed: boolean;
+  running: boolean;
+  status_message: string;
+  kohya_path: string;
+  launch_command: string;
+  setup_steps?: string[];
+}
+
+export interface KohyaTrainingTemplate {
+  model_type?: string;
+  model_path?: string;
+  train_data_dir?: string;
+  output_dir?: string;
+  output_name?: string;
+  learning_rate?: number;
+  num_train_epochs?: number;
+  batch_size?: number;
+  resolution?: string;
+  clip_skip?: number;
+  mixed_precision?: string;
+  use_8bit_adam?: boolean;
+  gradient_checkpointing?: boolean;
+  xformers?: boolean;
+  [key: string]: unknown;
+}
+
+export interface KohyaDatasetInfo {
+  name: string;
+  image_count: number;
+  path: string;
+}
+
+export interface KohyaTrainedLoraInfo {
+  name: string;
+  filename: string;
+  size_mb: number;
+  created?: string;
+  path: string;
+}
+
+export type LoraWorkflowMode = 'generated' | 'stored';
+
+export interface LoraWorkflowDescriptor {
+  mode: LoraWorkflowMode;
+  name?: string;
+  source?: string;
+  path?: string;
+}
+
+export interface LoraProjectSummary {
+  character_id: string;
+  base_prompt: string;
+  reference_image: string;
+  raw_count: number;
+  approved_count: number;
+  updated_utc?: string;
+}
+
+export interface LoraProject {
+  character_id: string;
+  reference_image: string;
+  base_prompt: string;
+  variations: Record<string, string[]>;
+  settings: Record<string, unknown>;
+  created_utc?: string;
+  updated_utc?: string;
+}
+
+export interface LoraBatchPlanJob {
+  index?: number;
+  prompt: string;
+  seed?: number | null;
+  variation_values?: string[];
+}
+
+export interface LoraBatchManifestSummary {
+  batch_id: string;
+  job_count: number;
+  created_utc?: string;
+  reference_image?: string;
+  path?: string;
+  workflow?: LoraWorkflowDescriptor;
+}
+
+export interface LoraDatasetItem {
+  image_id: string;
+  filename?: string;
+  prompt?: string;
+  seed?: number | null;
+  approved: boolean;
+  folder: string;
+  status?: string;
+  path?: string;
+  preview_image?: string;
+  source?: string;
+  workflow_mode?: string;
+  workflow_name?: string;
+  workflow_source?: string;
+  workflow_path?: string;
+}
+
+export interface LoraBatchExecutionJob {
+  index: number;
+  status: string;
+  prompt: string;
+  seed?: number | null;
+  error?: string;
+  image?: string;
+  output_path?: string;
+  started_utc?: string;
+  completed_utc?: string;
+  workflow?: LoraWorkflowDescriptor;
+}
+
+export interface LoraBatchExecutionStatus {
+  batch_id: string;
+  character_id: string;
+  status: string;
+  total_jobs: number;
+  completed_jobs: number;
+  failed_jobs: number;
+  current_job_index?: number;
+  started_utc?: string;
+  completed_utc?: string;
+  updated_utc?: string;
+  workflow?: LoraWorkflowDescriptor;
+  jobs: LoraBatchExecutionJob[];
+}
+
+export interface LoraTrainableProject {
+  character_id: string;
+  approved_count: number;
+  raw_count: number;
+  train_data_dir: string;
+  output_dir: string;
+}
+
+export interface LoraTrainingLaunchPreview {
+  command_line: string;
+  args?: string[];
+  base_model?: string;
+  train_data_dir?: string;
+  output_dir?: string;
+  output_name?: string;
+}
+
+export interface LoraTrainingJob {
+  job_id: string;
+  character_id: string;
+  state: string;
+  output_dir?: string;
+  output_name?: string;
+  base_model?: string;
+  train_data_dir?: string;
+  launch_preview?: LoraTrainingLaunchPreview;
+  message?: string;
+  created_utc?: string;
+  started_utc?: string;
+  finished_utc?: string;
+  completion_summary?: Record<string, unknown>;
+}
+
+export interface LoraTrainingStatus {
+  state: string;
+  job_id?: string;
+  character_id?: string;
+  message?: string;
+  pid?: number;
+  active_process_running?: boolean;
+  started_utc?: string;
+  finished_utc?: string;
+  exit_code?: number;
+  launch_preview?: LoraTrainingLaunchPreview;
+  completion_summary?: Record<string, unknown>;
+  refresh_triggered?: boolean;
+  refresh_state?: string;
+  refresh_message?: string;
+  refresh_requested_utc?: string;
+  refresh_completed_utc?: string;
+}
+

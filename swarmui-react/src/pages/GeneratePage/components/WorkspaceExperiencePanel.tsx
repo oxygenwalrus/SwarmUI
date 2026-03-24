@@ -1,7 +1,6 @@
 import {
     Badge,
     Box,
-    Button,
     Card,
     Divider,
     Group,
@@ -110,17 +109,18 @@ export function WorkspaceExperiencePanel({
                         </Box>
 
                         <Group gap="sm" wrap="wrap" className="generate-workspace-bar__actions">
-                            <Button
-                                variant="light"
+                            <SwarmButton
+                                tone="secondary"
+                                emphasis="soft"
                                 leftSection={<IconRestore size={14} />}
                                 onClick={onRestoreSnapshot}
                                 disabled={!lastSnapshot}
                             >
                                 Restore Session
-                            </Button>
-                            <Button variant="light" onClick={onPromoteWorkflow}>
+                            </SwarmButton>
+                            <SwarmButton tone="secondary" emphasis="soft" onClick={onPromoteWorkflow}>
                                 Send To Workflow
-                            </Button>
+                            </SwarmButton>
                         </Group>
                     </Group>
 

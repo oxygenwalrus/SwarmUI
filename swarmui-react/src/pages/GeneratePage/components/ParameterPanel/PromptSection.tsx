@@ -1,11 +1,12 @@
 import { memo } from 'react';
-import { Stack, Group, Badge, Text, Box, ActionIcon, Tooltip } from '@mantine/core';
+import { Stack, Group, Badge, Text, Box, Tooltip } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams } from '../../../../api/types';
 import { IconRefresh, IconX } from '@tabler/icons-react';
 import { PromptPresetSelector } from '../../../../components/PromptPresetSelector';
 import { PromptInput } from '../../../../components/PromptInput';
 import { QuickModeIndicator } from '../../../../components/QuickModeIndicator';
+import { SwarmActionIcon } from '../../../../components/ui';
 import { usePromptBuilderStore } from '../../../../stores/promptBuilderStore';
 import {
     compilePromptBuilder,
@@ -104,28 +105,28 @@ export const PromptSection = memo(function PromptSection({
                         </Group>
                         <Group gap="xs" className="generate-studio__prompt-builder-actions">
                             <Tooltip label="Resync prompt builder content from the canvas">
-                                <ActionIcon
+                                <SwarmActionIcon
                                     size="sm"
-                                    variant="subtle"
-                                    color="gray"
+                                    tone="secondary"
+                                    emphasis="ghost"
                                     onClick={handleResyncFromCanvas}
                                     disabled={!hasBuilderRules}
                                     aria-label="Resync from canvas"
                                 >
                                     <IconRefresh size={15} />
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
                             <Tooltip label="Remove the managed prompt block">
-                                <ActionIcon
+                                <SwarmActionIcon
                                     size="sm"
-                                    variant="subtle"
-                                    color="gray"
+                                    tone="secondary"
+                                    emphasis="ghost"
                                     onClick={handleRemoveManagedBlock}
                                     disabled={!hasVisibleBlock}
                                     aria-label="Remove managed block"
                                 >
                                     <IconX size={15} />
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
                         </Group>
                     </Group>

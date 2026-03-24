@@ -113,6 +113,13 @@
                         <button class="alt-prompt-buttons interrupt-button interrupt-button-none alt-interrupt" id="alt_interrupt_button" oncontextmenu="doPopover('interrupt'); return false;" onclick="mainGenHandler.doInterrupt()">&times;</button>
                     </div>
                 </div>
+                <div class="gen-save-folder-bar">
+                    <span class="translate gen-save-folder-label">Next Save Folder</span>
+                    <input type="text" class="auto-text gen-save-folder-input" id="current_generation_output_folder" placeholder="Optional history subfolder..." autocomplete="off" />
+                    <button type="button" class="basic-button translate" id="current_generation_output_folder_from_history">Use Current History Folder</button>
+                    <button type="button" class="basic-button translate" id="current_generation_output_folder_clear">Clear</button>
+                    <span class="gen-save-folder-status" id="current_generation_output_folder_status">Default output path</span>
+                </div>
             </div>
             <div class="sui-popover sui_popover_model" id="popover_generate_center">
                 <div class="sui_popover_model_button translate" onclick="mainGenHandler.doGenerate()">Generate</div>

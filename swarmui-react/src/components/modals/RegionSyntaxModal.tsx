@@ -2,9 +2,6 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
     Modal,
     Stack,
-    Slider,
-    Switch,
-    Button,
     Group,
     Text,
     Textarea,
@@ -14,6 +11,7 @@ import {
 } from '@mantine/core';
 import { IconInfoCircle, IconExternalLink } from '@tabler/icons-react';
 import { buildRegionTag, type BuilderRegionRule } from '../../features/promptBuilder';
+import { SwarmButton, SwarmSlider, SwarmSwitch } from '../ui';
 
 interface RegionSyntaxModalProps {
     /** Whether the modal is open */
@@ -262,22 +260,22 @@ export const RegionSyntaxModal = React.memo(function RegionSyntaxModal({
                 <Group grow>
                     <div>
                         <Text size="sm" fw={500}>X: {x.toFixed(2)}</Text>
-                        <Slider value={x} onChange={setX} min={0} max={1} step={0.01} />
+                        <SwarmSlider value={x} onChange={setX} min={0} max={1} step={0.01} />
                     </div>
                     <div>
                         <Text size="sm" fw={500}>Y: {y.toFixed(2)}</Text>
-                        <Slider value={y} onChange={setY} min={0} max={1} step={0.01} />
+                        <SwarmSlider value={y} onChange={setY} min={0} max={1} step={0.01} />
                     </div>
                 </Group>
 
                 <Group grow>
                     <div>
                         <Text size="sm" fw={500}>Width: {width.toFixed(2)}</Text>
-                        <Slider value={width} onChange={setWidth} min={0.05} max={1} step={0.01} />
+                        <SwarmSlider value={width} onChange={setWidth} min={0.05} max={1} step={0.01} />
                     </div>
                     <div>
                         <Text size="sm" fw={500}>Height: {height.toFixed(2)}</Text>
-                        <Slider value={height} onChange={setHeight} min={0.05} max={1} step={0.01} />
+                        <SwarmSlider value={height} onChange={setHeight} min={0.05} max={1} step={0.01} />
                     </div>
                 </Group>
 
@@ -286,7 +284,7 @@ export const RegionSyntaxModal = React.memo(function RegionSyntaxModal({
                     <Text size="xs" c="dimmed" mb={8}>
                         How strongly to apply the regional prompt vs global prompt
                     </Text>
-                    <Slider
+                    <SwarmSlider
                         value={strength}
                         onChange={setStrength}
                         min={0}
@@ -302,7 +300,7 @@ export const RegionSyntaxModal = React.memo(function RegionSyntaxModal({
 
                 <Divider />
 
-                <Switch
+                <SwarmSwitch
                     label="Also Inpaint Region"
                     description="After generation, automatically inpaint the region (uses <object:> tag)"
                     checked={doInpaint}
@@ -312,7 +310,7 @@ export const RegionSyntaxModal = React.memo(function RegionSyntaxModal({
                 {doInpaint && (
                     <div>
                         <Text size="sm" fw={500} mb={4}>Inpaint Strength: {inpaintStrength.toFixed(2)}</Text>
-                        <Slider
+                        <SwarmSlider
                             value={inpaintStrength}
                             onChange={setInpaintStrength}
                             min={0}
@@ -336,8 +334,8 @@ export const RegionSyntaxModal = React.memo(function RegionSyntaxModal({
                 />
 
                 <Group justify="flex-end" mt="md">
-                    <Button variant="subtle" onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleSubmit}>Add to Prompt</Button>
+                    <SwarmButton emphasis="ghost" tone="secondary" onClick={handleClose}>Cancel</SwarmButton>
+                    <SwarmButton emphasis="solid" onClick={handleSubmit}>Add to Prompt</SwarmButton>
                 </Group>
             </Stack>
         </Modal>

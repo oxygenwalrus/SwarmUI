@@ -1,14 +1,11 @@
-import { useState, useRef, useCallback, useEffect, memo } from 'react';
+import { useState, useRef, useCallback, memo } from 'react';
 import {
     Modal,
     Group,
     Stack,
     Text,
-    ActionIcon,
-    SegmentedControl,
     Paper,
     Box,
-    Slider,
     Tooltip,
 } from '@mantine/core';
 import {
@@ -21,6 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ImageListItem } from '../api/types';
+import { SwarmActionIcon, SwarmSegmentedControl, SwarmSlider } from './ui';
 
 interface ImageComparisonProps {
     /** Left image for comparison */
@@ -50,15 +48,6 @@ export const ImageComparison = memo(function ImageComparison({
     const [zoom, setZoom] = useState(100);
     const [isDragging, setIsDragging] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-
-    // Reset state when modal opens
-    useEffect(() => {
-        if (opened) {
-            setSliderPosition(50);
-            setZoom(100);
-            setMode('side-by-side');
-        }
-    }, [opened]);
 
     /**
      * Handle slider drag in slider mode
@@ -100,7 +89,7 @@ export const ImageComparison = memo(function ImageComparison({
         setZoom(100);
     }, []);
 
-    if (!leftImage || !rightImage) {
+    if (!opened || !leftImage || !rightImage) {
         return null;
     }
 
@@ -141,7 +130,7 @@ export const ImageComparison = memo(function ImageComparison({
                             <Text size="sm" fw={600} c="var(--theme-text-primary)" tt="uppercase" style={{ letterSpacing: '0.08em' }}>
                                 Image Comparison
                             </Text>
-                            <SegmentedControl
+                            <SwarmSegmentedControl
                                 size="xs"
                                 value={mode}
                                 onChange={(value) => setMode(value as 'side-by-side' | 'slider')}
@@ -171,47 +160,55 @@ export const ImageComparison = memo(function ImageComparison({
                         <Group gap="xs">
                             {/* Zoom Controls */}
                             <Tooltip label="Zoom Out">
-                                <ActionIcon
-                                    variant="subtle"
+                                <SwarmActionIcon
+                                    emphasis="ghost"
+                                    tone="secondary"
+                                    label="Zoom out"
                                     onClick={handleZoomOut}
                                     disabled={zoom <= 25}
                                     style={{ color: 'var(--theme-text-secondary)' }}
                                 >
                                     <IconZoomOut size={18} />
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
                             <Text size="xs" c="var(--theme-text-secondary)" w={50} ta="center">
                                 {zoom}%
                             </Text>
                             <Tooltip label="Zoom In">
-                                <ActionIcon
-                                    variant="subtle"
+                                <SwarmActionIcon
+                                    emphasis="ghost"
+                                    tone="secondary"
+                                    label="Zoom in"
                                     onClick={handleZoomIn}
                                     disabled={zoom >= 200}
                                     style={{ color: 'var(--theme-text-secondary)' }}
                                 >
                                     <IconZoomIn size={18} />
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
                             <Tooltip label="Reset Zoom">
-                                <ActionIcon
-                                    variant="subtle"
+                                <SwarmActionIcon
+                                    emphasis="ghost"
+                                    tone="secondary"
+                                    label="Reset zoom"
                                     onClick={handleZoomReset}
                                     style={{ color: 'var(--theme-text-secondary)' }}
                                 >
                                     <IconZoomReset size={18} />
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
 
                             {/* Close Button */}
-                            <ActionIcon
-                                variant="subtle"
+                            <SwarmActionIcon
+                                emphasis="ghost"
+                                tone="secondary"
+                                label="Close comparison"
                                 onClick={onClose}
                                 ml="md"
                                 style={{ color: 'var(--theme-text-secondary)' }}
                             >
                                 <IconX size={20} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Group>
                     </Group>
                 </Paper>
@@ -483,7 +480,7 @@ export const ImageComparison = memo(function ImageComparison({
                             <Text size="xs" c="var(--theme-text-secondary)">
                                 Slide Position
                             </Text>
-                            <Slider
+                            <SwarmSlider
                                 value={sliderPosition}
                                 onChange={setSliderPosition}
                                 min={0}

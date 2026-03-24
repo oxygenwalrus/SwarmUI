@@ -3,12 +3,12 @@ import {
     Box,
     ScrollArea,
     Stack,
-    ActionIcon,
 } from '@mantine/core';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams, LoRASelection, BackendStatus, Model } from '../../../../api/types';
 import type { Preset } from '../../../../stores/presets';
+import { SwarmActionIcon } from '../../../../components/ui';
 
 import { ParameterHeader } from './ParameterHeader';
 import { PresetControls } from './PresetControls';
@@ -18,6 +18,7 @@ import { DimensionControls } from './DimensionControls';
 import { GenerationSettings } from './GenerationSettings';
 import { AdvancedSettings } from './AdvancedSettings';
 import { ActiveLoRAs } from './ActiveLoRAs';
+import { BatchOutputFolderControl } from './BatchOutputFolderControl';
 import { GenerateButton } from './GenerateButton';
 import { analyzeGenerateQuality } from '../../utils/qualityCoach';
 
@@ -62,6 +63,9 @@ export interface ParameterPanelProps {
     onStop: () => void;
     onOpenSchedule: () => void;
     onGenerateAndUpscale?: () => void;
+    batchOutputFolder: string;
+    onBatchOutputFolderChange: (folder: string) => void;
+    onClearBatchOutputFolder: () => void;
 
     // High-Res Fix (Refiner)
     enableRefiner: boolean;
@@ -106,6 +110,9 @@ export function ParameterPanel({
     onStop,
     onOpenSchedule,
     onGenerateAndUpscale,
+    batchOutputFolder,
+    onBatchOutputFolderChange,
+    onClearBatchOutputFolder,
     enableRefiner,
     setEnableRefiner,
     models,
@@ -203,6 +210,12 @@ export function ParameterPanel({
 
                             <div className="divider-themed" />
 
+                            <BatchOutputFolderControl
+                                value={batchOutputFolder}
+                                onChange={onBatchOutputFolderChange}
+                                onClear={onClearBatchOutputFolder}
+                            />
+
                             {/* Generate Button */}
                             <GenerateButton
                                 generating={generating}
@@ -224,7 +237,7 @@ export function ParameterPanel({
             )}
 
             {/* Collapse Button */}
-            <ActionIcon
+            <SwarmActionIcon
                 style={{
                     position: 'absolute',
                     top: '50%',
@@ -233,8 +246,8 @@ export function ParameterPanel({
                     zIndex: 10,
                 }}
                 size="sm"
-                variant="filled"
-                color="invokeGray"
+                tone="secondary"
+                emphasis="solid"
                 onClick={onToggleCollapse}
             >
                 {collapsed ? (
@@ -242,7 +255,7 @@ export function ParameterPanel({
                 ) : (
                     <IconChevronLeft size={14} />
                 )}
-            </ActionIcon>
+            </SwarmActionIcon>
         </Box>
     );
 }
@@ -256,4 +269,5 @@ export { DimensionControls } from './DimensionControls';
 export { GenerationSettings } from './GenerationSettings';
 export { AdvancedSettings } from './AdvancedSettings';
 export { ActiveLoRAs } from './ActiveLoRAs';
+export { BatchOutputFolderControl } from './BatchOutputFolderControl';
 export { GenerateButton } from './GenerateButton';

@@ -4,11 +4,9 @@ import {
     Stack,
     Group,
     Text,
-    ActionIcon,
     Tooltip,
     Divider,
     Paper,
-    Button,
 } from '@mantine/core';
 import {
     IconChevronUp,
@@ -20,6 +18,7 @@ import {
     IconLayoutAlignCenter,
 } from '@tabler/icons-react';
 import { useCanvasEditorStore } from '../../stores/canvasEditorStore';
+import { SwarmActionIcon, SwarmButton } from '../ui';
 
 interface OutpaintControlsProps {
     onExtend?: (direction: 'top' | 'right' | 'bottom' | 'left', amount: number) => void;
@@ -55,15 +54,15 @@ export const OutpaintControls = memo(function OutpaintControls({
                         Outpaint Controls
                     </Text>
                     {hasExtended && (
-                        <Button
-                            variant="subtle"
+                        <SwarmButton
+                            emphasis="ghost"
+                            tone="secondary"
                             size="xs"
-                            color="gray"
                             leftSection={<IconRestore size={14} />}
                             onClick={resetCanvasSize}
                         >
                             Reset
-                        </Button>
+                        </SwarmButton>
                     )}
                 </Group>
 
@@ -81,17 +80,18 @@ export const OutpaintControls = memo(function OutpaintControls({
                     <Group gap={2} justify="center">
                         {EXTEND_AMOUNTS.slice(0, 2).map((amount) => (
                             <Tooltip key={`top-${amount}`} label={`Extend top ${amount}px`}>
-                                <ActionIcon
+                                <SwarmActionIcon
                                     size="sm"
-                                    variant="light"
-                                    color="gray"
+                                    emphasis="soft"
+                                    tone="secondary"
+                                    label={`Extend top ${amount}px`}
                                     onClick={() => handleExtend('top', amount)}
                                 >
                                     <Stack gap={0} align="center">
                                         <IconChevronUp size={10} />
                                         <Text size="xs">{amount}</Text>
                                     </Stack>
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
                         ))}
                     </Group>
@@ -100,17 +100,18 @@ export const OutpaintControls = memo(function OutpaintControls({
                     <Group gap={2} justify="flex-end">
                         {EXTEND_AMOUNTS.slice(0, 2).map((amount) => (
                             <Tooltip key={`left-${amount}`} label={`Extend left ${amount}px`}>
-                                <ActionIcon
+                                <SwarmActionIcon
                                     size="sm"
-                                    variant="light"
-                                    color="gray"
+                                    emphasis="soft"
+                                    tone="secondary"
+                                    label={`Extend left ${amount}px`}
                                     onClick={() => handleExtend('left', amount)}
                                 >
                                     <Group gap={0}>
                                         <IconChevronLeft size={10} />
                                         <Text size="xs">{amount}</Text>
                                     </Group>
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
                         ))}
                     </Group>
@@ -131,17 +132,18 @@ export const OutpaintControls = memo(function OutpaintControls({
                     <Group gap={2} justify="flex-start">
                         {EXTEND_AMOUNTS.slice(0, 2).map((amount) => (
                             <Tooltip key={`right-${amount}`} label={`Extend right ${amount}px`}>
-                                <ActionIcon
+                                <SwarmActionIcon
                                     size="sm"
-                                    variant="light"
-                                    color="gray"
+                                    emphasis="soft"
+                                    tone="secondary"
+                                    label={`Extend right ${amount}px`}
                                     onClick={() => handleExtend('right', amount)}
                                 >
                                     <Group gap={0}>
                                         <Text size="xs">{amount}</Text>
                                         <IconChevronRight size={10} />
                                     </Group>
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
                         ))}
                     </Group>
@@ -150,17 +152,18 @@ export const OutpaintControls = memo(function OutpaintControls({
                     <Group gap={2} justify="center">
                         {EXTEND_AMOUNTS.slice(0, 2).map((amount) => (
                             <Tooltip key={`bottom-${amount}`} label={`Extend bottom ${amount}px`}>
-                                <ActionIcon
+                                <SwarmActionIcon
                                     size="sm"
-                                    variant="light"
-                                    color="gray"
+                                    emphasis="soft"
+                                    tone="secondary"
+                                    label={`Extend bottom ${amount}px`}
                                     onClick={() => handleExtend('bottom', amount)}
                                 >
                                     <Stack gap={0} align="center">
                                         <Text size="xs">{amount}</Text>
                                         <IconChevronDown size={10} />
                                     </Stack>
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
                         ))}
                     </Group>
@@ -169,15 +172,15 @@ export const OutpaintControls = memo(function OutpaintControls({
 
                 <Divider color="invokeGray.7" />
 
-                <Button
+                <SwarmButton
                     size="xs"
-                    variant="light"
-                    color="gray"
+                    emphasis="soft"
+                    tone="secondary"
                     leftSection={<IconLayoutAlignCenter size={14} />}
                     onClick={centerImage}
                 >
                     Center Image
-                </Button>
+                </SwarmButton>
 
                 <Divider color="invokeGray.7" />
 
@@ -187,11 +190,11 @@ export const OutpaintControls = memo(function OutpaintControls({
                     </Text>
                     <Group gap="xs">
                         {EXTEND_AMOUNTS.map((amount) => (
-                            <Button
+                            <SwarmButton
                                 key={amount}
                                 size="xs"
-                                variant="light"
-                                color="gray"
+                                emphasis="soft"
+                                tone="secondary"
                                 onClick={() => {
                                     handleExtend('top', amount);
                                     handleExtend('right', amount);
@@ -200,7 +203,7 @@ export const OutpaintControls = memo(function OutpaintControls({
                                 }}
                             >
                                 +{amount}
-                            </Button>
+                            </SwarmButton>
                         ))}
                     </Group>
                 </Box>

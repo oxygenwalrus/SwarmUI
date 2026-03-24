@@ -9,6 +9,9 @@
 - `SwarmActionIcon`
 - `SwarmBadge`
 - `SwarmStatusPill`
+- `SwarmSwitch`
+- `SwarmSlider`
+- `SwarmSliderField`
 
 ## Mapping Rules
 - Primary CTA: `tone="primary"`, usually `emphasis="solid"`
@@ -31,6 +34,18 @@
   - `.swarm-tone--*`
   - `.swarm-emphasis--*`
   - `.swarm-button`, `.swarm-action-icon`, `.swarm-badge`, `.swarm-status-pill`
+
+## Motion Guardrail
+- Buttons, sliders, and other primary controls should stay visually anchored to the UI plane.
+- Avoid hover or active effects that make controls feel like they pop out of the layout:
+  - no upward `translateY(...)` lift for buttons
+  - no hover or active `scale(...)` on slider thumbs
+  - no exaggerated glow that visually detaches the control from nearby surfaces
+- Prefer in-plane feedback:
+  - color and border shifts
+  - subtle inset or ambient shadow changes
+  - highlight sweeps or contrast changes that preserve layout stability
+- If a control needs stronger emphasis, increase contrast and clarity before adding motion.
 
 ## Guardrail
 - Run `npm run theme:audit` to report hardcoded color props/hex literals and legacy Mantine dark references.

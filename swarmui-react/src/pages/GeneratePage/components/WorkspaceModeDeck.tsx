@@ -9,7 +9,6 @@ import {
     Select,
     SimpleGrid,
     Stack,
-    Switch,
     Text,
     Textarea,
 } from '@mantine/core';
@@ -26,8 +25,9 @@ import type { BackendStatus, GenerateParams, Model } from '../../../api/types';
 import type { GenerationIssue, GenerationRecipe } from '../../../features/generation/productTypes';
 import type { GenerateWorkspaceMode } from '../../../stores/navigationStore';
 import type { ModelMediaCapabilities } from '../../../utils/modelCapabilities';
-import { SwarmButton } from '../../../components/ui';
+import { SwarmButton, SwarmSwitch } from '../../../components/ui';
 import { DimensionControls } from './ParameterPanel/DimensionControls';
+import { BatchOutputFolderControl } from './ParameterPanel/BatchOutputFolderControl';
 import { GenerateButton } from './ParameterPanel/GenerateButton';
 
 interface WorkspaceModeDeckProps {
@@ -52,6 +52,9 @@ interface WorkspaceModeDeckProps {
     onOpenLoraBrowser: () => void;
     onOpenEmbeddingBrowser: () => void;
     onPromoteWorkflow: () => void;
+    batchOutputFolder: string;
+    onBatchOutputFolderChange: (folder: string) => void;
+    onClearBatchOutputFolder: () => void;
     enableRefiner: boolean;
     setEnableRefiner: (enabled: boolean) => void;
     enableInitImage: boolean;
@@ -87,7 +90,7 @@ function ToggleCard({
                     <Text fw={600} size="sm">{title}</Text>
                     <Text size="xs" c="dimmed">{description}</Text>
                 </Stack>
-                <Switch
+                <SwarmSwitch
                     checked={checked}
                     onChange={(event) => onChange(event.currentTarget.checked)}
                     disabled={disabled}
@@ -119,6 +122,9 @@ export const WorkspaceModeDeck = memo(function WorkspaceModeDeck({
     onOpenLoraBrowser,
     onOpenEmbeddingBrowser,
     onPromoteWorkflow,
+    batchOutputFolder,
+    onBatchOutputFolderChange,
+    onClearBatchOutputFolder,
     enableRefiner,
     setEnableRefiner,
     enableInitImage,
@@ -265,6 +271,12 @@ export const WorkspaceModeDeck = memo(function WorkspaceModeDeck({
                                     </Stack>
                                 </Card>
                             ) : null}
+
+                            <BatchOutputFolderControl
+                                value={batchOutputFolder}
+                                onChange={onBatchOutputFolderChange}
+                                onClear={onClearBatchOutputFolder}
+                            />
 
                             <GenerateButton
                                 generating={generating}
@@ -508,6 +520,12 @@ export const WorkspaceModeDeck = memo(function WorkspaceModeDeck({
                                 </Stack>
                             </Card>
                         ) : null}
+
+                        <BatchOutputFolderControl
+                            value={batchOutputFolder}
+                            onChange={onBatchOutputFolderChange}
+                            onClear={onClearBatchOutputFolder}
+                        />
 
                         <GenerateButton
                             generating={generating}

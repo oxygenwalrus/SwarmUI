@@ -5,15 +5,12 @@ import {
   Stack,
   Group,
   Text,
-  Button,
   Select,
   Image,
   Card,
   Progress,
   Badge,
   NumberInput,
-  SegmentedControl,
-  Slider,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Z_INDEX } from '../utils/zIndex';
@@ -21,6 +18,7 @@ import { logger } from '../utils/logger';
 import type { GenerateParams } from '../api/types';
 import { imageUrlToDataUrl, toRuntimeImageUrl } from '../utils/imageData';
 import { useQueueStore, type QueueJob } from '../stores/queue';
+import { SwarmButton, SwarmSegmentedControl, SwarmSlider } from './ui';
 
 interface ImageUpscalerProps {
   opened: boolean;
@@ -485,7 +483,7 @@ export function ImageUpscaler({
         {/* Upscale Method Selection */}
         <Stack gap="xs">
           <Text size="sm" fw={500}>Upscale Method</Text>
-          <SegmentedControl
+          <SwarmSegmentedControl
             value={upscaleMethod}
             onChange={(value) => setUpscaleMethod(value as UpscaleMethod)}
             data={[
@@ -522,7 +520,7 @@ export function ImageUpscaler({
               <Text size="sm" fw={500}>Creativity</Text>
               <Text size="sm" c="dimmed">{creativity.toFixed(2)}</Text>
             </Group>
-            <Slider
+            <SwarmSlider
               value={creativity}
               onChange={setCreativity}
               min={0.1}
@@ -551,7 +549,7 @@ export function ImageUpscaler({
                 <Text size="sm" fw={500}>Creativity</Text>
                 <Text size="sm" c="dimmed">{modelCreativity.toFixed(2)}</Text>
               </Group>
-              <Slider
+              <SwarmSlider
                 value={modelCreativity}
                 onChange={setModelCreativity}
                 min={0}
@@ -638,30 +636,32 @@ export function ImageUpscaler({
 
         {/* Actions */}
         <Group justify="flex-end">
-          <Button variant="subtle" onClick={handleClose} disabled={upscaling}>
+          <SwarmButton emphasis="ghost" tone="secondary" onClick={handleClose} disabled={upscaling}>
             {upscaledImage ? 'Close' : 'Cancel'}
-          </Button>
+          </SwarmButton>
           {!upscaledImage && (
-            <Button onClick={handleUpscale} loading={upscaling}>
+            <SwarmButton emphasis="solid" onClick={handleUpscale} loading={upscaling}>
               Upscale Image
-            </Button>
+            </SwarmButton>
           )}
           {upscaledImage && (
             <>
-              <Button
-                variant="light"
+              <SwarmButton
+                emphasis="soft"
+                tone="secondary"
                 onClick={() => {
                   setUpscaledImage(null);
                   setProgress(0);
                 }}
               >
                 Upscale Again
-              </Button>
-              <Button
+              </SwarmButton>
+              <SwarmButton
+                emphasis="solid"
                 onClick={() => window.open(upscaledImage, '_blank')}
               >
                 Open Full Size
-              </Button>
+              </SwarmButton>
             </>
           )}
         </Group>

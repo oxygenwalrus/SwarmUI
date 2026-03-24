@@ -2,9 +2,6 @@ import React, { useState, useCallback, useMemo } from 'react';
 import {
     Stack,
     TextInput,
-    Slider,
-    Switch,
-    Button,
     Group,
     Text,
     Select,
@@ -17,7 +14,7 @@ import { HeadlessDialog } from '../headless';
 import { useT2IParams } from '../../hooks/useT2IParams';
 import { buildSegmentTag, type BuilderSegmentRule } from '../../features/promptBuilder';
 import type { T2IParam } from '../../api/types';
-import { SamplingSelect } from '../ui';
+import { SamplingSelect, SwarmButton, SwarmSlider, SwarmSwitch } from '../ui';
 
 interface SegmentSyntaxModalProps {
     /** Whether the modal is open */
@@ -210,7 +207,7 @@ export const SegmentSyntaxModal = React.memo(function SegmentSyntaxModal({
                     <Text size="xs" c="dimmed" mb={8}>
                         How much to change the matched area (0 = no change, 1 = full replace).
                     </Text>
-                    <Slider
+                    <SwarmSlider
                         value={creativity}
                         onChange={setCreativity}
                         min={0}
@@ -229,7 +226,7 @@ export const SegmentSyntaxModal = React.memo(function SegmentSyntaxModal({
                     <Text size="xs" c="dimmed" mb={8}>
                         Minimum match quality (lower = more inclusive).
                     </Text>
-                    <Slider
+                    <SwarmSlider
                         value={threshold}
                         onChange={setThreshold}
                         min={0}
@@ -243,7 +240,7 @@ export const SegmentSyntaxModal = React.memo(function SegmentSyntaxModal({
                     />
                 </div>
 
-                <Switch
+                <SwarmSwitch
                     label="Invert Mask"
                     description="Select everything except what was matched."
                     checked={invertMask}
@@ -289,8 +286,8 @@ export const SegmentSyntaxModal = React.memo(function SegmentSyntaxModal({
                 />
 
                 <Group justify="flex-end" mt="md">
-                    <Button variant="subtle" onClick={onClose}>Cancel</Button>
-                    <Button onClick={handleSubmit} disabled={!canSubmit}>Add to Prompt</Button>
+                    <SwarmButton emphasis="ghost" tone="secondary" onClick={onClose}>Cancel</SwarmButton>
+                    <SwarmButton emphasis="solid" onClick={handleSubmit} disabled={!canSubmit}>Add to Prompt</SwarmButton>
                 </Group>
             </Stack>
         </HeadlessDialog>

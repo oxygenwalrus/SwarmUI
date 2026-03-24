@@ -6,15 +6,13 @@ import {
     Text,
     Badge,
     Card,
-    ActionIcon,
-    Slider,
-    Button,
     Tooltip,
     Box,
 } from '@mantine/core';
 import { IconX, IconLayoutGrid } from '@tabler/icons-react';
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams, LoRASelection } from '../../../../api/types';
+import { SwarmActionIcon, SwarmButton, SwarmSlider } from '../../../../components/ui';
 
 export interface ActiveLoRAsProps {
     /** Form instance */
@@ -103,7 +101,7 @@ export const ActiveLoRAs = memo(function ActiveLoRAs({
                                 <Text size="sm" c="invokeGray.3" ta="center">
                                     No LoRAs active
                                 </Text>
-                                <Button
+                                <SwarmButton
                                     variant="light"
                                     color="invokeBrand"
                                     size="xs"
@@ -111,7 +109,7 @@ export const ActiveLoRAs = memo(function ActiveLoRAs({
                                     onClick={onOpenLoraBrowser}
                                 >
                                     Add LoRA
-                                </Button>
+                                </SwarmButton>
                             </Box>
                         ) : (
                             <Stack gap={10}>
@@ -135,7 +133,7 @@ export const ActiveLoRAs = memo(function ActiveLoRAs({
                                                         {lora.lora.split('/').pop() || lora.lora}
                                                     </Text>
                                                 </Tooltip>
-                                                <ActionIcon
+                                                <SwarmActionIcon
                                                     size="xs"
                                                     color="red"
                                                     variant="subtle"
@@ -143,10 +141,10 @@ export const ActiveLoRAs = memo(function ActiveLoRAs({
                                                     onClick={() => handleRemoveLora(idx)}
                                                 >
                                                     <IconX size={12} />
-                                                </ActionIcon>
+                                                </SwarmActionIcon>
                                             </Group>
                                             <Group gap="xs" wrap="nowrap" style={{ width: '100%' }}>
-                                                <Slider
+                                                <SwarmSlider
                                                     value={lora.weight}
                                                     onChange={(value) => handleWeightChange(idx, value)}
                                                     min={-5}
@@ -177,7 +175,7 @@ export const ActiveLoRAs = memo(function ActiveLoRAs({
                         )}
 
                         {activeLoras.length > 0 && (
-                            <Button
+                            <SwarmButton
                                 variant="light"
                                 color="invokeBrand"
                                 size="xs"
@@ -186,7 +184,7 @@ export const ActiveLoRAs = memo(function ActiveLoRAs({
                                 onClick={onOpenLoraBrowser}
                             >
                                 Add More LoRAs
-                            </Button>
+                            </SwarmButton>
                         )}
                     </Stack>
                 </Accordion.Panel>

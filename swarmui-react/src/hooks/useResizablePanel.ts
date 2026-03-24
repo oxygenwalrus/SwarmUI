@@ -12,7 +12,7 @@ interface UseResizablePanelOptions {
 interface UseResizablePanelReturn {
     size: number;
     isResizing: boolean;
-    handlePointerDown: (e: ReactPointerEvent) => void;
+    handlePointerDown: (e: ReactPointerEvent, invert?: boolean) => void;
     nudgeSize: (delta: number) => void;
     setSize: (size: number) => void;
 }
@@ -29,6 +29,7 @@ export function useResizablePanel({
     const startPosRef = useRef(0);
     const startSizeRef = useRef(0);
     const activePointerIdRef = useRef<number | null>(null);
+    const invertRef = useRef(false);
 
     const clampSize = useCallback((nextSize: number) => (
         Math.max(minSize, Math.min(maxSize, nextSize))
@@ -41,11 +42,12 @@ export function useResizablePanel({
     }, [clampSize, onResize]);
 
     const handlePointerDown = useCallback(
-        (e: ReactPointerEvent) => {
+        (e: ReactPointerEvent, invert = false) => {
             e.preventDefault();
             e.stopPropagation();
 
             activePointerIdRef.current = e.pointerId;
+            invertRef.current = invert;
             if (e.currentTarget.setPointerCapture) {
                 e.currentTarget.setPointerCapture(e.pointerId);
             }
@@ -65,7 +67,7 @@ export function useResizablePanel({
                 return;
             }
             const currentPos = direction === 'horizontal' ? e.clientX : e.clientY;
-            const diff = currentPos - startPosRef.current;
+            const diff = invertRef.current ? startPosRef.current - currentPos : currentPos - startPosRef.current;
             commitSize(startSizeRef.current + diff);
         };
 

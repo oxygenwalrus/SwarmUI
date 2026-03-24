@@ -1,15 +1,12 @@
 import { memo, useMemo, useState } from 'react';
 import {
   Box,
-  Button,
   Card,
   Collapse,
   Group,
   ScrollArea,
   Select,
-  Slider,
   Stack,
-  Switch,
   Text,
   TextInput,
   Textarea,
@@ -28,7 +25,7 @@ import { usePromptBuilderStore } from '../../stores/promptBuilderStore';
 import { useT2IParams } from '../../hooks/useT2IParams';
 import type { T2IParam } from '../../api/types';
 import type { SamplerOption, SchedulerOption } from '../../data/samplerData';
-import { SamplingSelect, SwarmActionIcon } from '../ui';
+import { SamplingSelect, SwarmActionIcon, SwarmButton, SwarmSlider, SwarmSwitch } from '../ui';
 
 interface SegmentRuleCardProps {
   rule: BuilderSegmentRule;
@@ -179,14 +176,13 @@ const SegmentRuleCard = memo(function SegmentRuleCard({
             <Text size="xs" c="invokeGray.4">Creativity</Text>
             <Text size="xs" c="invokeGray.3">{rule.creativity.toFixed(2)}</Text>
           </Group>
-          <Slider
+          <SwarmSlider
             value={rule.creativity}
             onChange={(value) => onUpdate({ creativity: value })}
             min={0}
             max={1}
             step={0.05}
             size="xs"
-            color="invokeBrand"
           />
         </Box>
 
@@ -195,25 +191,24 @@ const SegmentRuleCard = memo(function SegmentRuleCard({
             <Text size="xs" c="invokeGray.4">Threshold</Text>
             <Text size="xs" c="invokeGray.3">{rule.threshold.toFixed(2)}</Text>
           </Group>
-          <Slider
+          <SwarmSlider
             value={rule.threshold}
             onChange={(value) => onUpdate({ threshold: value })}
             min={0}
             max={1}
             step={0.05}
             size="xs"
-            color="invokeBrand"
           />
         </Box>
 
         <Group grow>
-          <Switch
+          <SwarmSwitch
             label="Invert Mask"
             size="xs"
             checked={rule.invertMask}
             onChange={(event) => onUpdate({ invertMask: event.currentTarget.checked })}
           />
-          <Switch
+          <SwarmSwitch
             label="Enabled"
             size="xs"
             checked={rule.enabled}
@@ -221,13 +216,14 @@ const SegmentRuleCard = memo(function SegmentRuleCard({
           />
         </Group>
 
-        <Button
-          variant="subtle"
+        <SwarmButton
+          emphasis="ghost"
+          tone="secondary"
           size="compact-xs"
           onClick={() => setAdvancedOpen((current) => !current)}
         >
           {advancedOpen ? 'Hide Advanced Options' : 'Show Advanced Options'}
-        </Button>
+        </SwarmButton>
 
         <Collapse in={advancedOpen}>
           <Stack gap="xs">
@@ -333,14 +329,14 @@ export const SegmentRulesPanel = memo(function SegmentRulesPanel() {
           )}
         </Group>
 
-        <Button
+        <SwarmButton
           size="xs"
-          variant="light"
+          emphasis="soft"
           leftSection={<IconPlus size={14} />}
           onClick={() => addSegment()}
         >
           Add Segment Rule
-        </Button>
+        </SwarmButton>
 
         <Box>
           <Text size="xs" c="invokeGray.4" mb="xs">
@@ -348,10 +344,11 @@ export const SegmentRulesPanel = memo(function SegmentRulesPanel() {
           </Text>
           <Group gap="xs">
             {COMMON_SEGMENT_PRESETS.map((preset) => (
-              <Button
+              <SwarmButton
                 key={preset.label}
                 size="compact-xs"
-                variant="subtle"
+                emphasis="ghost"
+                tone="secondary"
                 leftSection={<IconSparkles size={12} />}
                 onClick={() => addSegment({
                   modelType: 'clip-seg',
@@ -363,7 +360,7 @@ export const SegmentRulesPanel = memo(function SegmentRulesPanel() {
                 })}
               >
                 {preset.label}
-              </Button>
+              </SwarmButton>
             ))}
           </Group>
           <Text size="xs" c="invokeGray.5" mt="xs">

@@ -76,6 +76,7 @@ class GenPageBrowserClass {
         this.container = getRequiredElementById(container);
         this.listFoldersAndFiles = listFoldersAndFiles;
         this.id = id;
+        this.defaultDepth = defaultDepth;
         this.format = localStorage.getItem(`browser_${this.id}_format`) || getCookie(`${id}_format`) || defaultFormat; // TODO: Remove the old cookie
         this.describe = describe;
         this.select = select;
@@ -84,7 +85,7 @@ class GenPageBrowserClass {
         this.extraHeader = extraHeader;
         this.navCaller = this.navigate.bind(this);
         this.tree = new BrowserTreePart('', false, true, null, '');
-        this.depth = localStorage.getItem(`browser_${id}_depth`) || defaultDepth;
+        this.depth = this.cleanDepthValue(localStorage.getItem(`browser_${id}_depth`));
         this.filter = localStorage.getItem(`browser_${id}_filter`) || '';
         this.folderTreeVerticalSpacing = '0';
         this.splitterMinWidth = 100;
@@ -107,6 +108,17 @@ class GenPageBrowserClass {
         this.runAfterUpdate = [];
         this.refreshHandler = (callback) => callback();
         this.checkIsSmall();
+    }
+
+    /**
+     * Cleans a browser depth value so requests always send a valid integer.
+     */
+    cleanDepthValue(depth) {
+        let parsed = parseInt(depth);
+        if (Number.isNaN(parsed) || parsed < 1) {
+            return this.defaultDepth;
+        }
+        return Math.min(parsed, 100);
     }
 
     /**
@@ -656,7 +668,8 @@ class GenPageBrowserClass {
             let inputArr = buttons.getElementsByTagName('input');
             let depthInput = inputArr[0];
             depthInput.addEventListener('change', () => {
-                this.depth = depthInput.value;
+                this.depth = this.cleanDepthValue(depthInput.value);
+                depthInput.value = this.depth;
                 localStorage.setItem(`browser_${this.id}_depth`, this.depth);
                 this.lightRefresh();
             });

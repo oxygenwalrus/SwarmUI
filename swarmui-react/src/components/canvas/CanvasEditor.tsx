@@ -5,11 +5,8 @@ import {
     Paper,
     Group,
     Text,
-    ActionIcon,
     Tooltip,
-    Slider,
     ColorSwatch,
-    Button,
     Divider,
     ScrollArea,
     Badge,
@@ -42,6 +39,7 @@ import { RegionalPromptEditor } from './RegionalPromptEditor';
 import { SegmentRulesPanel } from './SegmentRulesPanel';
 import { OutpaintControls } from './OutpaintControls';
 import type { CanvasWorkflowResult, CanvasWorkflowStep } from '../../stores/canvasWorkflowStore';
+import { SwarmActionIcon, SwarmButton, SwarmSlider } from '../ui';
 
 // ============================================================================
 // Types
@@ -130,8 +128,8 @@ export const CanvasEditor = memo(function CanvasEditor({
     onContinueRefining,
     clearMaskVersion = 0,
 }: CanvasEditorProps) {
-    const [imageLoaded, setImageLoaded] = useState(false);
     const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
+    const [loadedImageUrl, setLoadedImageUrl] = useState<string | null>(null);
     const previousLayoutRef = useRef<{ width: number; height: number; offsetX: number; offsetY: number } | null>(null);
 
     const {
@@ -193,6 +191,7 @@ export const CanvasEditor = memo(function CanvasEditor({
 
     const isWorkflowMode = mode === 'workflow';
     const supportsPromptBuilder = mode === 'regional' || isWorkflowMode;
+    const imageLoaded = imageElement !== null && loadedImageUrl === imageUrl;
     const title = isWorkflowMode
         ? 'Canvas Workflow'
         : mode === 'inpaint'
@@ -202,8 +201,6 @@ export const CanvasEditor = memo(function CanvasEditor({
                 : 'Regional Prompt Editor';
 
     useEffect(() => {
-        setImageLoaded(false);
-        setImageElement(null);
         previousLayoutRef.current = null;
 
         const img = new window.Image();
@@ -211,7 +208,7 @@ export const CanvasEditor = memo(function CanvasEditor({
 
         img.onload = () => {
             setImageElement(img);
-            setImageLoaded(true);
+            setLoadedImageUrl(imageUrl);
             openEditor(imageUrl, img.width, img.height);
         };
 
@@ -287,7 +284,7 @@ export const CanvasEditor = memo(function CanvasEditor({
             offsetX: imageOffsetX,
             offsetY: imageOffsetY,
         };
-    }, [canvasHeight, canvasWidth, imageElement, imageOffsetX, imageOffsetY]);
+    }, [canvasHeight, canvasWidth, imageElement, imageOffsetX, imageOffsetY, canvasRef, maskCanvasRef]);
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -501,24 +498,23 @@ export const CanvasEditor = memo(function CanvasEditor({
                     </Group>
 
                     <Group gap="xs">
-                        <Button
-                            variant="light"
-                            color="gray"
+                        <SwarmButton
+                            emphasis="soft"
+                            tone="secondary"
                             size="xs"
                             leftSection={<IconX size={14} />}
                             onClick={onClose}
                         >
                             Cancel
-                        </Button>
-                        <Button
-                            variant="filled"
-                            color="invokeBrand"
+                        </SwarmButton>
+                        <SwarmButton
+                            emphasis="solid"
                             size="xs"
                             leftSection={<IconCheck size={14} />}
                             onClick={handleApply}
                         >
                             {isWorkflowMode ? 'Sync Workspace' : 'Apply Mask'}
-                        </Button>
+                        </SwarmButton>
                     </Group>
                 </Group>
             </Paper>
@@ -537,55 +533,58 @@ export const CanvasEditor = memo(function CanvasEditor({
                     <Stack gap="xs" align="center">
                         {TOOLS.map((tool) => (
                             <Tooltip key={tool.id} label={`${tool.label} (${tool.shortcut})`} position="right">
-                                <ActionIcon
+                                <SwarmActionIcon
                                     size="lg"
-                                    variant={currentTool === tool.id ? 'filled' : 'subtle'}
-                                    color={currentTool === tool.id ? 'invokeBrand' : 'gray'}
+                                    emphasis={currentTool === tool.id ? 'solid' : 'ghost'}
+                                    tone={currentTool === tool.id ? 'primary' : 'secondary'}
+                                    label={`${tool.label} tool`}
                                     onClick={() => setTool(tool.id)}
                                 >
                                     <tool.icon size={20} />
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
                         ))}
 
                         <Divider w="100%" my="xs" color="invokeGray.7" />
 
                         <Tooltip label="Undo (Ctrl+Z)" position="right">
-                            <ActionIcon
+                            <SwarmActionIcon
                                 size="lg"
-                                variant="subtle"
-                                color="gray"
+                                emphasis="ghost"
+                                tone="secondary"
+                                label="Undo"
                                 disabled={!canUndo}
                                 onClick={undo}
                             >
                                 <IconArrowBackUp size={20} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
 
                         <Tooltip label="Redo (Ctrl+Shift+Z)" position="right">
-                            <ActionIcon
+                            <SwarmActionIcon
                                 size="lg"
-                                variant="subtle"
-                                color="gray"
+                                emphasis="ghost"
+                                tone="secondary"
+                                label="Redo"
                                 disabled={!canRedo}
                                 onClick={redo}
                             >
                                 <IconArrowForwardUp size={20} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
 
                         <Divider w="100%" my="xs" color="invokeGray.7" />
 
                         <Tooltip label="Zoom In" position="right">
-                            <ActionIcon size="lg" variant="subtle" color="gray" onClick={zoomIn}>
+                            <SwarmActionIcon size="lg" emphasis="ghost" tone="secondary" label="Zoom in" onClick={zoomIn}>
                                 <IconZoomIn size={20} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
 
                         <Tooltip label="Zoom Out" position="right">
-                            <ActionIcon size="lg" variant="subtle" color="gray" onClick={zoomOut}>
+                            <SwarmActionIcon size="lg" emphasis="ghost" tone="secondary" label="Zoom out" onClick={zoomOut}>
                                 <IconZoomOut size={20} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
                     </Stack>
                 </Paper>
@@ -792,15 +791,15 @@ export const CanvasEditor = memo(function CanvasEditor({
                                             {WORKFLOW_STEPS.map((step, index) => {
                                                 const isActive = step.id === workflowStep;
                                                 return (
-                                                    <Button
+                                                    <SwarmButton
                                                         key={step.id}
                                                         justify="flex-start"
-                                                        variant={isActive ? 'filled' : 'subtle'}
-                                                        color={isActive ? 'invokeBrand' : 'gray'}
+                                                        emphasis={isActive ? 'solid' : 'ghost'}
+                                                        tone={isActive ? 'primary' : 'secondary'}
                                                         onClick={() => onWorkflowStepChange?.(step.id)}
                                                     >
                                                         {index + 1}. {step.label.replace(/^\d+\.\s*/, '')}
-                                                    </Button>
+                                                    </SwarmButton>
                                                 );
                                             })}
                                             <Paper p="xs" radius="sm" bg="invokeGray.9" withBorder>
@@ -811,14 +810,14 @@ export const CanvasEditor = memo(function CanvasEditor({
                                                     {activeWorkflowStep.helper}
                                                 </Text>
                                                 {primaryWorkflowAction && (
-                                                    <Button
+                                                    <SwarmButton
                                                         size="xs"
-                                                        variant="light"
+                                                        emphasis="soft"
                                                         mt="sm"
                                                         onClick={primaryWorkflowAction.action}
                                                     >
                                                         {primaryWorkflowAction.label}
-                                                    </Button>
+                                                    </SwarmButton>
                                                 )}
                                             </Paper>
                                         </Stack>
@@ -890,206 +889,208 @@ export const CanvasEditor = memo(function CanvasEditor({
                                 </>
                             )}
 
-                        <Box>
-                            <Text size="sm" fw={500} c="invokeGray.1" mb="xs">
-                                Brush Size: {brushSettings.size}px
-                            </Text>
-                            <Slider
-                                value={brushSettings.size}
-                                onChange={(value) => setBrushSettings({ size: value })}
-                                min={1}
-                                max={200}
-                                color="invokeBrand"
-                            />
-                            <Group gap="xs" mt="xs">
-                                {BRUSH_SIZES.map((size) => (
-                                    <ActionIcon
-                                        key={size}
-                                        size="sm"
-                                        variant={brushSettings.size === size ? 'filled' : 'light'}
-                                        color={brushSettings.size === size ? 'invokeBrand' : 'gray'}
-                                        onClick={() => setBrushSettings({ size })}
-                                    >
-                                        <Text size="xs">{size}</Text>
-                                    </ActionIcon>
-                                ))}
-                            </Group>
-                        </Box>
-
-                        <Divider color="invokeGray.7" />
-
-                        {(workflowStep !== 'source' || !isWorkflowMode) && (
                             <Box>
                                 <Text size="sm" fw={500} c="invokeGray.1" mb="xs">
-                                    Mask Opacity: {Math.round(maskOpacity * 100)}%
+                                    Brush Size: {brushSettings.size}px
                                 </Text>
-                                <Slider
-                                    value={maskOpacity}
-                                    onChange={setMaskOpacity}
-                                    min={0.1}
-                                    max={1}
-                                    step={0.1}
-                                    color="invokeBrand"
+                                <SwarmSlider
+                                    value={brushSettings.size}
+                                    onChange={(value) => setBrushSettings({ size: value })}
+                                    min={1}
+                                    max={200}
                                 />
+                                <Group gap="xs" mt="xs">
+                                    {BRUSH_SIZES.map((size) => (
+                                        <SwarmActionIcon
+                                            key={size}
+                                            size="sm"
+                                            emphasis={brushSettings.size === size ? 'solid' : 'soft'}
+                                            tone={brushSettings.size === size ? 'primary' : 'secondary'}
+                                            label={`Set brush size to ${size}`}
+                                            onClick={() => setBrushSettings({ size })}
+                                        >
+                                            <Text size="xs">{size}</Text>
+                                        </SwarmActionIcon>
+                                    ))}
+                                </Group>
                             </Box>
-                        )}
 
-                        <Divider color="invokeGray.7" />
+                            <Divider color="invokeGray.7" />
 
-                        <Box>
-                            <Text size="sm" fw={500} c="invokeGray.1" mb="xs">
-                                Mask Color
-                            </Text>
-                            <Group gap="xs">
-                                {MASK_COLORS.map((color) => (
-                                    <ColorSwatch
-                                        key={color}
-                                        color={color}
-                                        size={24}
-                                        style={{
-                                            cursor: 'pointer',
-                                            border: maskColor === color ? '2px solid white' : 'none',
-                                        }}
-                                        onClick={() => setMaskColor(color)}
-                                    />
-                                ))}
-                            </Group>
-                        </Box>
-
-                        <Divider color="invokeGray.7" />
-
-                        <Box>
-                            <Text size="sm" fw={500} c="invokeGray.1" mb="xs">
-                                Mask Actions
-                            </Text>
-                            <Stack gap="xs">
-                                <Button
-                                    variant="light"
-                                    size="xs"
-                                    fullWidth
-                                    leftSection={<IconPaint size={14} />}
-                                    onClick={fillMask}
-                                >
-                                    Fill Mask
-                                </Button>
-                                <Button
-                                    variant="light"
-                                    size="xs"
-                                    fullWidth
-                                    leftSection={<IconTrash size={14} />}
-                                    onClick={clearMask}
-                                >
-                                    Clear Mask
-                                </Button>
-                                <Button
-                                    variant="light"
-                                    size="xs"
-                                    fullWidth
-                                    leftSection={<IconSwitchHorizontal size={14} />}
-                                    onClick={invertMask}
-                                >
-                                    Invert Mask
-                                </Button>
-                                <Button
-                                    variant="light"
-                                    size="xs"
-                                    fullWidth
-                                    onClick={toggleMaskVisibility}
-                                >
-                                    {showMask ? 'Hide Mask' : 'Show Mask'}
-                                </Button>
-                            </Stack>
-                        </Box>
-
-                        {isWorkflowMode && (
-                            <>
-                                <Divider color="invokeGray.7" />
-
+                            {(workflowStep !== 'source' || !isWorkflowMode) && (
                                 <Box>
                                     <Text size="sm" fw={500} c="invokeGray.1" mb="xs">
-                                        Generate Actions
+                                        Mask Opacity: {Math.round(maskOpacity * 100)}%
                                     </Text>
-                                    <Stack gap="xs">
-                                        <Button
-                                            variant="light"
-                                            size="xs"
-                                            fullWidth
-                                            onClick={() => handleWorkflowAction('apply')}
-                                        >
-                                            Apply to Generate
-                                        </Button>
-                                        <Button
-                                            variant="filled"
-                                            color="invokeBrand"
-                                            size="xs"
-                                            fullWidth
-                                            disabled={!getMaskDataUrl()}
-                                            onClick={() => handleWorkflowAction('generate')}
-                                        >
-                                            Generate Inpaint
-                                        </Button>
-                                        <Button
-                                            variant="light"
-                                            size="xs"
-                                            fullWidth
-                                            onClick={onOpenUpscaler}
-                                        >
-                                            Open Upscaler
-                                        </Button>
-                                        <Text size="xs" c="invokeGray.4">
-                                            Only compatibility-safe fields are sent: init image, mask image, and the existing managed builder block.
-                                        </Text>
-                                    </Stack>
+                                    <SwarmSlider
+                                        value={maskOpacity}
+                                        onChange={setMaskOpacity}
+                                        min={0.1}
+                                        max={1}
+                                        step={0.1}
+                                    />
                                 </Box>
+                            )}
 
-                                {pendingResult && (
-                                    <Paper p="sm" radius="md" bg="invokeGray.8" withBorder>
+                            <Divider color="invokeGray.7" />
+
+                            <Box>
+                                <Text size="sm" fw={500} c="invokeGray.1" mb="xs">
+                                    Mask Color
+                                </Text>
+                                <Group gap="xs">
+                                    {MASK_COLORS.map((color) => (
+                                        <ColorSwatch
+                                            key={color}
+                                            color={color}
+                                            size={24}
+                                            style={{
+                                                cursor: 'pointer',
+                                                border: maskColor === color ? '2px solid white' : 'none',
+                                            }}
+                                            onClick={() => setMaskColor(color)}
+                                        />
+                                    ))}
+                                </Group>
+                            </Box>
+
+                            <Divider color="invokeGray.7" />
+
+                            <Box>
+                                <Text size="sm" fw={500} c="invokeGray.1" mb="xs">
+                                    Mask Actions
+                                </Text>
+                                <Stack gap="xs">
+                                    <SwarmButton
+                                        emphasis="soft"
+                                        size="xs"
+                                        fullWidth
+                                        leftSection={<IconPaint size={14} />}
+                                        onClick={fillMask}
+                                    >
+                                        Fill Mask
+                                    </SwarmButton>
+                                    <SwarmButton
+                                        emphasis="soft"
+                                        tone="secondary"
+                                        size="xs"
+                                        fullWidth
+                                        leftSection={<IconTrash size={14} />}
+                                        onClick={clearMask}
+                                    >
+                                        Clear Mask
+                                    </SwarmButton>
+                                    <SwarmButton
+                                        emphasis="soft"
+                                        tone="secondary"
+                                        size="xs"
+                                        fullWidth
+                                        leftSection={<IconSwitchHorizontal size={14} />}
+                                        onClick={invertMask}
+                                    >
+                                        Invert Mask
+                                    </SwarmButton>
+                                    <SwarmButton
+                                        emphasis="soft"
+                                        tone="secondary"
+                                        size="xs"
+                                        fullWidth
+                                        onClick={toggleMaskVisibility}
+                                    >
+                                        {showMask ? 'Hide Mask' : 'Show Mask'}
+                                    </SwarmButton>
+                                </Stack>
+                            </Box>
+
+                            {isWorkflowMode && (
+                                <>
+                                    <Divider color="invokeGray.7" />
+
+                                    <Box>
+                                        <Text size="sm" fw={500} c="invokeGray.1" mb="xs">
+                                            Generate Actions
+                                        </Text>
                                         <Stack gap="xs">
-                                            <Group justify="space-between">
-                                                <Text size="sm" fw={600} c="invokeGray.0">
-                                                    New Result Ready
-                                                </Text>
-                                                <Badge color={pendingResult.source === 'upscale' ? 'teal' : 'green'} variant="light">
-                                                    {pendingResult.source === 'upscale' ? 'Upscale' : 'Generate'}
-                                                </Badge>
-                                            </Group>
-                                            <img
-                                                src={pendingResult.imageUrl}
-                                                alt="Pending workflow result"
-                                                style={{
-                                                    width: '100%',
-                                                    borderRadius: 8,
-                                                    border: '1px solid var(--mantine-color-invokeGray-7)',
-                                                }}
-                                            />
-                                            <Group grow>
-                                                <Button size="xs" variant="light" onClick={onUsePendingResult}>
-                                                    Use Result
-                                                </Button>
-                                                <Button size="xs" onClick={onContinueRefining}>
-                                                    Continue Refining
-                                                </Button>
-                                            </Group>
+                                            <SwarmButton
+                                                emphasis="soft"
+                                                size="xs"
+                                                fullWidth
+                                                onClick={() => handleWorkflowAction('apply')}
+                                            >
+                                                Apply to Generate
+                                            </SwarmButton>
+                                            <SwarmButton
+                                                emphasis="solid"
+                                                size="xs"
+                                                fullWidth
+                                                disabled={!getMaskDataUrl()}
+                                                onClick={() => handleWorkflowAction('generate')}
+                                            >
+                                                Generate Inpaint
+                                            </SwarmButton>
+                                            <SwarmButton
+                                                emphasis="soft"
+                                                tone="secondary"
+                                                size="xs"
+                                                fullWidth
+                                                onClick={onOpenUpscaler}
+                                            >
+                                                Open Upscaler
+                                            </SwarmButton>
+                                            <Text size="xs" c="invokeGray.4">
+                                                Only compatibility-safe fields are sent: init image, mask image, and the existing managed builder block.
+                                            </Text>
                                         </Stack>
-                                    </Paper>
-                                )}
-                            </>
-                        )}
+                                    </Box>
 
-                        <Divider color="invokeGray.7" />
+                                    {pendingResult && (
+                                        <Paper p="sm" radius="md" bg="invokeGray.8" withBorder>
+                                            <Stack gap="xs">
+                                                <Group justify="space-between">
+                                                    <Text size="sm" fw={600} c="invokeGray.0">
+                                                        New Result Ready
+                                                    </Text>
+                                                    <Badge color={pendingResult.source === 'upscale' ? 'teal' : 'green'} variant="light">
+                                                        {pendingResult.source === 'upscale' ? 'Upscale' : 'Generate'}
+                                                    </Badge>
+                                                </Group>
+                                                <img
+                                                    src={pendingResult.imageUrl}
+                                                    alt="Pending workflow result"
+                                                    style={{
+                                                        width: '100%',
+                                                        borderRadius: 8,
+                                                        border: '1px solid var(--mantine-color-invokeGray-7)',
+                                                    }}
+                                                />
+                                                <Group grow>
+                                                    <SwarmButton size="xs" emphasis="soft" onClick={onUsePendingResult}>
+                                                        Use Result
+                                                    </SwarmButton>
+                                                    <SwarmButton size="xs" emphasis="solid" onClick={onContinueRefining}>
+                                                        Continue Refining
+                                                    </SwarmButton>
+                                                </Group>
+                                            </Stack>
+                                        </Paper>
+                                    )}
+                                </>
+                            )}
 
-                        <Box>
-                            <Text size="xs" c="invokeGray.4">
-                                <strong>Shortcuts:</strong><br />
-                                B - Brush<br />
-                                E - Eraser<br />
-                                H/Space - Pan<br />
-                                R - Region Draw/Select<br />
-                                [ / ] - Brush size<br />
-                                Ctrl+Z - Undo<br />
-                                Scroll - Zoom
-                            </Text>
-                        </Box>
+                            <Divider color="invokeGray.7" />
+
+                            <Box>
+                                <Text size="xs" c="invokeGray.4">
+                                    <strong>Shortcuts:</strong><br />
+                                    B - Brush<br />
+                                    E - Eraser<br />
+                                    H/Space - Pan<br />
+                                    R - Region Draw/Select<br />
+                                    [ / ] - Brush size<br />
+                                    Ctrl+Z - Undo<br />
+                                    Scroll - Zoom
+                                </Text>
+                            </Box>
                         </Stack>
                     </ScrollArea>
                 </Paper>

@@ -3,7 +3,6 @@ import {
     Accordion,
     Badge,
     Box,
-    Button,
     Checkbox,
     Divider,
     Group,
@@ -17,6 +16,7 @@ import {
 } from '@mantine/core';
 import type { GenerateParams } from '../../../../api/types';
 import type { QualityCoachAnalysis, QualityCoachSeverity } from '../../utils/qualityCoach';
+import { SwarmButton } from '../../../../components/ui';
 import {
     getCurrentMatrixCell,
     getFailureModesForDifficulty,
@@ -199,16 +199,17 @@ export function QualityCoachLearningPanel({
                                     </Paper>
                                 ))}
                                 {onApplyValues && Object.keys(qualityCoach.mergedOverrides).length > 0 ? (
-                                    <Button
+                                    <SwarmButton
                                         size="sm"
-                                        variant="light"
+                                        tone="secondary"
+                                        emphasis="soft"
                                         onClick={() => {
                                             onApplyValues(qualityCoach.mergedOverrides);
                                             onClose?.();
                                         }}
                                     >
                                         Apply Suggested Fixes
-                                    </Button>
+                                    </SwarmButton>
                                 ) : null}
                             </Stack>
                         ) : (
@@ -331,9 +332,10 @@ export function QualityCoachLearningPanel({
                                     CFG {recipe.params.cfgscale ?? '-'} | Steps {recipe.params.steps ?? '-'} | Sampler {recipe.params.sampler ?? '-'} | Size {recipe.params.width ?? '-'}x{recipe.params.height ?? '-'}
                                 </Text>
                                 {onApplyValues ? (
-                                    <Button
+                                    <SwarmButton
                                         size="xs"
-                                        variant="light"
+                                        tone="secondary"
+                                        emphasis="soft"
                                         mt="sm"
                                         onClick={() => {
                                             onApplyValues(recipe.params);
@@ -341,7 +343,7 @@ export function QualityCoachLearningPanel({
                                         }}
                                     >
                                         Apply Recipe
-                                    </Button>
+                                    </SwarmButton>
                                 ) : null}
                             </Paper>
                         ))}

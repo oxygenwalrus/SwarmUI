@@ -1,8 +1,8 @@
 import { lazy, memo, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
-import { ActionIcon, Badge, Box, Group, Popover, Stack, Text, Tooltip, UnstyledButton } from '@mantine/core';
+import { Badge, Box, Group, Popover, Stack, Text, Tooltip, UnstyledButton } from '@mantine/core';
 import { IconPlayerPlay, IconPlayerPause, IconPlus, IconSparkles, IconStack2, IconUpload } from '@tabler/icons-react';
 import { ContextMenu, useContextMenu, type ContextMenuItem } from '../../../../components/ContextMenu';
-import { SwarmButton } from '../../../../components/ui';
+import { SwarmActionIcon, SwarmButton } from '../../../../components/ui';
 import type { GenerateParams, Model } from '../../../../api/types';
 import type { QualityCoachAnalysis, QualityCoachSeverity } from '../../utils/qualityCoach';
 
@@ -192,11 +192,10 @@ export const GenerateButton = memo(function GenerateButton({
                     >
                         <Popover.Target>
                             <Tooltip label="Open the Stable Diffusion learning engine and live quality coach.">
-                                <ActionIcon
+                                <SwarmActionIcon
                                     size="lg"
-                                    radius="md"
-                                    variant={resolvedQualityCoach?.overallSeverity !== 'balanced' ? 'filled' : 'light'}
-                                    color={severityColor}
+                                    tone={resolvedQualityCoach?.overallSeverity === 'high-risk' ? 'danger' : resolvedQualityCoach?.overallSeverity === 'caution' ? 'warning' : 'info'}
+                                    emphasis={resolvedQualityCoach?.overallSeverity !== 'balanced' ? 'solid' : 'soft'}
                                     onClick={() => {
                                         setCoachOpened((opened) => !opened);
                                         void ensureQualityCoach();
@@ -208,7 +207,7 @@ export const GenerateButton = memo(function GenerateButton({
                                     style={{ alignSelf: 'stretch', minWidth: 48 }}
                                 >
                                     <IconSparkles size={18} />
-                                </ActionIcon>
+                                </SwarmActionIcon>
                             </Tooltip>
                         </Popover.Target>
                         <Popover.Dropdown>

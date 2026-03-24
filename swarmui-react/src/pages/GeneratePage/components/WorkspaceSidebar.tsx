@@ -9,9 +9,7 @@ import {
     MultiSelect,
     ScrollArea,
     Select,
-    Slider,
     Stack,
-    Switch,
     Text,
     Textarea,
     Tooltip,
@@ -49,10 +47,13 @@ import {
     SwarmActionIcon,
     SwarmBadge,
     SwarmButton,
+    SwarmSlider,
+    SwarmSwitch,
 } from '../../../components/ui';
 import { PromptSection } from './ParameterPanel/PromptSection';
 import { DimensionControls } from './ParameterPanel/DimensionControls';
 import { PresetControls } from './ParameterPanel/PresetControls';
+import { BatchOutputFolderControl } from './ParameterPanel/BatchOutputFolderControl';
 import { GenerateButton } from './ParameterPanel/GenerateButton';
 import {
     ControlNetAccordion,
@@ -117,6 +118,9 @@ interface WorkspaceSidebarProps {
     wildcardOptions: { value: string; label: string }[];
     wildcardText: string;
     onWildcardTextChange: (text: string) => void;
+    batchOutputFolder: string;
+    onBatchOutputFolderChange: (folder: string) => void;
+    onClearBatchOutputFolder: () => void;
     quickModules: QuickModuleKey[];
     onQuickModulesChange: (sections: QuickModuleKey[]) => void;
     inspectorSections: string[];
@@ -284,6 +288,9 @@ export const WorkspaceSidebar = memo(function WorkspaceSidebar({
     wildcardOptions,
     wildcardText,
     onWildcardTextChange,
+    batchOutputFolder,
+    onBatchOutputFolderChange,
+    onClearBatchOutputFolder,
     quickModules,
     onQuickModulesChange,
     inspectorSections,
@@ -540,7 +547,7 @@ export const WorkspaceSidebar = memo(function WorkspaceSidebar({
                                 </SwarmActionIcon>
                             </Group>
                         </Group>
-                        <Slider
+                        <SwarmSlider
                             value={lora.weight}
                             onChange={(value) => handleUpdateLoraWeight(index, value)}
                             min={-5}
@@ -670,7 +677,7 @@ export const WorkspaceSidebar = memo(function WorkspaceSidebar({
                                                     <Text size="xs" fw={700} c="var(--theme-text-secondary)">
                                                         Hi-Res Fix
                                                     </Text>
-                                                    <Switch
+                                                    <SwarmSwitch
                                                         size="sm"
                                                         checked={enableRefiner}
                                                         onChange={(event) => setEnableRefiner(event.currentTarget.checked)}
@@ -718,6 +725,12 @@ export const WorkspaceSidebar = memo(function WorkspaceSidebar({
                                         </Group>
                                     </Stack>
                                 </ElevatedCard>
+
+                                <BatchOutputFolderControl
+                                    value={batchOutputFolder}
+                                    onChange={onBatchOutputFolderChange}
+                                    onClear={onClearBatchOutputFolder}
+                                />
 
                                 <GenerateButton
                                     generating={generating}
@@ -848,7 +861,7 @@ export const WorkspaceSidebar = memo(function WorkspaceSidebar({
                                         <Accordion.Panel>
                                             <Stack gap="md">
                                                 <Group justify="space-between" align="center" wrap="wrap">
-                                                    <Switch
+                                                    <SwarmSwitch
                                                         label="Use Init Image"
                                                         size="sm"
                                                         checked={enableInitImage}
@@ -952,7 +965,7 @@ export const WorkspaceSidebar = memo(function WorkspaceSidebar({
                                         <Accordion.Panel>
                                             <Stack gap="md">
                                                 <Group justify="space-between" align="center" wrap="wrap">
-                                                    <Switch
+                                                    <SwarmSwitch
                                                         label="Enable Refiner"
                                                         size="sm"
                                                         checked={enableRefiner}

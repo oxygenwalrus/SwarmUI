@@ -10,7 +10,7 @@ import { notifications } from '@mantine/notifications';
 import { swarmClient } from '../api/client';
 import { logger } from '../utils/logger';
 import type { GenerateParams } from '../api/types';
-import { useSessionImages, useCanvasState } from '../store/generationStore';
+import { useSessionImages, useCanvasState, useGenerationStore } from '../store/generationStore';
 import {
     summarizeDiagnosticValue,
     useGenerationDiagnosticsStore,
@@ -554,6 +554,7 @@ export function useGenerationHandlers({
 
         const omittedParameters: OmittedGenerationParameter[] = [];
         const backendParams: Partial<GenerateParams> = {};
+        const batchOutputFolder = useGenerationStore.getState().batchOutputFolder;
 
         for (const [key, value] of Object.entries(normalizedValues)) {
             if (!includeParam(key)) {
@@ -632,6 +633,14 @@ export function useGenerationHandlers({
         }
 
         backendParams.model = backendModel;
+        if (batchOutputFolder) {
+            backendParams.extra_metadata = {
+                ...(backendParams.extra_metadata && typeof backendParams.extra_metadata === 'object'
+                    ? backendParams.extra_metadata as Record<string, unknown>
+                    : {}),
+                batch_output_folder: batchOutputFolder,
+            };
+        }
         const payloadKeys = Object.keys(backendParams).sort();
         const payloadSummary = summarizeRecord(backendParams as Record<string, unknown>);
         startDiagnosticAttempt({
@@ -672,6 +681,9 @@ export function useGenerationHandlers({
         logger.info('Starting generation with WebSocket store:', backendParams);
 
         startGeneration(backendParams as GenerateParams, generationId);
+        if (batchOutputFolder) {
+            useGenerationStore.getState().clearBatchOutputFolder();
+        }
     }, [
         appendDiagnosticsEvent,
         enableControlNet,

@@ -37,6 +37,9 @@ public static class T2IAPI
         API.RegisterAPICall(ToggleImageStarred, true, Permissions.UserStarImages);
         API.RegisterAPICall(OpenImageFolder, true, Permissions.LocalImageFolder);
         API.RegisterAPICall(DeleteImage, true, Permissions.UserDeleteImage);
+        API.RegisterAPICall(CreateHistoryFolder, true, Permissions.UserDeleteImage);
+        API.RegisterAPICall(RenameHistoryFolder, true, Permissions.UserDeleteImage);
+        API.RegisterAPICall(MoveHistoryImage, true, Permissions.UserDeleteImage);
         API.RegisterAPICall(ExportHistoryZip, true, Permissions.ViewImageHistory);
         API.RegisterAPICall(ListT2IParams, false, Permissions.FundamentalGenerateTabAccess);
         API.RegisterAPICall(TriggerRefresh, true, Permissions.FundamentalGenerateTabAccess); // Intentionally weird perm here: internal check for readonly vs true refresh
@@ -493,6 +496,7 @@ public static class T2IAPI
         try
         {
             user_input = RequestToParams(session, rawInput);
+            ApplyBatchOutputFolderOverride(session.User, user_input);
         }
         catch (SwarmReadableErrorException ex)
         {
@@ -742,6 +746,7 @@ public static class T2IAPI
         try
         {
             user_input = RequestToParams(session, rawInput);
+            ApplyBatchOutputFolderOverride(session.User, user_input);
         }
         catch (SwarmReadableErrorException ex)
         {
@@ -809,12 +814,79 @@ public static class T2IAPI
         public string Error { get; set; }
     }
 
+    /// <summary>Normalizes and stores a one-shot output folder override on a request if one was supplied.</summary>
+    public static void ApplyBatchOutputFolderOverride(User user, T2IParamInput userInput)
+    {
+        if (!userInput.ExtraMeta.TryGetValue(User.BatchOutputFolderExtraMetaKey, out object rawFolder) || rawFolder is null)
+        {
+            return;
+        }
+        string cleaned = user.NormalizeBatchOutputFolder($"{rawFolder}");
+        if (string.IsNullOrWhiteSpace(cleaned))
+        {
+            userInput.ExtraMeta.Remove(User.BatchOutputFolderExtraMetaKey);
+        }
+        else
+        {
+            userInput.ExtraMeta[User.BatchOutputFolderExtraMetaKey] = cleaned;
+        }
+    }
+
     public static HashSet<string> HistoryImageExtensions = ["png", "jpg", "gif", "webp"];
     public static HashSet<string> HistoryVideoExtensions = ["webm", "mp4", "mov"];
     public static HashSet<string> HistoryAudioExtensions = ["mp3", "aac", "wav", "flac"];
     public static HashSet<string> HistoryHtmlExtensions = ["html"];
 
     private static string NormalizeHistoryPath(string path) => (path ?? "").Replace('\\', '/').Trim('/');
+
+    private static bool IsReservedHistoryPath(string path)
+    {
+        string clean = NormalizeHistoryPath(path);
+        return clean.StartsWith("_") || clean.Equals("Starred", StringComparison.OrdinalIgnoreCase) || clean.StartsWith("Starred/", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GetHistoryFileName(string path)
+    {
+        return NormalizeHistoryPath(path).AfterLast('/');
+    }
+
+    private static IEnumerable<string> EnumerateHistoryMediaFiles(string folder)
+    {
+        if (!Directory.Exists(folder))
+        {
+            return [];
+        }
+        return Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).Where(file => HistoryExtensions.Contains(file.AfterLast('.').ToLowerInvariant()));
+    }
+
+    private static void MoveHistorySidecars(string sourcePath, string targetPath)
+    {
+        string sourceBeforeDot = sourcePath.BeforeLast('.');
+        string targetBeforeDot = targetPath.BeforeLast('.');
+        foreach (string ext in DeletableFileExtensions)
+        {
+            string sourceAlt = $"{sourceBeforeDot}{ext}";
+            string targetAlt = $"{targetBeforeDot}{ext}";
+            if (File.Exists(sourceAlt) && File.Exists(targetAlt))
+            {
+                throw new SwarmUserErrorException($"Cannot move image because sidecar file '{Path.GetFileName(targetAlt)}' already exists.");
+            }
+        }
+        Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
+        File.Move(sourcePath, targetPath);
+        foreach (string ext in DeletableFileExtensions)
+        {
+            string sourceAlt = $"{sourceBeforeDot}{ext}";
+            if (!File.Exists(sourceAlt))
+            {
+                continue;
+            }
+            string targetAlt = $"{targetBeforeDot}{ext}";
+            File.Move(sourceAlt, targetAlt);
+        }
+        OutputMetadataTracker.RemoveMetadataFor(sourcePath);
+        OutputMetadataTracker.RemoveMetadataFor(targetPath);
+    }
 
     private static bool TryResolveHistoryPath(Session session, string root, string rawPath, out string actualPath, out string userError)
     {
@@ -871,6 +943,19 @@ public static class T2IAPI
             return true;
         }
         return Enum.TryParse(mediaType, true, out mode);
+    }
+
+    private static int ParseHistoryDepth(string depth, int defaultValue)
+    {
+        if (string.IsNullOrWhiteSpace(depth))
+        {
+            return defaultValue;
+        }
+        if (!int.TryParse(depth, out int parsed))
+        {
+            return defaultValue;
+        }
+        return Math.Max(parsed, 0);
     }
 
     private static string GetHistoryCanonicalPath(string relativePath, bool starNoFolders)
@@ -1316,7 +1401,7 @@ public static class T2IAPI
         """)]
     public static async Task<JObject> ListImages(Session session,
         [API.APIParameter("The folder path to start the listing in. Use an empty string for root.")] string path,
-        [API.APIParameter("Maximum depth (number of recursive folders) to search.")] int depth,
+        [API.APIParameter("Maximum depth (number of recursive folders) to search.")] string depth = null,
         [API.APIParameter("What to sort the list by - `Name` or `Date`.")] string sortBy = "Name",
         [API.APIParameter("If true, the sorting should be done in reverse.")] bool sortReverse = false)
     {
@@ -1325,7 +1410,7 @@ public static class T2IAPI
             return new JObject() { ["error"] = $"Invalid sort mode '{sortBy}'." };
         }
         string root = Utilities.CombinePathWithAbsolute(Environment.CurrentDirectory, session.User.OutputDirectory);
-        return GetListAPIInternal(session, path, root, HistoryExtensions, f => true, depth, sortMode, sortReverse);
+        return GetListAPIInternal(session, path, root, HistoryExtensions, f => true, ParseHistoryDepth(depth, 0), sortMode, sortReverse);
     }
 
     [API.APIDescription("Gets a paginated list of images in saved image history with media metadata and filters.",
@@ -1356,7 +1441,7 @@ public static class T2IAPI
     public static async Task<JObject> ListImagesV2(Session session,
         [API.APIParameter("The folder path to start the listing in. Use an empty string for root.")] string path = "",
         [API.APIParameter("If true, search recursively from the path. If false, only inspect the current folder.")] bool recursive = true,
-        [API.APIParameter("Maximum recursive depth relative to the current path. Use a large number for full depth.")] int depth = int.MaxValue,
+        [API.APIParameter("Maximum recursive depth relative to the current path. Use a large number for full depth.")] string depth = null,
         [API.APIParameter("Optional free-text query across path, metadata, prompt, model, seed, and resolution.")] string query = null,
         [API.APIParameter("What to sort the list by - `Name` or `Date`.")] string sortBy = "Date",
         [API.APIParameter("If true, reverse the selected sort order.")] bool sortReverse = false,
@@ -1380,7 +1465,7 @@ public static class T2IAPI
         offset = Math.Max(offset, 0);
         limit = Math.Clamp(limit, 1, 200);
         string root = Utilities.CombinePathWithAbsolute(Environment.CurrentDirectory, session.User.OutputDirectory);
-        HistoryQueryResult result = QueryHistoryItems(session, root, path, recursive, depth, query, sortMode, sortReverse, starredOnly, mediaMode);
+        HistoryQueryResult result = QueryHistoryItems(session, root, path, recursive, ParseHistoryDepth(depth, int.MaxValue), query, sortMode, sortReverse, starredOnly, mediaMode);
         if (result.Error is not null)
         {
             return new JObject() { ["error"] = result.Error };
@@ -1453,6 +1538,130 @@ public static class T2IAPI
 
     public static string[] DeletableFileExtensions = [".txt", ".metadata.js", ".swarm.json", ".swarmpreview.jpg", ".swarmpreview.webp"];
 
+    [API.APIDescription("Create a folder in image history.", "\"success\": true")]
+    public static async Task<JObject> CreateHistoryFolder(Session session,
+        [API.APIParameter("The history-relative folder path to create.")] string path)
+    {
+        string cleanPath = NormalizeHistoryPath(path);
+        if (string.IsNullOrWhiteSpace(cleanPath))
+        {
+            return new JObject() { ["error"] = "Folder path cannot be empty." };
+        }
+        if (IsReservedHistoryPath(cleanPath))
+        {
+            return new JObject() { ["error"] = "That folder path is reserved and cannot be created here." };
+        }
+        string root = Utilities.CombinePathWithAbsolute(Environment.CurrentDirectory, session.User.OutputDirectory);
+        (string actualPath, string consoleError, string userError) = WebServer.CheckFilePath(root, cleanPath);
+        if (consoleError is not null)
+        {
+            Logs.Error(consoleError);
+            return new JObject() { ["error"] = userError };
+        }
+        Directory.CreateDirectory(actualPath);
+        return new JObject() { ["success"] = true, ["path"] = cleanPath };
+    }
+
+    [API.APIDescription("Rename or move a folder in image history.", "\"success\": true")]
+    public static async Task<JObject> RenameHistoryFolder(Session session,
+        [API.APIParameter("The existing history-relative folder path.")] string path,
+        [API.APIParameter("The new history-relative folder path.")] string newPath)
+    {
+        string cleanPath = NormalizeHistoryPath(path);
+        string cleanNewPath = NormalizeHistoryPath(newPath);
+        if (string.IsNullOrWhiteSpace(cleanPath) || string.IsNullOrWhiteSpace(cleanNewPath))
+        {
+            return new JObject() { ["error"] = "Folder paths cannot be empty." };
+        }
+        if (IsReservedHistoryPath(cleanPath) || IsReservedHistoryPath(cleanNewPath))
+        {
+            return new JObject() { ["error"] = "Reserved history folders cannot be renamed or targeted here." };
+        }
+        if (cleanPath.Equals(cleanNewPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return new JObject() { ["success"] = true, ["path"] = cleanNewPath };
+        }
+        if (cleanNewPath.StartsWith($"{cleanPath}/", StringComparison.OrdinalIgnoreCase))
+        {
+            return new JObject() { ["error"] = "Cannot move a folder into itself." };
+        }
+        string root = Utilities.CombinePathWithAbsolute(Environment.CurrentDirectory, session.User.OutputDirectory);
+        if (!TryResolveHistoryPath(session, root, cleanPath, out string actualPath, out string userError))
+        {
+            return new JObject() { ["error"] = userError };
+        }
+        if (!TryResolveHistoryPath(session, root, cleanNewPath, out string actualNewPath, out userError))
+        {
+            return new JObject() { ["error"] = userError };
+        }
+        if (!Directory.Exists(actualPath))
+        {
+            return new JObject() { ["error"] = "That source folder does not exist." };
+        }
+        if (Directory.Exists(actualNewPath) || File.Exists(actualNewPath))
+        {
+            return new JObject() { ["error"] = "That target folder already exists." };
+        }
+        string[] priorFiles = [.. EnumerateHistoryMediaFiles(actualPath)];
+        Directory.CreateDirectory(Path.GetDirectoryName(actualNewPath));
+        Directory.Move(actualPath, actualNewPath);
+        foreach (string priorFile in priorFiles)
+        {
+            string relative = Path.GetRelativePath(actualPath, priorFile).Replace('\\', '/');
+            OutputMetadataTracker.RemoveMetadataFor(priorFile.Replace('\\', '/'));
+            OutputMetadataTracker.RemoveMetadataFor($"{actualNewPath.Replace('\\', '/')}/{relative}");
+        }
+        return new JObject() { ["success"] = true, ["path"] = cleanNewPath };
+    }
+
+    [API.APIDescription("Move a saved history image into another history folder.", "\"success\": true")]
+    public static async Task<JObject> MoveHistoryImage(Session session,
+        [API.APIParameter("The history-relative image path to move.")] string path,
+        [API.APIParameter("The history-relative destination folder path.")] string targetFolder)
+    {
+        string cleanPath = NormalizeHistoryPath(path);
+        string cleanTargetFolder = NormalizeHistoryPath(targetFolder);
+        if (string.IsNullOrWhiteSpace(cleanPath) || string.IsNullOrWhiteSpace(cleanTargetFolder))
+        {
+            return new JObject() { ["error"] = "Image path and target folder are both required." };
+        }
+        if (IsReservedHistoryPath(cleanPath) || IsReservedHistoryPath(cleanTargetFolder))
+        {
+            return new JObject() { ["error"] = "Reserved history folders cannot be used for this move." };
+        }
+        string root = Utilities.CombinePathWithAbsolute(Environment.CurrentDirectory, session.User.OutputDirectory);
+        if (!TryResolveHistoryPath(session, root, cleanPath, out string actualPath, out string userError))
+        {
+            return new JObject() { ["error"] = userError };
+        }
+        if (!File.Exists(actualPath))
+        {
+            return new JObject() { ["error"] = "That image no longer exists." };
+        }
+        string targetPath = $"{cleanTargetFolder}/{GetHistoryFileName(cleanPath)}";
+        if (!TryResolveHistoryPath(session, root, targetPath, out string actualTargetPath, out userError))
+        {
+            return new JObject() { ["error"] = userError };
+        }
+        if (cleanPath.Equals(targetPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return new JObject() { ["success"] = true, ["path"] = targetPath, ["url"] = BuildHistoryViewPath(targetPath) };
+        }
+        if (File.Exists(actualTargetPath))
+        {
+            return new JObject() { ["error"] = "A file with that name already exists in the target folder." };
+        }
+        try
+        {
+            MoveHistorySidecars(actualPath, actualTargetPath);
+        }
+        catch (SwarmReadableErrorException ex)
+        {
+            return new JObject() { ["error"] = ex.Message };
+        }
+        return new JObject() { ["success"] = true, ["path"] = targetPath, ["url"] = BuildHistoryViewPath(targetPath) };
+    }
+
     [API.APIDescription("Delete an image from history.", "\"success\": true")]
     public static async Task<JObject> DeleteImage(Session session,
         [API.APIParameter("The path to the image to delete.")] string path)
@@ -1499,7 +1708,7 @@ public static class T2IAPI
         [API.APIParameter("Optional explicit list of history-relative paths to export. If omitted, the current query filter is exported.")] string[] paths = null,
         [API.APIParameter("The folder path to start the listing in. Use an empty string for root.")] string path = "",
         [API.APIParameter("If true, search recursively from the path. If false, only inspect the current folder.")] bool recursive = true,
-        [API.APIParameter("Maximum recursive depth relative to the current path. Use a large number for full depth.")] int depth = int.MaxValue,
+        [API.APIParameter("Maximum recursive depth relative to the current path. Use a large number for full depth.")] string depth = null,
         [API.APIParameter("Optional free-text query across path, metadata, prompt, model, seed, and resolution.")] string query = null,
         [API.APIParameter("What to sort the list by - `Name` or `Date`.")] string sortBy = "Date",
         [API.APIParameter("If true, reverse the selected sort order.")] bool sortReverse = false,
@@ -1548,7 +1757,7 @@ public static class T2IAPI
             {
                 return new JObject() { ["error"] = $"Invalid media type '{mediaType}'." };
             }
-            HistoryQueryResult result = QueryHistoryItems(session, root, path, recursive, depth, query, sortMode, sortReverse, starredOnly, mediaMode);
+            HistoryQueryResult result = QueryHistoryItems(session, root, path, recursive, ParseHistoryDepth(depth, int.MaxValue), query, sortMode, sortReverse, starredOnly, mediaMode);
             if (result.Error is not null)
             {
                 return new JObject() { ["error"] = result.Error };

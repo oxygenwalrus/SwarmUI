@@ -2,12 +2,12 @@ import { memo } from 'react';
 import {
     Accordion,
     Stack,
-    Switch,
     Text,
 } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams } from '../../../../api/types';
 import { SliderWithInput } from '../../../../components/SliderWithInput';
+import { SwarmSwitch } from '../../../../components/ui';
 
 export interface VariationAccordionProps {
     form: UseFormReturnType<GenerateParams>;
@@ -29,7 +29,7 @@ export const VariationAccordion = memo(function VariationAccordion({
             <Accordion.Control>Variation Seed</Accordion.Control>
             <Accordion.Panel>
                 <Stack gap="md">
-                    <Switch
+                    <SwarmSwitch
                         label="Enable Variation Seed"
                         size="xs"
                         checked={enabled}

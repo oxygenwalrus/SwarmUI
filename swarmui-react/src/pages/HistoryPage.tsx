@@ -61,6 +61,7 @@ import { SectionHero, SwarmActionIcon, SwarmButton, SwarmSegmentedControl } from
 import { useDebouncedState } from '../hooks/useDebounce';
 import { queryClient, queryKeys } from '../api/queryClient';
 import {
+    cleanHistoryFolderPath,
     DEFAULT_HISTORY_PREFERENCES,
     HISTORY_PAGE_SIZE,
     getHistoryFilename,
@@ -68,6 +69,7 @@ import {
     getHistoryRelativePath,
     getHistorySelectionId,
     isImageMedia,
+    isReservedHistoryFolderPath,
     mergeHistoryItems,
     readHistoryPreferences,
     resolveHistoryItems,
@@ -107,6 +109,7 @@ const INITIAL_HISTORY_STATE: HistoryPageState = {
 
 export function HistoryPage({ routeState }: HistoryPageProps) {
     const { setParams } = useGenerationStore();
+    const setBatchOutputFolder = useGenerationStore((state) => state.setBatchOutputFolder);
     const { setEnableInitImage } = useInitImageToggle();
     const openCanvasWorkflow = useCanvasWorkflowStore((state) => state.openSession);
     const { navigateToGenerate, navigateToHistory } = useNavigationStore();
@@ -171,7 +174,7 @@ export function HistoryPage({ routeState }: HistoryPageProps) {
                 ? currentPath
                 : '',
         recursive: preferences.viewMode === 'gallery' ? !effectiveCurrentFolderOnly : false,
-        depth: preferences.viewMode === 'gallery' ? null : 0,
+        depth: preferences.viewMode === 'gallery' ? undefined : 0,
         query: debouncedSearchQuery.trim() || null,
         sortBy: preferences.sortBy,
         sortReverse: preferences.sortReverse,
@@ -349,6 +352,26 @@ export function HistoryPage({ routeState }: HistoryPageProps) {
     const handleImportImage = useCallback(() => {
         fileInputRef.current?.click();
     }, []);
+
+    const handleUseFolderForNextBatch = useCallback(() => {
+        const folder = cleanHistoryFolderPath(currentPath);
+        if (!folder || isReservedHistoryFolderPath(folder)) {
+            notifications.show({
+                title: 'Select A Folder',
+                message: 'Open a normal history folder first, then send that folder to Generate.',
+                color: 'yellow',
+            });
+            return;
+        }
+
+        setBatchOutputFolder(folder);
+        navigateToGenerate();
+        notifications.show({
+            title: 'Next Save Folder Set',
+            message: `The next batch will save into ${folder}.`,
+            color: 'green',
+        });
+    }, [currentPath, navigateToGenerate, setBatchOutputFolder]);
 
     useEffect(() => {
         if (!routeState) {
@@ -1051,6 +1074,16 @@ export function HistoryPage({ routeState }: HistoryPageProps) {
                                         </SwarmActionIcon>
                                     </Tooltip>
                                 )}
+                                <SwarmButton
+                                    tone="secondary"
+                                    emphasis="soft"
+                                    size="xs"
+                                    leftSection={<IconFolder size={16} />}
+                                    onClick={handleUseFolderForNextBatch}
+                                    disabled={!currentPath || isReservedHistoryFolderPath(currentPath)}
+                                >
+                                    Use Folder For Next Batch
+                                </SwarmButton>
                                 <SwarmButton
                                     tone="secondary"
                                     emphasis="soft"

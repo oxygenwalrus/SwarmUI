@@ -32,6 +32,20 @@ export const DEFAULT_HISTORY_PREFERENCES: HistoryPreferences = {
     currentFolderOnly: false,
 };
 
+export function cleanHistoryFolderPath(path: string | null | undefined): string {
+    return (path || '')
+        .replace(/\\/g, '/')
+        .split('/')
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .join('/');
+}
+
+export function isReservedHistoryFolderPath(path: string | null | undefined): boolean {
+    const clean = cleanHistoryFolderPath(path);
+    return clean.startsWith('_') || clean === 'Starred' || clean.startsWith('Starred/');
+}
+
 export function readHistoryPreferences(): HistoryPreferences {
     if (typeof window === 'undefined') {
         return DEFAULT_HISTORY_PREFERENCES;

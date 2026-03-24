@@ -2,7 +2,6 @@ import { memo, useMemo, useState } from 'react';
 import {
     Group,
     Select,
-    ActionIcon,
     Tooltip,
     Menu,
 } from '@mantine/core';
@@ -14,6 +13,7 @@ import {
     IconDotsVertical,
 } from '@tabler/icons-react';
 import type { Preset } from '../../../../stores/presets';
+import { SwarmActionIcon } from '../../../../components/ui';
 
 export interface PresetControlsProps {
     /** Available presets */
@@ -78,21 +78,22 @@ export const PresetControls = memo(function PresetControls({
                 multiline
                 w={280}
             >
-                <ActionIcon
+                <SwarmActionIcon
                     size="lg"
-                    variant="default"
+                    tone="secondary"
+                    emphasis="outline"
                     onClick={onOpenSaveModal}
                     aria-label="Save Preset"
                 >
                     <IconDeviceFloppy size={20} />
-                </ActionIcon>
+                </SwarmActionIcon>
             </Tooltip>
             {selectedPreset && (onDeletePreset || onDuplicatePreset) && (
                 <Menu shadow="md" width={160} position="bottom-end">
                     <Menu.Target>
-                        <ActionIcon size="lg" variant="default" aria-label="Preset actions">
+                        <SwarmActionIcon size="lg" tone="secondary" emphasis="outline" aria-label="Preset actions">
                             <IconDotsVertical size={18} />
-                        </ActionIcon>
+                        </SwarmActionIcon>
                     </Menu.Target>
                     <Menu.Dropdown>
                         {onDuplicatePreset && (
@@ -119,15 +120,15 @@ export const PresetControls = memo(function PresetControls({
                 </Menu>
             )}
             <Tooltip label="View Generation History">
-                <ActionIcon
+                <SwarmActionIcon
                     size="lg"
-                    variant="light"
-                    color="violet"
+                    tone="info"
+                    emphasis="soft"
                     onClick={onOpenHistory}
                     aria-label="History"
                 >
                     <IconHistory size={20} />
-                </ActionIcon>
+                </SwarmActionIcon>
             </Tooltip>
         </Group>
     );

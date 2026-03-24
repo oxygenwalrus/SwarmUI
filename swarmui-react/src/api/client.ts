@@ -26,6 +26,19 @@ import type {
   LogType,
   LogMessage,
   ServerResourceInfo,
+  KohyaDatasetInfo,
+  KohyaStatusResponse,
+  KohyaTrainedLoraInfo,
+  KohyaTrainingTemplate,
+  LoraProjectSummary,
+  LoraProject,
+  LoraBatchPlanJob,
+  LoraBatchManifestSummary,
+  LoraDatasetItem,
+  LoraBatchExecutionStatus,
+  LoraTrainableProject,
+  LoraTrainingJob,
+  LoraTrainingStatus,
 } from './types';
 import { requestDeduplicator } from './requestDeduplicator';
 import { profiler } from '../utils/performanceProfiler';
@@ -66,6 +79,41 @@ function isUnknownRouteError(error: APIError | null | undefined): boolean {
 
 function normalizeHistoryPath(path: string = ''): string {
   return path.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '').trim();
+}
+
+function normalizeHistoryDepth(depth: unknown): number | null {
+  if (depth === null || depth === undefined || depth === '') {
+    return null;
+  }
+
+  const parsed = typeof depth === 'number' ? depth : Number.parseInt(String(depth), 10);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return null;
+  }
+
+  return parsed;
+}
+
+function sanitizeApiParams(params: any): any {
+  if (!params || typeof params !== 'object' || Array.isArray(params)) {
+    return params;
+  }
+
+  const cleaned: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(params)) {
+    if (key === 'depth') {
+      const normalizedDepth = normalizeHistoryDepth(value);
+      if (normalizedDepth !== null) {
+        cleaned[key] = normalizedDepth;
+      }
+      continue;
+    }
+
+    cleaned[key] = value;
+  }
+
+  return cleaned;
 }
 
 function joinHistoryPath(basePath: string, entryPath: string): string {
@@ -390,16 +438,32 @@ export class SwarmUIClient {
     return resolveApiUrl('/ComfyBackendDirect/', this.runtimeEndpoints);
   }
 
+  private async getJson<T>(path: string): Promise<T> {
+    const response = await fetch(resolveApiUrl(path, this.runtimeEndpoints), {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+      credentials: 'same-origin',
+    });
+    if (!response.ok) {
+      throw new Error(`Request failed for ${path}: ${response.status}`);
+    }
+    return response.json() as Promise<T>;
+  }
+
   // Generic POST request with optional deduplication
   async post<T>(endpoint: string, params: any = {}, options?: { timeout?: number }): Promise<T | APIError> {
+    const cleanedParams = sanitizeApiParams(params);
+
     // Deduplicate read-only list endpoints
     if (DEDUP_ENDPOINTS.includes(endpoint)) {
-      return requestDeduplicator.dedupe<T | APIError>(endpoint, params, () =>
-        this.executePost<T>(endpoint, params, options)
+      return requestDeduplicator.dedupe<T | APIError>(endpoint, cleanedParams, () =>
+        this.executePost<T>(endpoint, cleanedParams, options)
       );
     }
 
-    return this.executePost<T>(endpoint, params, options);
+    return this.executePost<T>(endpoint, cleanedParams, options);
   }
 
   // Execute the actual POST request
@@ -408,7 +472,8 @@ export class SwarmUIClient {
     this.log('debug', `POST ${endpoint}`, params);
     recordApiCall(endpoint);
 
-    const body = this.sessionId ? { session_id: this.sessionId, ...params } : params;
+    const cleanedParams = sanitizeApiParams(params);
+    const body = this.sessionId ? { session_id: this.sessionId, ...cleanedParams } : cleanedParams;
 
     const timer = profiler.startTimer(`api:${endpoint}`);
 
@@ -666,7 +731,10 @@ export class SwarmUIClient {
     }
 
   async listImages(path: string = '', depth: number = 1): Promise<ImageFolderResponse> {
-    const response = await this.post<ImageFolderResponse>('ListImages', { path, depth });
+    const response = await this.post<ImageFolderResponse>('ListImages', {
+      path,
+      depth: normalizeHistoryDepth(depth) ?? 1,
+    });
     if ('files' in response) {
       return {
         files: response.files || [],
@@ -746,10 +814,11 @@ export class SwarmUIClient {
   }
 
   async listImagesV2(params: ListImagesV2Params = {}): Promise<HistoryFolderResponseV2> {
+    const normalizedDepth = normalizeHistoryDepth(params.depth);
     const response = await this.post<HistoryFolderResponseV2>('ListImagesV2', {
       path: params.path ?? '',
       recursive: params.recursive ?? true,
-      depth: params.depth ?? null,
+      ...(normalizedDepth !== null ? { depth: normalizedDepth } : {}),
       query: params.query ?? null,
       sortBy: params.sortBy ?? 'Date',
       sortReverse: params.sortReverse ?? false,
@@ -777,11 +846,12 @@ export class SwarmUIClient {
   }
 
   async exportHistoryZip(params: ExportHistoryZipParams = {}): Promise<ExportHistoryZipResponse> {
+    const normalizedDepth = normalizeHistoryDepth(params.depth);
     const response = await this.post<ExportHistoryZipResponse>('ExportHistoryZip', {
       paths: params.paths,
       path: params.path ?? '',
       recursive: params.recursive ?? true,
-      depth: params.depth ?? null,
+      ...(normalizedDepth !== null ? { depth: normalizedDepth } : {}),
       query: params.query ?? null,
       sortBy: params.sortBy ?? 'Date',
       sortReverse: params.sortReverse ?? false,
@@ -1853,6 +1923,235 @@ export class SwarmUIClient {
       { features }
     );
     return response as { success?: boolean; installed?: string[]; error?: string };
+  }
+
+  async getKohyaStatus(): Promise<KohyaStatusResponse> {
+    return this.getJson<KohyaStatusResponse>('/api/kohya/status');
+  }
+
+  async getKohyaTrainingTemplate(): Promise<KohyaTrainingTemplate> {
+    return this.getJson<KohyaTrainingTemplate>('/api/kohya/training-template');
+  }
+
+  async listKohyaDatasets(): Promise<KohyaDatasetInfo[]> {
+    const response = await this.getJson<KohyaDatasetInfo[]>('/api/kohya/datasets');
+    return Array.isArray(response) ? response : [];
+  }
+
+  async listKohyaTrainedLoras(): Promise<KohyaTrainedLoraInfo[]> {
+    const response = await this.getJson<KohyaTrainedLoraInfo[]>('/api/kohya/trained-loras');
+    return Array.isArray(response) ? response : [];
+  }
+
+  async listLoraProjects(): Promise<LoraProjectSummary[]> {
+    const response = await this.post<{ projects?: LoraProjectSummary[] } | APIError>('ListLoraProjects', {});
+    if ('projects' in response && Array.isArray(response.projects)) {
+      return response.projects;
+    }
+    throw new Error((response as APIError).error || 'Failed to list LoRA projects');
+  }
+
+  async getLoraProject(characterId: string): Promise<LoraProject> {
+    const response = await this.post<{ project?: LoraProject } | APIError>('GetLoraProject', {
+      character_id: characterId,
+    });
+    if ('project' in response && response.project) {
+      return response.project;
+    }
+    throw new Error((response as APIError).error || 'Failed to load LoRA project');
+  }
+
+  async saveLoraProject(params: {
+    character_id: string;
+    reference_image: string;
+    base_prompt: string;
+    variations: Record<string, string[]>;
+    settings: Record<string, unknown>;
+  }): Promise<LoraProject> {
+    const response = await this.post<{ project?: LoraProject } | APIError>('SaveLoraProject', params);
+    if ('project' in response && response.project) {
+      return response.project;
+    }
+    throw new Error((response as APIError).error || 'Failed to save LoRA project');
+  }
+
+  async generateLoraBatchPlan(params: {
+    character_id: string;
+    reference_image: string;
+    base_prompt: string;
+    variations: Record<string, string[]>;
+    settings: Record<string, unknown>;
+  }): Promise<{ batch_id: string; job_count: number; jobs: LoraBatchPlanJob[]; workflow?: Record<string, unknown> }> {
+    const response = await this.post<{ batch_id?: string; job_count?: number; jobs?: LoraBatchPlanJob[]; workflow?: Record<string, unknown> } | APIError>('GenerateLoraBatchPlan', params);
+    if ('batch_id' in response && typeof response.batch_id === 'string') {
+      return {
+        batch_id: response.batch_id,
+        job_count: response.job_count || 0,
+        jobs: response.jobs || [],
+        workflow: response.workflow,
+      };
+    }
+    throw new Error((response as APIError).error || 'Failed to generate LoRA batch plan');
+  }
+
+  async listLoraBatchManifests(characterId: string): Promise<LoraBatchManifestSummary[]> {
+    const response = await this.post<{ manifests?: LoraBatchManifestSummary[] } | APIError>('ListLoraBatchManifests', {
+      character_id: characterId,
+    });
+    if ('manifests' in response && Array.isArray(response.manifests)) {
+      return response.manifests;
+    }
+    throw new Error((response as APIError).error || 'Failed to list LoRA batch manifests');
+  }
+
+  async createLoraDatasetRecordsFromBatchPlan(params: {
+    character_id: string;
+    batch_id: string;
+    overwrite?: boolean;
+  }): Promise<{ created: number; updated: number }> {
+    const response = await this.post<{ created?: number; updated?: number } | APIError>('CreateLoraDatasetRecordsFromBatchPlan', params);
+    if (!('error' in response)) {
+      return {
+        created: response.created || 0,
+        updated: response.updated || 0,
+      };
+    }
+    throw new Error(response.error || 'Failed to create dataset records');
+  }
+
+  async executeLoraBatchPlan(params: {
+    character_id: string;
+    batch_id: string;
+    max_jobs?: number;
+    workflow_mode?: string;
+    workflow_name?: string;
+  }): Promise<LoraBatchExecutionStatus> {
+    const response = await this.post<{ execution?: LoraBatchExecutionStatus } | APIError>('ExecuteLoraBatchPlan', params, { timeout: 120000 });
+    if ('execution' in response && response.execution) {
+      return response.execution;
+    }
+    throw new Error((response as APIError).error || 'Failed to execute LoRA batch plan');
+  }
+
+  async getLoraBatchExecutionStatus(params: {
+    character_id: string;
+    batch_id: string;
+  }): Promise<LoraBatchExecutionStatus> {
+    const response = await this.post<{ execution?: LoraBatchExecutionStatus } | APIError>('GetLoraBatchExecutionStatus', params);
+    if ('execution' in response && response.execution) {
+      return response.execution;
+    }
+    throw new Error((response as APIError).error || 'Failed to load LoRA batch execution status');
+  }
+
+  async listLoraDataset(characterId: string): Promise<LoraDatasetItem[]> {
+    const response = await this.post<{ items?: LoraDatasetItem[] } | APIError>('ListLoraDataset', {
+      character_id: characterId,
+    });
+    if ('items' in response && Array.isArray(response.items)) {
+      return response.items;
+    }
+    throw new Error((response as APIError).error || 'Failed to list LoRA dataset');
+  }
+
+  async approveLoraDatasetImage(params: {
+    character_id: string;
+    image_id: string;
+    approved: boolean;
+  }): Promise<LoraDatasetItem> {
+    const response = await this.post<{ item?: LoraDatasetItem } | APIError>('ApproveLoraDatasetImage', params);
+    if ('item' in response && response.item) {
+      return response.item;
+    }
+    throw new Error((response as APIError).error || 'Failed to update LoRA dataset item');
+  }
+
+  async rejectLoraDatasetImage(params: {
+    character_id: string;
+    image_id: string;
+  }): Promise<LoraDatasetItem | null> {
+    const response = await this.post<{ item?: LoraDatasetItem } | APIError>('RejectLoraDatasetImage', params);
+    if (!('error' in response)) {
+      return response.item || null;
+    }
+    throw new Error(response.error || 'Failed to reject LoRA dataset item');
+  }
+
+  async listTrainableLoraProjects(): Promise<LoraTrainableProject[]> {
+    const response = await this.post<{ projects?: LoraTrainableProject[] } | APIError>('ListTrainableLoraProjects', {});
+    if ('projects' in response && Array.isArray(response.projects)) {
+      return response.projects;
+    }
+    throw new Error((response as APIError).error || 'Failed to list trainable LoRA projects');
+  }
+
+  async prepareLoraTraining(params: {
+    character_id: string;
+    base_model?: string;
+    epochs?: number;
+    dim?: number;
+    alpha?: number;
+    batch_size?: number;
+    learning_rate?: number;
+    resolution?: string;
+    mixed_precision?: string;
+    use_8bit_adam?: boolean;
+    gradient_checkpointing?: boolean;
+    xformers?: boolean;
+    output_name?: string;
+  }): Promise<{ job: LoraTrainingJob; launch_preview: Record<string, unknown> }> {
+    const response = await this.post<{ job?: LoraTrainingJob; launch_preview?: Record<string, unknown> } | APIError>('PrepareLoraTraining', params);
+    if ('job' in response && response.job) {
+      return {
+        job: response.job,
+        launch_preview: response.launch_preview || {},
+      };
+    }
+    throw new Error((response as APIError).error || 'Failed to prepare LoRA training');
+  }
+
+  async startLoraTraining(jobId?: string): Promise<{ started?: boolean; already_running?: boolean; process_id?: number; job?: LoraTrainingJob; status?: LoraTrainingStatus; launch_preview?: Record<string, unknown> }> {
+    const response = await this.post<{ started?: boolean; already_running?: boolean; process_id?: number; job?: LoraTrainingJob; status?: LoraTrainingStatus; launch_preview?: Record<string, unknown> } | APIError>('StartLoraTraining', {
+      job_id: jobId,
+    }, { timeout: 30000 });
+    if (!('error' in response)) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to start LoRA training');
+  }
+
+  async interruptLoraTraining(jobId?: string): Promise<{ interrupted?: boolean; status?: LoraTrainingStatus }> {
+    const response = await this.post<{ interrupted?: boolean; status?: LoraTrainingStatus } | APIError>('InterruptLoraTraining', {
+      job_id: jobId,
+    });
+    if (!('error' in response)) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to interrupt LoRA training');
+  }
+
+  async getLoraTrainingStatus(): Promise<{ status: LoraTrainingStatus | null; recent_jobs: LoraTrainingJob[]; history_count: number; trainable_projects: LoraTrainableProject[] }> {
+    const response = await this.post<{ status?: LoraTrainingStatus; recent_jobs?: LoraTrainingJob[]; history_count?: number; trainable_projects?: LoraTrainableProject[] } | APIError>('GetLoraTrainingStatus', {});
+    if (!('error' in response)) {
+      return {
+        status: response.status || null,
+        recent_jobs: response.recent_jobs || [],
+        history_count: response.history_count || 0,
+        trainable_projects: response.trainable_projects || [],
+      };
+    }
+    throw new Error(response.error || 'Failed to load LoRA training status');
+  }
+
+  async listLoraTrainingHistory(characterId?: string, limit: number = 20): Promise<LoraTrainingJob[]> {
+    const response = await this.post<{ jobs?: LoraTrainingJob[] } | APIError>('ListLoraTrainingHistory', {
+      character_id: characterId,
+      limit,
+    });
+    if ('jobs' in response && Array.isArray(response.jobs)) {
+      return response.jobs;
+    }
+    throw new Error((response as APIError).error || 'Failed to list LoRA training history');
   }
 
   doTensorRTCreate(

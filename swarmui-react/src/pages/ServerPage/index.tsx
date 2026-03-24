@@ -16,6 +16,7 @@ import {
 import { PageScaffold } from '../../components/layout/PageScaffold';
 import { SectionHero } from '../../components/ui';
 import { BackendsTab } from './BackendsTab';
+import { KohyaTrainerTab } from './KohyaTrainerTab';
 import { useNavigationStore, type ServerRouteState } from '../../stores/navigationStore';
 
 const LogsTab = lazy(() => import('./LogsTab').then(m => ({ default: m.LogsTab })));
@@ -42,6 +43,8 @@ export function ServerPage({ routeState }: ServerPageProps) {
                 ? 'Resources'
                 : activeTab === 'account'
                     ? 'Account'
+                    : activeTab === 'trainer'
+                        ? 'Trainer'
                     : 'Admin Tools';
 
     useEffect(() => {
@@ -90,6 +93,9 @@ export function ServerPage({ routeState }: ServerPageProps) {
                         <Tabs.Tab value="account" leftSection={<IconUser size={16} />}>
                             Account
                         </Tabs.Tab>
+                        <Tabs.Tab value="trainer" leftSection={<IconTools size={16} />}>
+                            Trainer
+                        </Tabs.Tab>
                         <Tabs.Tab value="admin-tools" leftSection={<IconTools size={16} />}>
                             Admin Tools
                         </Tabs.Tab>
@@ -115,6 +121,10 @@ export function ServerPage({ routeState }: ServerPageProps) {
                         <Suspense fallback={<TabFallback />}>
                             <AccountTab />
                         </Suspense>
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="trainer" className="swarm-server-panel">
+                        <KohyaTrainerTab />
                     </Tabs.Panel>
 
                     <Tabs.Panel value="admin-tools" className="swarm-server-panel">

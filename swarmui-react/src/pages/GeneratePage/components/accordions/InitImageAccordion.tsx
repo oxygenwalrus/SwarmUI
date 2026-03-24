@@ -2,11 +2,8 @@ import { memo } from 'react';
 import {
     Accordion,
     Stack,
-    Switch,
-    Button,
     Box,
     Image,
-    ActionIcon,
     Select,
     FileButton,
     Group,
@@ -15,6 +12,7 @@ import { IconUpload, IconX } from '@tabler/icons-react';
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams } from '../../../../api/types';
 import { SliderWithInput } from '../../../../components/SliderWithInput';
+import { SwarmActionIcon, SwarmButton, SwarmSwitch } from '../../../../components/ui';
 
 export interface InitImageAccordionProps {
     form: UseFormReturnType<GenerateParams>;
@@ -44,7 +42,7 @@ export const InitImageAccordion = memo(function InitImageAccordion({
             </Accordion.Control>
             <Accordion.Panel>
                 <Stack gap="md">
-                    <Switch
+                    <SwarmSwitch
                         label="Enable Init Image"
                         size="xs"
                         checked={enabled}
@@ -56,14 +54,15 @@ export const InitImageAccordion = memo(function InitImageAccordion({
                         accept="image/png,image/jpeg,image/webp"
                     >
                         {(props) => (
-                            <Button
+                            <SwarmButton
                                 {...props}
                                 leftSection={<IconUpload size={16} />}
-                                variant="light"
+                                tone="secondary"
+                                emphasis="soft"
                                 fullWidth
                             >
                                 {initImagePreview ? 'Change Init Image' : 'Upload Init Image'}
-                            </Button>
+                            </SwarmButton>
                         )}
                     </FileButton>
 
@@ -75,15 +74,15 @@ export const InitImageAccordion = memo(function InitImageAccordion({
                                 radius="sm"
                                 style={{ maxHeight: '200px' }}
                             />
-                            <ActionIcon
+                            <SwarmActionIcon
                                 style={{ position: 'absolute', top: 8, right: 8 }}
-                                color="red"
-                                variant="filled"
+                                tone="danger"
+                                emphasis="solid"
                                 aria-label="Remove init image"
                                 onClick={onClear}
                             >
                                 <IconX size={16} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Box>
                     )}
 
@@ -148,7 +147,7 @@ export const InitImageAccordion = memo(function InitImageAccordion({
                             clearable
                             size="xs"
                         />
-                        <Switch
+                        <SwarmSwitch
                             label="Invert Mask"
                             size="xs"
                             checked={form.values.invertmask || false}

@@ -32,7 +32,7 @@ export interface WorkflowRouteState {
 }
 
 export interface ServerRouteState {
-    tab?: 'backends' | 'logs' | 'resources' | 'account' | 'admin-tools';
+    tab?: 'backends' | 'logs' | 'resources' | 'account' | 'admin-tools' | 'trainer';
 }
 
 export interface RoleplayRouteState {

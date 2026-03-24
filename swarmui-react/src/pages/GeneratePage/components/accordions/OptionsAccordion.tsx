@@ -3,11 +3,11 @@ import {
     Accordion,
     Stack,
     Select,
-    Switch,
 } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams } from '../../../../api/types';
 import { SliderWithInput } from '../../../../components/SliderWithInput';
+import { SwarmSwitch } from '../../../../components/ui';
 import { useT2IParams } from '../../../../hooks/useT2IParams';
 
 export interface OptionsAccordionProps {
@@ -59,22 +59,22 @@ export const OptionsAccordion = memo(function OptionsAccordion({
                         clearable
                     />
 
-                    <Switch
+                    <SwarmSwitch
                         label="Remove Background"
                         {...form.getInputProps('removebackground', { type: 'checkbox' })}
                     />
 
-                    <Switch
+                    <SwarmSwitch
                         label="Do Not Save"
                         {...form.getInputProps('donotsave', { type: 'checkbox' })}
                     />
 
-                    <Switch
+                    <SwarmSwitch
                         label="Don't Save Intermediates"
                         {...form.getInputProps('dontsaveintermediates', { type: 'checkbox' })}
                     />
 
-                    <Switch
+                    <SwarmSwitch
                         label="Disable Live Previews"
                         description="Sends SwarmUI's existing nopreviews flag for lighter generation updates."
                         {...form.getInputProps('nopreviews', { type: 'checkbox' })}

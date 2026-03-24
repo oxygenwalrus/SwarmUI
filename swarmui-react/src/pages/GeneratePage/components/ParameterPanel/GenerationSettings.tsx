@@ -1,9 +1,10 @@
 import { memo, useMemo } from 'react';
-import { Accordion, Stack, Group, Switch, Text, Paper, Badge, SimpleGrid } from '@mantine/core';
+import { Accordion, Stack, Group, Text, Paper, Badge, SimpleGrid } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams } from '../../../../api/types';
 import { SliderWithInput } from '../../../../components/SliderWithInput';
 import { SeedInput } from '../../../../components/SeedInput';
+import { SwarmSwitch } from '../../../../components/ui';
 import { useT2IParams } from '../../../../hooks/useT2IParams';
 import type { QualityCoachAnalysis, QualityCoachSeverity } from '../../utils/qualityCoach';
 import { getCurrentMatrixCell } from '../../utils/qualityCoachLearningData';
@@ -86,7 +87,7 @@ export const GenerationSettings = memo(function GenerationSettings({
                 </Accordion.Control>
                 <Accordion.Panel>
                     <Stack gap="sm">
-                        <Switch
+                        <SwarmSwitch
                             label="High-Res Fix"
                             size="xs"
                             checked={enableRefiner}

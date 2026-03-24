@@ -2,17 +2,18 @@ import { memo } from 'react';
 import {
     Accordion,
     Stack,
-    Switch,
     Text,
     Select,
-    Button,
     FileButton,
     Group,
+    Badge,
+    Image,
 } from '@mantine/core';
-import { IconUpload } from '@tabler/icons-react';
+import { IconUpload, IconX } from '@tabler/icons-react';
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams } from '../../../../api/types';
 import { SliderWithInput } from '../../../../components/SliderWithInput';
+import { SwarmButton, SwarmSwitch } from '../../../../components/ui';
 
 type ControlNetFieldKey =
     | 'controlnetimageinput'
@@ -100,12 +101,16 @@ export const ControlNetAccordion = memo(function ControlNetAccordion({
         }
     };
 
+    const handleClearImage = (key: ControlNetFieldKey) => {
+        form.setFieldValue(key, '');
+    };
+
     return (
         <Accordion.Item value="controlnet">
             <Accordion.Control>ControlNet</Accordion.Control>
             <Accordion.Panel>
                 <Stack gap="md">
-                    <Switch
+                    <SwarmSwitch
                         label="Enable ControlNet"
                         size="xs"
                         checked={enabled}
@@ -122,22 +127,51 @@ export const ControlNetAccordion = memo(function ControlNetAccordion({
                                 <Accordion.Control>{slot.title}</Accordion.Control>
                                 <Accordion.Panel>
                                     <Stack gap="md">
-                                        <FileButton
-                                            onChange={(file) => handleImageUpload(slot.imageKey, file)}
-                                            accept="image/*"
-                                        >
-                                            {(props) => (
-                                                <Button
-                                                    {...props}
-                                                    leftSection={<IconUpload size={16} />}
-                                                    variant="light"
-                                                    fullWidth
-                                                    size="xs"
-                                                >
-                                                    Upload {slot.title} Image
-                                                </Button>
+                                        <div>
+                                            <FileButton
+                                                onChange={(file) => handleImageUpload(slot.imageKey, file)}
+                                                accept="image/*"
+                                            >
+                                                {(props) => (
+                                                    <SwarmButton
+                                                        {...props}
+                                                        leftSection={<IconUpload size={16} />}
+                                                        tone="secondary"
+                                                        emphasis="soft"
+                                                        fullWidth
+                                                        size="xs"
+                                                    >
+                                                        Upload {slot.title} Image
+                                                    </SwarmButton>
+                                                )}
+                                            </FileButton>
+
+                                            {form.values[slot.imageKey] && (
+                                                <Stack gap="xs" mt="sm">
+                                                    <Group justify="space-between" align="flex-start">
+                                                        <Badge size="sm" variant="dot">
+                                                            Image Uploaded
+                                                        </Badge>
+                                                        <SwarmButton
+                                                            size="xs"
+                                                            tone="danger"
+                                                            emphasis="ghost"
+                                                            leftSection={<IconX size={14} />}
+                                                            onClick={() => handleClearImage(slot.imageKey)}
+                                                        >
+                                                            Clear
+                                                        </SwarmButton>
+                                                    </Group>
+                                                    <Image
+                                                        src={form.values[slot.imageKey] as string}
+                                                        alt="ControlNet input"
+                                                        radius="md"
+                                                        fit="contain"
+                                                        height={150}
+                                                    />
+                                                </Stack>
                                             )}
-                                        </FileButton>
+                                        </div>
 
                                         <Select
                                             label={`${slot.title} Model`}

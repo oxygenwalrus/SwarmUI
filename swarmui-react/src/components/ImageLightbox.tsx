@@ -8,8 +8,6 @@ import {
     ScrollArea,
     Code,
     Tooltip,
-    SegmentedControl,
-    Slider,
 } from '@mantine/core';
 import {
     IconX,
@@ -25,7 +23,7 @@ import {
     IconDownload,
 } from '@tabler/icons-react';
 import { useImagePreloader } from '../hooks/useImagePreloader';
-import { SwarmActionIcon, SwarmBadge } from './ui';
+import { SwarmActionIcon, SwarmBadge, SwarmSegmentedControl, SwarmSlider } from './ui';
 
 interface ImageLightboxProps {
     /** Whether the lightbox is open */
@@ -400,7 +398,7 @@ export function ImageLightbox({
                     {/* Comparison mode */}
                     {comparisonImage && (
                         <>
-                            <SegmentedControl
+                            <SwarmSegmentedControl
                                 size="xs"
                                 value={comparisonMode}
                                 onChange={(v) => setComparisonMode(v as ComparisonMode)}
@@ -412,7 +410,7 @@ export function ImageLightbox({
                             />
 
                             {comparisonMode === 'overlay' && (
-                                <Slider
+                                <SwarmSlider
                                     value={overlayOpacity}
                                     onChange={setOverlayOpacity}
                                     min={0}
