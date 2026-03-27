@@ -23,7 +23,7 @@ export interface BrowserPreset {
   category: PresetCategory;
   tagIds: string[];          // references into the tag library (can span any wizard step)
   description?: string;
-  thumbnail?: string;        // optional emoji or icon name for the card
+  thumbnail?: string;        // optional single emoji character for the card (e.g., "🐺", "🏰")
   isDefault: boolean;        // true = shipped default, false = user-created
 }
 ```
@@ -81,13 +81,14 @@ Each card displays:
 
 ### Preset Creation Flow (Inline)
 
-Triggered by "Create Preset" button at the bottom of the browser. Renders an inline form (not a new modal):
+Triggered by "Create Preset" button at the bottom of the browser. Renders an inline form that replaces the preset card grid (not a new modal):
 
 1. **Name** — text input (required)
 2. **Description** — text input (optional)
-3. **Category** — dropdown select (Characters, Scenes, Styles, Perspectives, Explicit)
-4. **Tag selection** — temporarily switches to the step view for tag picking, or allows selecting from currently selected tags
-5. **Save** — validates name is non-empty and at least 1 tag is selected, then saves to store
+3. **Category** — dropdown select, defaults to the currently active category tab
+4. **Tag selection** — the form displays the user's currently selected tags (from `selectedTagIds` in the store) as clickable chips. The user toggles which of their current tags to include in the preset. This means the typical workflow is: use the Steps view to pick tags first, switch to Presets view, then "Create Preset" to save that selection. If no tags are currently selected, the form shows an empty state prompting the user to switch to Steps view and select tags first.
+5. **Save** — validates name is non-empty and at least 1 tag is toggled on, then calls `addBrowserPreset`. The form closes and the new preset appears in the grid.
+6. **Cancel** — discards the form and returns to the card grid.
 
 ### Apply Behavior
 
@@ -102,10 +103,10 @@ All new state lives in the existing `promptWizardStore` (not a separate store).
 ### New State Fields
 
 ```typescript
-browserPresets: BrowserPreset[];        // user-created presets (defaults loaded from JSON)
-activeView: 'steps' | 'presets';        // which view is showing
-activePresetCategory: PresetCategory;   // which category tab is selected
-presetSearchQuery: string;              // search within preset browser
+userBrowserPresets: BrowserPreset[];    // ONLY user-created presets (isDefault: false). Persisted.
+activeView: 'steps' | 'presets';        // which view is showing (ephemeral, resets to 'steps')
+activePresetCategory: PresetCategory;   // which category tab is selected (default: 'characters')
+presetSearchQuery: string;              // search within preset browser (ephemeral)
 ```
 
 ### New Actions
@@ -114,11 +115,15 @@ presetSearchQuery: string;              // search within preset browser
 setActiveView: (view: 'steps' | 'presets') => void;
 setActivePresetCategory: (category: PresetCategory) => void;
 setPresetSearchQuery: (query: string) => void;
-applyBrowserPreset: (presetId: string, allPresets: BrowserPreset[]) => void;
-addBrowserPreset: (preset: Omit<BrowserPreset, 'id' | 'isDefault'>) => void;
-updateBrowserPreset: (presetId: string, updates: Partial<BrowserPreset>) => void;
-removeBrowserPreset: (presetId: string) => void;  // only allows removing user-created presets
+applyBrowserPreset: (tagIds: string[]) => void;              // additive merge of tagIds into selectedTagIds
+addBrowserPreset: (preset: Omit<BrowserPreset, 'id' | 'isDefault'>) => void;  // id auto-generated, isDefault always false
+updateBrowserPreset: (presetId: string, updates: Partial<Pick<BrowserPreset, 'name' | 'description' | 'category' | 'tagIds' | 'thumbnail'>>) => void;  // only user-created presets; no-ops on defaults
+removeBrowserPreset: (presetId: string) => void;             // only user-created presets; no-ops on defaults
 ```
+
+### Merged Preset List
+
+The store holds only `userBrowserPresets`. Default presets are loaded from JSON into component state (like the existing `defaultTags` / `defaultPresets` pattern in `PromptWizard.tsx`). The `PromptWizardBrowser` component receives both as props and merges them: `[...defaultBrowserPresets, ...userBrowserPresets]`. The `applyBrowserPreset` action takes `tagIds` directly (not a preset ID), so it does not need to look up presets — the component resolves the preset's tagIds before calling the action. This matches the existing `applyPreset(tagIds)` pattern in the store.
 
 ### Data Loading
 
@@ -126,10 +131,21 @@ Default browser presets ship in `promptBrowserPresets.json`, lazy-loaded alongsi
 
 ### Persistence
 
-- `browserPresets` (user-created only, where `isDefault === false`) persisted to localStorage via existing zustand persist middleware.
-- `activePresetCategory` persisted (so user returns to their last-used category).
-- `activeView` and `presetSearchQuery` are ephemeral (reset on modal close).
-- Default presets are always loaded fresh from JSON — not persisted.
+- `userBrowserPresets` is persisted to localStorage via the existing zustand `partialize` — the field contains only user-created presets, so no filtering needed.
+- `activePresetCategory` is persisted (so user returns to their last-used category). Defaults to `'characters'`.
+- `activeView` and `presetSearchQuery` are ephemeral (reset to `'steps'` and `''` on modal close).
+- Default presets are always loaded fresh from JSON — never persisted.
+
+### Header Behavior in Presets View
+
+When `activeView === 'presets'`, the existing tag search input in the header is hidden. The preset browser has its own search bar for filtering presets by name. The Steps/Presets segmented control is added to the header's left section, next to the profile selector.
+
+### Footer & Stacked Preview in Presets View
+
+When `activeView === 'presets'`:
+- The Previous/Next step footer buttons are hidden.
+- The stacked/bottom preview strip remains visible (it shows selected tags and assembled prompt, which is useful when applying presets).
+- The footer area shows a simplified bar with just the preset count and a "Switch to Steps" shortcut.
 
 ---
 
@@ -226,7 +242,11 @@ Default browser presets ship in `promptBrowserPresets.json`, lazy-loaded alongsi
 | Provocative Outfit | provocative, revealing, tight, short skirt, cleavage |
 | Stripping | stripping, undressing, removing clothes, tease |
 
-*Note: Exact tag IDs will be mapped to the existing `promptTags.json` library during implementation. Tags not yet in the library will be added.*
+*Note: Exact tag IDs will be mapped to the existing `promptTags.json` library during implementation. Tags not yet in the library will be added with appropriate `step`, `subcategory`, and `majorGroup` assignments.*
+
+### Explicit Content Handling
+
+Explicit category presets are always visible in the browser (no content gating toggle). The existing wizard already tracks `explicitCount` and shows an 18+ badge in the preview panel — this mechanism applies automatically when explicit preset tags are selected. No additional gating is needed for v1.
 
 ---
 
@@ -236,7 +256,6 @@ Default browser presets ship in `promptBrowserPresets.json`, lazy-loaded alongsi
 
 | File | Purpose |
 |------|---------|
-| `src/features/promptWizard/browserPresetTypes.ts` | `PresetCategory` and `BrowserPreset` type definitions |
 | `src/data/promptBrowserPresets.json` | ~65 curated default presets with tag ID mappings |
 | `src/components/PromptWizardBrowser.tsx` | Main preset browser (category tabs + grid + search) |
 | `src/components/PromptWizardPresetCard.tsx` | Individual preset card component |
@@ -246,7 +265,7 @@ Default browser presets ship in `promptBrowserPresets.json`, lazy-loaded alongsi
 
 | File | Change |
 |------|--------|
-| `src/features/promptWizard/types.ts` | Re-export `PresetCategory`, `BrowserPreset` from browserPresetTypes |
+| `src/features/promptWizard/types.ts` | Add `PresetCategory` and `BrowserPreset` types directly (same file as other wizard types) |
 | `src/stores/promptWizardStore.ts` | Add browser preset state fields and actions |
 | `src/components/PromptWizard.tsx` | Add view toggle, conditionally render browser vs steps, load browser presets JSON |
 | `src/components/PromptWizardHeader.tsx` | Add Steps/Presets segmented control |
