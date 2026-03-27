@@ -7,6 +7,8 @@ import type {
   PromptBundle,
   PromptRecipe,
   PromptWizardStateSnapshot,
+  BrowserPreset,
+  PresetCategory,
 } from '../features/promptWizard/types';
 import { DEFAULT_PROFILE_ID } from '../features/promptWizard/profiles';
 
@@ -26,6 +28,12 @@ interface PromptWizardStore {
   savedRecipes: PromptRecipe[];
   savedStates: PromptWizardStateSnapshot[];
   migrationVersion: number;
+
+  // Browser presets
+  userBrowserPresets: BrowserPreset[];
+  activeView: 'steps' | 'presets';
+  activePresetCategory: PresetCategory;
+  presetSearchQuery: string;
 
   // Tag selection
   toggleTag: (tagId: string) => void;
@@ -67,6 +75,16 @@ interface PromptWizardStore {
 
   // Migration
   setMigrationVersion: (version: number) => void;
+
+  // Browser preset actions
+  setActiveView: (view: 'steps' | 'presets') => void;
+  setActivePresetCategory: (category: PresetCategory) => void;
+  setPresetSearchQuery: (query: string) => void;
+  resetPresetBrowserEphemeral: () => void;
+  applyBrowserPreset: (tagIds: string[]) => void;
+  addBrowserPreset: (preset: Omit<BrowserPreset, 'id' | 'isDefault'>) => void;
+  updateBrowserPreset: (presetId: string, updates: Partial<Pick<BrowserPreset, 'name' | 'description' | 'category' | 'tagIds' | 'thumbnail'>>) => void;
+  removeBrowserPreset: (presetId: string) => void;
 }
 
 function uniqueStrings(values: string[]): string[] {
@@ -95,6 +113,10 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
         savedRecipes: [],
         savedStates: [],
         migrationVersion: 0,
+        userBrowserPresets: [],
+        activeView: 'steps' as const,
+        activePresetCategory: 'characters' as PresetCategory,
+        presetSearchQuery: '',
 
         toggleTag: (tagId) => {
           set((state) => {
@@ -339,6 +361,49 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
         setMigrationVersion: (version) => {
           set({ migrationVersion: version });
         },
+
+        setActiveView: (view) => {
+          set({ activeView: view });
+        },
+
+        setActivePresetCategory: (category) => {
+          set({ activePresetCategory: category });
+        },
+
+        setPresetSearchQuery: (query) => {
+          set({ presetSearchQuery: query });
+        },
+
+        resetPresetBrowserEphemeral: () => {
+          set({ activeView: 'steps' as const, presetSearchQuery: '' });
+        },
+
+        applyBrowserPreset: (tagIds) => {
+          set((state) => ({
+            selectedTagIds: uniqueStrings([...state.selectedTagIds, ...tagIds]),
+          }));
+        },
+
+        addBrowserPreset: (preset) => {
+          const id = `browser-preset-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+          set((state) => ({
+            userBrowserPresets: [...state.userBrowserPresets, { ...preset, id, isDefault: false }],
+          }));
+        },
+
+        updateBrowserPreset: (presetId, updates) => {
+          set((state) => ({
+            userBrowserPresets: state.userBrowserPresets.map((p) =>
+              p.id === presetId ? { ...p, ...updates } : p
+            ),
+          }));
+        },
+
+        removeBrowserPreset: (presetId) => {
+          set((state) => ({
+            userBrowserPresets: state.userBrowserPresets.filter((p) => p.id !== presetId),
+          }));
+        },
       }),
       {
         name: 'swarmui-prompt-wizard-v1',
@@ -356,6 +421,8 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
           savedRecipes: state.savedRecipes,
           savedStates: state.savedStates,
           migrationVersion: state.migrationVersion,
+          userBrowserPresets: state.userBrowserPresets,
+          activePresetCategory: state.activePresetCategory,
         }),
       }
     ),
