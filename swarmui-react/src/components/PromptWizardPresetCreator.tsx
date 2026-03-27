@@ -107,7 +107,7 @@ export const PromptWizardPresetCreator = memo(function PromptWizardPresetCreator
               <UnstyledButton key={tag.id} onClick={() => toggleInclude(tag.id)}>
                 <SwarmBadge
                   tone={includedTagIds.has(tag.id) ? 'primary' : 'secondary'}
-                  emphasis={includedTagIds.has(tag.id) ? 'filled' : 'ghost'}
+                  emphasis={includedTagIds.has(tag.id) ? 'solid' : 'ghost'}
                 >
                   {tag.text}
                 </SwarmBadge>
@@ -121,7 +121,7 @@ export const PromptWizardPresetCreator = memo(function PromptWizardPresetCreator
         <SwarmButton tone="secondary" emphasis="ghost" size="compact-sm" onClick={onCancel}>
           Cancel
         </SwarmButton>
-        <SwarmButton tone="primary" emphasis="filled" size="compact-sm" onClick={handleSave} disabled={!canSave}>
+        <SwarmButton tone="primary" emphasis="solid" size="compact-sm" onClick={handleSave} disabled={!canSave}>
           Save Preset
         </SwarmButton>
       </Group>

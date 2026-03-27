@@ -72,7 +72,7 @@ export const PromptWizardSuggestionStrip = memo(function PromptWizardSuggestionS
       {/* Body — collapsible */}
       <Collapse in={!collapsed}>
         <Box px={12} pb={12}>
-          <Tabs defaultValue={suggestions[0]?.title} variant="pills" radius="xl" size="xs">
+          <Tabs defaultValue={suggestions[0]?.title} variant="pills" radius="xl">
             <Tabs.List mb="xs">
               {suggestions.map((set) => (
                 <Tabs.Tab key={set.title} value={set.title}>

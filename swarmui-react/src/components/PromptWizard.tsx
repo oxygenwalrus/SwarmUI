@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { Box, Center, Group, Loader, Modal, Stack, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import { useDisclosure, useViewportSize } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconChevronRight, IconLibrary, IconSparkles } from '@tabler/icons-react';
+import { IconChevronRight, IconSparkles } from '@tabler/icons-react';
 import { ElevatedCard, ResizeHandle, SwarmBadge, SwarmButton } from './ui';
 import { PromptWizardHeader } from './PromptWizardHeader';
 import { PromptWizardSidebar } from './PromptWizardSidebar';

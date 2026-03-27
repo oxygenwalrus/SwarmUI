@@ -1,10 +1,11 @@
 import { memo, useCallback, useMemo, useState } from 'react';
-import { Box, ScrollArea, SimpleGrid, Stack, Tabs, Text, TextInput } from '@mantine/core';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { Group, ScrollArea, SimpleGrid, Stack, Switch, Tabs, Text, TextInput } from '@mantine/core';
+import { IconEyeOff, IconPlus, IconSearch, IconEye } from '@tabler/icons-react';
 import { SwarmButton } from './ui';
 import { PromptWizardPresetCard } from './PromptWizardPresetCard';
 import { PromptWizardPresetCreator } from './PromptWizardPresetCreator';
 import { PRESET_CATEGORIES, PRESET_CATEGORY_LABELS } from '../features/promptWizard/types';
+import { usePromptWizardStore } from '../stores/promptWizardStore';
 import type { BrowserPreset, PresetCategory, PromptTag } from '../features/promptWizard/types';
 
 interface PromptWizardBrowserProps {
@@ -39,13 +40,31 @@ export const PromptWizardBrowser = memo(function PromptWizardBrowser({
   const [creatorOpen, setCreatorOpen] = useState(false);
   const [editingPresetId, setEditingPresetId] = useState<string | null>(null);
 
+  const { showExplicitPresets, setShowExplicitPresets } = usePromptWizardStore();
+
   const allPresets = useMemo(
     () => [...defaultPresets, ...userPresets],
     [defaultPresets, userPresets]
   );
 
+  const isExplicitPreset = useCallback((preset: BrowserPreset) => {
+    if (preset.category === 'explicit') return true;
+    const explicitIdKeywords = [
+      'succubus', 'bdsm', 'naughty-nurse', 'maid', 'dancer', 'submissive', 'temptress',
+      'love-hotel', 'red-light', 'boudoir', 'harem', 'casting-couch', 'exhibitionist',
+      'erotic', 'hentai', 'high-gloss-wet', 'sleaze',
+      'crotch', 'cleavage', 'booty', 'pantsu', 'x-ray', 'womb', 'facesitting', 'groin', 'm-leg', 'cowgirl',
+      'futa', 'milf', 'paizuri', 'titjob', 'footjob', 'yuri', 'gloryhole'
+    ];
+    if (explicitIdKeywords.some(keyword => preset.id.includes(keyword))) return true;
+    return false;
+  }, []);
+
   const filteredPresets = useMemo(() => {
     let result = allPresets.filter((p) => p.category === activeCategory);
+    if (!showExplicitPresets) {
+      result = result.filter(p => !isExplicitPreset(p));
+    }
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       result = result.filter(
@@ -53,7 +72,7 @@ export const PromptWizardBrowser = memo(function PromptWizardBrowser({
       );
     }
     return result;
-  }, [allPresets, activeCategory, searchQuery]);
+  }, [allPresets, activeCategory, showExplicitPresets, isExplicitPreset, searchQuery]);
 
   const handleSavePreset = useCallback(
     (preset: Omit<BrowserPreset, 'id' | 'isDefault'>) => {
@@ -92,24 +111,47 @@ export const PromptWizardBrowser = memo(function PromptWizardBrowser({
         style={{ flexShrink: 0 }}
       >
         <Tabs.List px="md" pt="sm">
-          {PRESET_CATEGORIES.map((cat) => (
-            <Tabs.Tab key={cat} value={cat}>
-              {PRESET_CATEGORY_LABELS[cat]}
-            </Tabs.Tab>
-          ))}
+          {PRESET_CATEGORIES.map((cat) => {
+            if (!showExplicitPresets && cat === 'explicit') return null;
+            return (
+              <Tabs.Tab key={cat} value={cat}>
+                {PRESET_CATEGORY_LABELS[cat]}
+              </Tabs.Tab>
+            );
+          })}
         </Tabs.List>
       </Tabs>
 
-      {/* Search */}
-      <Box px="md" py="xs" style={{ flexShrink: 0 }}>
+      {/* Search and explicit toggle */}
+      <Group px="md" py="xs" style={{ flexShrink: 0 }} justify="space-between">
         <TextInput
           placeholder="Search presets..."
           leftSection={<IconSearch size={16} />}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.currentTarget.value)}
           size="sm"
+          style={{ flex: 1, maxWidth: 320 }}
         />
-      </Box>
+        <Group gap="xs" align="center">
+          <Switch
+            checked={showExplicitPresets}
+            onChange={(e) => {
+              const show = e.currentTarget.checked;
+              setShowExplicitPresets(show);
+              if (!show && activeCategory === 'explicit') {
+                onCategoryChange('characters');
+              }
+            }}
+            label={
+              <Group gap={4}>
+                {showExplicitPresets ? <IconEye size={16} /> : <IconEyeOff size={16} />}
+                <Text size="sm">Show Explicit</Text>
+              </Group>
+            }
+            size="sm"
+          />
+        </Group>
+      </Group>
 
       {/* Content: creator or grid */}
       <ScrollArea style={{ flex: 1, minHeight: 0 }} px="md" pb="md">

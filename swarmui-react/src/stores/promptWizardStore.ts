@@ -34,6 +34,7 @@ interface PromptWizardStore {
   activeView: 'steps' | 'presets';
   activePresetCategory: PresetCategory;
   presetSearchQuery: string;
+  showExplicitPresets: boolean;
 
   // Tag selection
   toggleTag: (tagId: string) => void;
@@ -85,6 +86,7 @@ interface PromptWizardStore {
   addBrowserPreset: (preset: Omit<BrowserPreset, 'id' | 'isDefault'>) => void;
   updateBrowserPreset: (presetId: string, updates: Partial<Pick<BrowserPreset, 'name' | 'description' | 'category' | 'tagIds' | 'thumbnail'>>) => void;
   removeBrowserPreset: (presetId: string) => void;
+  setShowExplicitPresets: (show: boolean) => void;
 }
 
 function uniqueStrings(values: string[]): string[] {
@@ -117,6 +119,7 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
         activeView: 'steps' as const,
         activePresetCategory: 'characters' as PresetCategory,
         presetSearchQuery: '',
+        showExplicitPresets: false,
 
         toggleTag: (tagId) => {
           set((state) => {
@@ -404,6 +407,10 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
             userBrowserPresets: state.userBrowserPresets.filter((p) => p.id !== presetId),
           }));
         },
+
+        setShowExplicitPresets: (show) => {
+          set({ showExplicitPresets: show });
+        },
       }),
       {
         name: 'swarmui-prompt-wizard-v1',
@@ -423,6 +430,7 @@ export const usePromptWizardStore = create<PromptWizardStore>()(
           migrationVersion: state.migrationVersion,
           userBrowserPresets: state.userBrowserPresets,
           activePresetCategory: state.activePresetCategory,
+          showExplicitPresets: state.showExplicitPresets,
         }),
       }
     ),

@@ -36,7 +36,6 @@ export const PromptWizardSteps = memo(function PromptWizardSteps({
           {steps.map((meta, index) => {
             const isActive = meta.step === activeStep;
             const count = tagCountsByStep[meta.step] ?? 0;
-            const completion = completionByStep[meta.step] ?? 'empty';
             return (
               <UnstyledButton key={meta.step} onClick={() => onStepClick(meta.step)}>
                 <Box

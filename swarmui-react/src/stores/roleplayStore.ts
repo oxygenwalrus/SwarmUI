@@ -1,37 +1,133 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import type { RoleplayCharacter, ChatMessage, RoleplayConnectionState } from '../types/roleplay';
+import type {
+    RoleplayCharacter,
+    ChatMessage,
+    RoleplayConnectionState,
+    RoleplayInteractionStyle,
+    RoleplayMemoryFact,
+    RoleplayMemoryStatus,
+} from '../types/roleplay';
 import type { AssistantModel, AssistantServerMode } from '../types/assistant';
+import {
+    DEFAULT_ROLEPLAY_INTERACTION_STYLE,
+    LEGACY_ROLEPLAY_INTERACTION_STYLE,
+    getRoleplayInteractionStyleConfig,
+} from '../data/roleplayInteractionStyles';
+import {
+    ROLEPLAY_MAX_MEMORY_FACTS,
+    createEmptyRoleplayMemoryState,
+} from '../features/roleplay/roleplayMemory';
+import {
+    createDefaultPromptSet,
+    createEmptyRoleplayPersonalityProfile,
+    getEffectiveSystemPrompt,
+} from '../features/roleplay/roleplayCharacterPrompting';
 
+type LegacyRoleplayCharacter = Omit<
+    RoleplayCharacter,
+    | 'interactionStyle'
+    | 'personalityProfile'
+    | 'conversationSummary'
+    | 'continuity'
+    | 'imageModelId'
+    | 'chatSystemPrompt'
+    | 'roleplaySystemPrompt'
+    | 'openingChatMessage'
+    | 'openingRoleplayMessage'
+    | 'memoryFacts'
+    | 'memoryStatus'
+    | 'messagesSinceMemoryRefresh'
+    | 'lastMemoryUpdatedAt'
+    | 'lastVisitedAt'
+> & {
+    interactionStyle?: RoleplayInteractionStyle;
+    personalityProfile?: RoleplayCharacter['personalityProfile'];
+    conversationSummary?: string;
+    continuity?: RoleplayCharacter['continuity'];
+    imageModelId?: string | null;
+    chatSystemPrompt?: string;
+    roleplaySystemPrompt?: string;
+    openingChatMessage?: string;
+    openingRoleplayMessage?: string;
+    memoryFacts?: RoleplayMemoryFact[];
+    memoryStatus?: RoleplayMemoryStatus;
+    messagesSinceMemoryRefresh?: number;
+    lastMemoryUpdatedAt?: number | null;
+    lastVisitedAt?: number | null;
+};
+
+function normalizeCharacter(character: RoleplayCharacter | LegacyRoleplayCharacter): RoleplayCharacter {
+    const defaultPromptSet = createDefaultPromptSet();
+    const chatSystemPrompt =
+        character.chatSystemPrompt ??
+        (character.interactionStyle === 'personal-chat'
+            ? character.systemPrompt
+            : defaultPromptSet.chatSystemPrompt);
+    const roleplaySystemPrompt =
+        character.roleplaySystemPrompt ??
+        (character.interactionStyle === 'storyteller'
+            ? character.systemPrompt
+            : defaultPromptSet.roleplaySystemPrompt);
+    return {
+        ...character,
+        interactionStyle: character.interactionStyle ?? LEGACY_ROLEPLAY_INTERACTION_STYLE,
+        personalityProfile: character.personalityProfile ?? createEmptyRoleplayPersonalityProfile(),
+        conversationSummary: character.conversationSummary ?? '',
+        continuity: character.continuity ?? createEmptyRoleplayMemoryState().continuity,
+        imageModelId: character.imageModelId ?? null,
+        chatSystemPrompt,
+        roleplaySystemPrompt,
+        openingChatMessage: character.openingChatMessage ?? '',
+        openingRoleplayMessage: character.openingRoleplayMessage ?? '',
+        memoryFacts: character.memoryFacts ?? [],
+        memoryStatus: character.memoryStatus ?? 'idle',
+        messagesSinceMemoryRefresh: character.messagesSinceMemoryRefresh ?? 0,
+        lastMemoryUpdatedAt: character.lastMemoryUpdatedAt ?? null,
+        lastVisitedAt: character.lastVisitedAt ?? null,
+        systemPrompt: getEffectiveSystemPrompt({
+            interactionStyle: character.interactionStyle ?? LEGACY_ROLEPLAY_INTERACTION_STYLE,
+            chatSystemPrompt,
+            roleplaySystemPrompt,
+            systemPrompt: character.systemPrompt ?? '',
+        }),
+    };
+}
+
+/*
 const SCENE_TAG_INSTRUCTION =
     '\n\nWhen a scene is vivid and worth illustrating — a dramatic location, a creature, ' +
     'a key moment — write [SCENE: detailed image generation prompt] on its own line. ' +
     'Make the image prompt specific: describe lighting, mood, style, subject, and composition.';
+*/
+
+const defaultInteractionStyleConfig = getRoleplayInteractionStyleConfig(DEFAULT_ROLEPLAY_INTERACTION_STYLE);
 
 const DEFAULT_CHARACTERS: RoleplayCharacter[] = [
-    {
-        id: 'default-storyteller',
-        name: 'Storyteller',
+    normalizeCharacter({
+        id: 'default-companion',
+        name: 'Companion',
         avatar: null,
+        interactionStyle: DEFAULT_ROLEPLAY_INTERACTION_STYLE,
         appearancePrompt: null,
+        imageModelId: null,
+        personalityProfile: createEmptyRoleplayPersonalityProfile(),
         characterLora: null,
         characterLoraWeight: 0.8,
         ipAdapterEnabled: false,
         ipAdapterModel: 'faceid plus v2',
         ipAdapterWeight: 1.0,
-        personality: 'A creative narrator who builds immersive fantasy worlds.',
-        systemPrompt:
-            'You are a creative storyteller and dungeon master. You narrate scenes vividly, ' +
-            "respond to the user's actions, and drive the story forward. Keep descriptions " +
-            'atmospheric and concise. Always stay in character.' +
-            SCENE_TAG_INSTRUCTION,
-        sceneSuggestionPrompt:
-            'Based on the conversation, describe the current visual scene in a single vivid sentence ' +
-            'suitable as an image generation prompt. Focus on setting, lighting, and mood. ' +
-            'Do not include character dialogue or actions.',
+        personality: 'Warm, attentive, and personal. Talks directly to the user without narrating for them.',
+        systemPrompt: defaultInteractionStyleConfig.systemPrompt,
+        chatSystemPrompt: createDefaultPromptSet().chatSystemPrompt,
+        roleplaySystemPrompt: createDefaultPromptSet().roleplaySystemPrompt,
+        openingChatMessage: '',
+        openingRoleplayMessage: '',
+        sceneSuggestionPrompt: defaultInteractionStyleConfig.sceneSuggestionPrompt,
+        ...createEmptyRoleplayMemoryState(),
         createdAt: Date.now(),
         updatedAt: Date.now(),
-    },
+    }),
 ];
 
 interface RoleplayStoreState {
@@ -84,12 +180,35 @@ interface RoleplayStoreState {
 
     // Actions - Chat
     addMessage: (characterId: string, message: ChatMessage) => void;
+    updateMessage: (
+        characterId: string,
+        messageId: string,
+        updates: Partial<Omit<ChatMessage, 'id' | 'role' | 'timestamp'>>
+    ) => void;
     clearConversation: (characterId: string) => void;
     setStreamingChat: (streaming: boolean) => void;
     setStreamingContent: (content: string) => void;
     appendStreamingContent: (token: string) => void;
     attachSceneImageToLastMessage: (characterId: string, imageUrl: string) => void;
     dismissSuggestion: (characterId: string, messageId: string) => void;
+    setCharacterMemoryStatus: (characterId: string, status: RoleplayMemoryStatus) => void;
+    incrementMessagesSinceMemoryRefresh: (characterId: string, amount?: number) => void;
+    applyGeneratedMemory: (
+        characterId: string,
+        summary: string,
+        continuity: RoleplayCharacter['continuity'],
+        facts: RoleplayMemoryFact[],
+        updatedAt?: number
+    ) => void;
+    clearCharacterMemory: (characterId: string) => void;
+    addMemoryFact: (characterId: string, text: string) => void;
+    updateMemoryFact: (characterId: string, factId: string, text: string) => void;
+    removeMemoryFact: (characterId: string, factId: string) => void;
+    toggleMemoryFactPinned: (characterId: string, factId: string) => void;
+    addContinuityThread: (characterId: string, text: string) => void;
+    removeContinuityThread: (characterId: string, threadIndex: number) => void;
+    moveContinuityThread: (characterId: string, threadIndex: number, direction: -1 | 1) => void;
+    markCharacterVisited: (characterId: string, visitedAt?: number) => void;
 
     // Actions - Connection
     setConnectionStatus: (status: RoleplayConnectionState) => void;
@@ -155,13 +274,13 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                 // Character actions
                 addCharacter: (character) =>
                     set((state) => ({
-                        characters: [...state.characters, character],
+                        characters: [...state.characters, normalizeCharacter(character)],
                     })),
 
                 updateCharacter: (id, updates) =>
                     set((state) => ({
                         characters: state.characters.map((c) =>
-                            c.id === id ? { ...c, ...updates, updatedAt: Date.now() } : c
+                            c.id === id ? normalizeCharacter({ ...c, ...updates, updatedAt: Date.now() }) : c
                         ),
                     })),
 
@@ -182,7 +301,7 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                 updateCharacterAvatar: (id, avatarUrl) =>
                     set((state) => ({
                         characters: state.characters.map((c) =>
-                            c.id === id ? { ...c, avatar: avatarUrl, updatedAt: Date.now() } : c
+                            c.id === id ? normalizeCharacter({ ...c, avatar: avatarUrl, updatedAt: Date.now() }) : c
                         ),
                     })),
 
@@ -195,12 +314,43 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                         },
                     })),
 
+                updateMessage: (characterId, messageId, updates) =>
+                    set((state) => {
+                        const messages = state.conversations[characterId];
+                        if (!messages) {
+                            return {};
+                        }
+
+                        return {
+                            conversations: {
+                                ...state.conversations,
+                                [characterId]: messages.map((message) =>
+                                    message.id === messageId
+                                        ? {
+                                              ...message,
+                                              ...updates,
+                                          }
+                                        : message
+                                ),
+                            },
+                        };
+                    }),
+
                 clearConversation: (characterId) =>
                     set((state) => ({
                         conversations: {
                             ...state.conversations,
                             [characterId]: [],
                         },
+                        characters: state.characters.map((character) =>
+                            character.id === characterId
+                                ? {
+                                      ...character,
+                                      ...createEmptyRoleplayMemoryState(),
+                                      updatedAt: Date.now(),
+                                  }
+                                : character
+                        ),
                     })),
 
                 setStreamingChat: (streaming) => set({ isStreamingChat: streaming }),
@@ -248,6 +398,250 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                         };
                     }),
 
+                setCharacterMemoryStatus: (characterId, status) =>
+                    set((state) => ({
+                        characters: state.characters.map((character) =>
+                            character.id === characterId
+                                ? { ...character, memoryStatus: status, updatedAt: Date.now() }
+                                : character
+                        ),
+                    })),
+
+                incrementMessagesSinceMemoryRefresh: (characterId, amount = 1) =>
+                    set((state) => ({
+                        characters: state.characters.map((character) =>
+                            character.id === characterId
+                                ? {
+                                      ...character,
+                                      messagesSinceMemoryRefresh:
+                                          character.messagesSinceMemoryRefresh + amount,
+                                      updatedAt: Date.now(),
+                                  }
+                                : character
+                        ),
+                    })),
+
+                applyGeneratedMemory: (characterId, summary, continuity, facts, updatedAt = Date.now()) =>
+                    set((state) => ({
+                        characters: state.characters.map((character) =>
+                            character.id === characterId
+                                ? {
+                                      ...character,
+                                      conversationSummary: summary.trim(),
+                                      continuity: {
+                                          relationshipSummary: continuity.relationshipSummary.trim(),
+                                          currentLocation: continuity.currentLocation.trim(),
+                                          currentSituation: continuity.currentSituation.trim(),
+                                          openThreads: continuity.openThreads
+                                              .map((thread) => thread.trim())
+                                              .filter((thread) => thread),
+                                      },
+                                      memoryFacts: facts,
+                                      memoryStatus: 'idle',
+                                      messagesSinceMemoryRefresh: 0,
+                                      lastMemoryUpdatedAt: updatedAt,
+                                      updatedAt,
+                                  }
+                                : character
+                        ),
+                    })),
+
+                clearCharacterMemory: (characterId) =>
+                    set((state) => ({
+                        characters: state.characters.map((character) =>
+                            character.id === characterId
+                                ? {
+                                      ...character,
+                                      ...createEmptyRoleplayMemoryState(),
+                                      updatedAt: Date.now(),
+                                  }
+                                : character
+                        ),
+                    })),
+
+                addMemoryFact: (characterId, text) =>
+                    set((state) => {
+                        const trimmedText = text.trim();
+                        if (!trimmedText) {
+                            return {};
+                        }
+
+                        const now = Date.now();
+                        return {
+                            characters: state.characters.map((character) =>
+                                character.id === characterId
+                                    ? character.memoryFacts.length >= ROLEPLAY_MAX_MEMORY_FACTS
+                                        ? character
+                                        : {
+                                              ...character,
+                                              memoryFacts: [
+                                                  ...character.memoryFacts,
+                                                  {
+                                                      id: crypto.randomUUID(),
+                                                      text: trimmedText,
+                                                      pinned: true,
+                                                      createdAt: now,
+                                                      updatedAt: now,
+                                                  },
+                                              ],
+                                              updatedAt: now,
+                                          }
+                                    : character
+                            ),
+                        };
+                    }),
+
+                updateMemoryFact: (characterId, factId, text) =>
+                    set((state) => {
+                        const now = Date.now();
+                        return {
+                            characters: state.characters.map((character) =>
+                                character.id === characterId
+                                    ? {
+                                          ...character,
+                                          memoryFacts: character.memoryFacts
+                                              .map((fact) =>
+                                                  fact.id === factId
+                                                      ? {
+                                                            ...fact,
+                                                            text,
+                                                            updatedAt: Date.now(),
+                                                        }
+                                                      : fact
+                                              ),
+                                          updatedAt: now,
+                                      }
+                                    : character
+                            ),
+                        };
+                    }),
+
+                removeMemoryFact: (characterId, factId) =>
+                    set((state) => ({
+                        characters: state.characters.map((character) =>
+                            character.id === characterId
+                                ? {
+                                      ...character,
+                                      memoryFacts: character.memoryFacts.filter((fact) => fact.id !== factId),
+                                      updatedAt: Date.now(),
+                                  }
+                                : character
+                        ),
+                    })),
+
+                toggleMemoryFactPinned: (characterId, factId) =>
+                    set((state) => ({
+                        characters: state.characters.map((character) =>
+                            character.id === characterId
+                                ? {
+                                      ...character,
+                                      memoryFacts: character.memoryFacts.map((fact) =>
+                                          fact.id === factId
+                                              ? {
+                                                    ...fact,
+                                                    pinned: !fact.pinned,
+                                                    updatedAt: Date.now(),
+                                                }
+                                              : fact
+                                      ),
+                                      updatedAt: Date.now(),
+                                  }
+                                : character
+                        ),
+                    })),
+
+                addContinuityThread: (characterId, text) =>
+                    set((state) => {
+                        const trimmedText = text.trim().replace(/\s+/g, ' ');
+                        if (!trimmedText) {
+                            return {};
+                        }
+
+                        return {
+                            characters: state.characters.map((character) => {
+                                if (character.id !== characterId) {
+                                    return character;
+                                }
+
+                                const existingThreads = character.continuity.openThreads.map((thread) => thread.trim());
+                                if (existingThreads.includes(trimmedText)) {
+                                    return character;
+                                }
+
+                                return {
+                                    ...character,
+                                    continuity: {
+                                        ...character.continuity,
+                                        openThreads: [...existingThreads, trimmedText].slice(0, 6),
+                                    },
+                                    updatedAt: Date.now(),
+                                };
+                            }),
+                        };
+                    }),
+
+                removeContinuityThread: (characterId, threadIndex) =>
+                    set((state) => ({
+                        characters: state.characters.map((character) =>
+                            character.id === characterId
+                                ? {
+                                      ...character,
+                                      continuity: {
+                                          ...character.continuity,
+                                          openThreads: character.continuity.openThreads.filter(
+                                              (_thread, index) => index !== threadIndex
+                                          ),
+                                      },
+                                      updatedAt: Date.now(),
+                                  }
+                                : character
+                        ),
+                    })),
+
+                moveContinuityThread: (characterId, threadIndex, direction) =>
+                    set((state) => ({
+                        characters: state.characters.map((character) => {
+                            if (character.id !== characterId) {
+                                return character;
+                            }
+
+                            const targetIndex = threadIndex + direction;
+                            if (
+                                threadIndex < 0 ||
+                                threadIndex >= character.continuity.openThreads.length ||
+                                targetIndex < 0 ||
+                                targetIndex >= character.continuity.openThreads.length
+                            ) {
+                                return character;
+                            }
+
+                            const nextThreads = [...character.continuity.openThreads];
+                            const [movedThread] = nextThreads.splice(threadIndex, 1);
+                            nextThreads.splice(targetIndex, 0, movedThread);
+
+                            return {
+                                ...character,
+                                continuity: {
+                                    ...character.continuity,
+                                    openThreads: nextThreads,
+                                },
+                                updatedAt: Date.now(),
+                            };
+                        }),
+                    })),
+
+                markCharacterVisited: (characterId, visitedAt = Date.now()) =>
+                    set((state) => ({
+                        characters: state.characters.map((character) =>
+                            character.id === characterId
+                                ? {
+                                      ...character,
+                                      lastVisitedAt: visitedAt,
+                                  }
+                                : character
+                        ),
+                    })),
+
                 // Connection actions
                 setConnectionStatus: (status) => set({ connectionStatus: status }),
                 setConnectionMessage: (message) => set({ connectionMessage: message }),
@@ -271,7 +665,8 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                 // Derived
                 getActiveCharacter: () => {
                     const { characters, activeCharacterId } = get();
-                    return characters.find((c) => c.id === activeCharacterId) ?? null;
+                    const character = characters.find((c) => c.id === activeCharacterId);
+                    return character ? normalizeCharacter(character) : null;
                 },
 
                 getActiveConversation: () => {
@@ -282,7 +677,21 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
             }),
             {
                 name: 'swarmui-roleplay-v1',
-                version: 1,
+                version: 7,
+                migrate: (persistedState) => {
+                    const state = persistedState as Partial<RoleplayStoreState> & {
+                        characters?: LegacyRoleplayCharacter[];
+                    };
+
+                    if (!Array.isArray(state.characters)) {
+                        return state;
+                    }
+
+                    return {
+                        ...state,
+                        characters: state.characters.map((character) => normalizeCharacter(character)),
+                    } as any;
+                },
                 partialize: (state) => ({
                     characters: state.characters,
                     conversations: state.conversations,
