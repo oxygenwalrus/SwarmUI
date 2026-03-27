@@ -115,6 +115,7 @@ presetSearchQuery: string;              // search within preset browser (ephemer
 setActiveView: (view: 'steps' | 'presets') => void;
 setActivePresetCategory: (category: PresetCategory) => void;
 setPresetSearchQuery: (query: string) => void;
+resetPresetBrowserEphemeral: () => void;                     // resets activeView → 'steps', presetSearchQuery → ''
 applyBrowserPreset: (tagIds: string[]) => void;              // additive merge of tagIds into selectedTagIds
 addBrowserPreset: (preset: Omit<BrowserPreset, 'id' | 'isDefault'>) => void;  // id auto-generated, isDefault always false
 updateBrowserPreset: (presetId: string, updates: Partial<Pick<BrowserPreset, 'name' | 'description' | 'category' | 'tagIds' | 'thumbnail'>>) => void;  // only user-created presets; no-ops on defaults
@@ -133,8 +134,10 @@ Default browser presets ship in `promptBrowserPresets.json`, lazy-loaded alongsi
 
 - `userBrowserPresets` is persisted to localStorage via the existing zustand `partialize` — the field contains only user-created presets, so no filtering needed.
 - `activePresetCategory` is persisted (so user returns to their last-used category). Defaults to `'characters'`.
-- `activeView` and `presetSearchQuery` are ephemeral (reset to `'steps'` and `''` on modal close).
+- `activeView` and `presetSearchQuery` are ephemeral — **not** added to `partialize`. Reset via `resetPresetBrowserEphemeral()` which is called from the `PromptWizard.tsx` `onClose` handler alongside the existing `close()`.
 - Default presets are always loaded fresh from JSON — never persisted.
+
+**`partialize` additions:** Add `userBrowserPresets` and `activePresetCategory` to the existing partialize allowlist. Do NOT add `activeView` or `presetSearchQuery`.
 
 ### Header Behavior in Presets View
 
@@ -267,7 +270,7 @@ Explicit category presets are always visible in the browser (no content gating t
 |------|--------|
 | `src/features/promptWizard/types.ts` | Add `PresetCategory` and `BrowserPreset` types directly (same file as other wizard types) |
 | `src/stores/promptWizardStore.ts` | Add browser preset state fields and actions |
-| `src/components/PromptWizard.tsx` | Add view toggle, conditionally render browser vs steps, load browser presets JSON |
+| `src/components/PromptWizard.tsx` | Add view toggle, conditionally render browser vs steps, load browser presets JSON, call `resetPresetBrowserEphemeral()` on modal close |
 | `src/components/PromptWizardHeader.tsx` | Add Steps/Presets segmented control |
 | `src/data/promptTags.json` | Add any missing tags needed by browser presets |
 
