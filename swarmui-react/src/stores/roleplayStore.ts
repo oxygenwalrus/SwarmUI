@@ -57,6 +57,8 @@ type LegacyRoleplayCharacter = Omit<
     lastVisitedAt?: number | null;
 };
 
+const DEFAULT_CHAT_MAX_TOKENS = 768;
+
 function normalizeCharacter(character: RoleplayCharacter | LegacyRoleplayCharacter): RoleplayCharacter {
     const defaultPromptSet = createDefaultPromptSet();
     const chatSystemPrompt =
@@ -264,7 +266,7 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                 imageClipStopAtLayer: null,
                 imageModelId: '',
                 chatTemperature: 0.8,
-                chatMaxTokens: 2048,
+                chatMaxTokens: DEFAULT_CHAT_MAX_TOKENS,
                 imageWidth: 768,
                 imageHeight: 512,
 
@@ -677,7 +679,7 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
             }),
             {
                 name: 'swarmui-roleplay-v1',
-                version: 7,
+                version: 8,
                 migrate: (persistedState) => {
                     const state = persistedState as Partial<RoleplayStoreState> & {
                         characters?: LegacyRoleplayCharacter[];
@@ -690,6 +692,10 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                     return {
                         ...state,
                         characters: state.characters.map((character) => normalizeCharacter(character)),
+                        chatMaxTokens:
+                            typeof state.chatMaxTokens === 'number'
+                                ? (state.chatMaxTokens === 2048 ? DEFAULT_CHAT_MAX_TOKENS : state.chatMaxTokens)
+                                : DEFAULT_CHAT_MAX_TOKENS,
                     } as any;
                 },
                 partialize: (state) => ({

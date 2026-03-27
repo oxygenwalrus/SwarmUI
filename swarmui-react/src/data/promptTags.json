@@ -22433,5 +22433,4145 @@
     "minorGroup": "Multi",
     "groupOrder": 40,
     "minorOrder": 20
+  },
+  {
+    "id": "tag-subject-1girl",
+    "text": "1girl",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-beautiful",
+    "text": "beautiful",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-delicate-features",
+    "text": "delicate features",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-slim",
+    "text": "slim",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-fierce",
+    "text": "fierce",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-armor",
+    "text": "armor",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-magic",
+    "text": "magic",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-staff",
+    "text": "staff",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-sorceress",
+    "text": "sorceress",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-dark-magic",
+    "text": "dark magic",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-black-robes",
+    "text": "black robes",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-goggles",
+    "text": "goggles",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-tech",
+    "text": "tech",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-warrior",
+    "text": "warrior",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-white-robes",
+    "text": "white robes",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-dark-wings",
+    "text": "dark wings",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-medieval",
+    "text": "medieval",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-banners",
+    "text": "banners",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-nightclub",
+    "text": "nightclub",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-dance-floor",
+    "text": "dance floor",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-bar",
+    "text": "bar",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-city-skyline",
+    "text": "city skyline",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-evening",
+    "text": "evening",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-cocktails",
+    "text": "cocktails",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-overwater-bungalow",
+    "text": "overwater bungalow",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-bed",
+    "text": "bed",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-pillows",
+    "text": "pillows",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-apartment",
+    "text": "apartment",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-modern-interior",
+    "text": "modern interior",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-window",
+    "text": "window",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-reading",
+    "text": "reading",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-wood",
+    "text": "wood",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-cherry-blossoms",
+    "text": "cherry blossoms",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-petals",
+    "text": "petals",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-dark-forest",
+    "text": "dark forest",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-twisted-trees",
+    "text": "twisted trees",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-eerie",
+    "text": "eerie",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-space-station",
+    "text": "space station",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-control-panel",
+    "text": "control panel",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-zero-gravity",
+    "text": "zero gravity",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-tavern",
+    "text": "tavern",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-candles",
+    "text": "candles",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-ale",
+    "text": "ale",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-fireplace",
+    "text": "fireplace",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-hot-spring",
+    "text": "hot spring",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-rocks",
+    "text": "rocks",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-outdoor",
+    "text": "outdoor",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-onsen",
+    "text": "onsen",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-ruins",
+    "text": "ruins",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-city",
+    "text": "city",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-skyline",
+    "text": "skyline",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-lights",
+    "text": "lights",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-skyscrapers",
+    "text": "skyscrapers",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-photorealistic",
+    "text": "photorealistic",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-semi-realistic",
+    "text": "semi realistic",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-blend-of-anime-and-realism",
+    "text": "blend of anime and realism",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-low-light",
+    "text": "low light",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-dim",
+    "text": "dim",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-moody",
+    "text": "moody",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-bright",
+    "text": "bright",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-well-lit",
+    "text": "well lit",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-vivid",
+    "text": "vivid",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-clean-lighting",
+    "text": "clean lighting",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-golden-light",
+    "text": "golden light",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-tatsuki-fujimoto",
+    "text": "tatsuki fujimoto",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-horror-manga",
+    "text": "horror manga",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-dark-souls",
+    "text": "dark souls",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-grim",
+    "text": "grim",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-foreboding",
+    "text": "foreboding",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-pastel-colors",
+    "text": "pastel colors",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-gentle",
+    "text": "gentle",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-light",
+    "text": "light",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-vibrant",
+    "text": "vibrant",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-bold-colors",
+    "text": "bold colors",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-warhol",
+    "text": "warhol",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-graphic",
+    "text": "graphic",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-close-up",
+    "text": "close up",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-head-shot",
+    "text": "head shot",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-wide-frame",
+    "text": "wide frame",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-tilted-camera",
+    "text": "tilted camera",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-dynamic",
+    "text": "dynamic",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-birds-eye-view",
+    "text": "birds eye view",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-from-above",
+    "text": "from above",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-overhead",
+    "text": "overhead",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-worms-eye-view",
+    "text": "worms eye view",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-over-the-shoulder",
+    "text": "over the shoulder",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-behind",
+    "text": "behind",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-depth",
+    "text": "depth",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-establishing-shot",
+    "text": "establishing shot",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-landscape",
+    "text": "landscape",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-panoramic",
+    "text": "panoramic",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-dynamic-angle",
+    "text": "dynamic angle",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-action-shot",
+    "text": "action shot",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-profile",
+    "text": "profile",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-silhouette",
+    "text": "silhouette",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-angled",
+    "text": "angled",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-natural-pose",
+    "text": "natural pose",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-lace",
+    "text": "lace",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-bra",
+    "text": "bra",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-panties",
+    "text": "panties",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-naked",
+    "text": "naked",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-bare-skin",
+    "text": "bare skin",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-exposed",
+    "text": "exposed",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-suggestive",
+    "text": "suggestive",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-seductive",
+    "text": "seductive",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-alluring",
+    "text": "alluring",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-commanding",
+    "text": "commanding",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-assertive",
+    "text": "assertive",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-power-pose",
+    "text": "power pose",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-submissive",
+    "text": "submissive",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-yielding",
+    "text": "yielding",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-shy",
+    "text": "shy",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-tied",
+    "text": "tied",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-cowgirl",
+    "text": "cowgirl",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-missionary",
+    "text": "missionary",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-intimate",
+    "text": "intimate",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-doggy-style",
+    "text": "doggy style",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-fellatio",
+    "text": "fellatio",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-licking",
+    "text": "licking",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-mouth",
+    "text": "mouth",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-provocative",
+    "text": "provocative",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-revealing",
+    "text": "revealing",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-tight",
+    "text": "tight",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-short-skirt",
+    "text": "short skirt",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-stripping",
+    "text": "stripping",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-undressing",
+    "text": "undressing",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-tease",
+    "text": "tease",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-succubus",
+    "text": "succubus",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-demon-horns",
+    "text": "demon horns",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-leather",
+    "text": "leather",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-latex",
+    "text": "latex",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-nurse",
+    "text": "nurse",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-french-maid",
+    "text": "french maid",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-maid-headdress",
+    "text": "maid headdress",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-stripper",
+    "text": "stripper",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-minimal-clothing",
+    "text": "minimal clothing",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-high-heels",
+    "text": "high heels",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-collar",
+    "text": "collar",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-crawling",
+    "text": "crawling",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-submissive",
+    "text": "submissive",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-seductive-gaze",
+    "text": "seductive gaze",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-sheer-clothing",
+    "text": "sheer clothing",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-intimate",
+    "text": "intimate",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-dungeon",
+    "text": "dungeon",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-chains",
+    "text": "chains",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-dim-red-lighting",
+    "text": "dim red lighting",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-restraints",
+    "text": "restraints",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-love-hotel",
+    "text": "love hotel",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-round-bed",
+    "text": "round bed",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-mirrors-on-ceiling",
+    "text": "mirrors on ceiling",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-neon",
+    "text": "neon",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-red-light-district",
+    "text": "red light district",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-rainy-streets",
+    "text": "rainy streets",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-seedy",
+    "text": "seedy",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-boudoir",
+    "text": "boudoir",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-silk-sheets",
+    "text": "silk sheets",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-velvet-curtains",
+    "text": "velvet curtains",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-sultry-lighting",
+    "text": "sultry lighting",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-tent",
+    "text": "tent",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-harem",
+    "text": "harem",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-silk-pillows",
+    "text": "silk pillows",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-incense-smoke",
+    "text": "incense smoke",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-sheer-fabrics",
+    "text": "sheer fabrics",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-minimalist-room",
+    "text": "minimalist room",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-black-leather-couch",
+    "text": "black leather couch",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-camera",
+    "text": "camera",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-audition",
+    "text": "audition",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-public-park",
+    "text": "public park",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-exhibitionism",
+    "text": "exhibitionism",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-risky",
+    "text": "risky",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-erotic-art",
+    "text": "erotic art",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-pin-up",
+    "text": "pin up",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-vintage-glamour",
+    "text": "vintage glamour",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-hentai",
+    "text": "hentai",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-doujin-art",
+    "text": "doujin art",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-anime-aesthetic",
+    "text": "anime aesthetic",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-thick-lines",
+    "text": "thick lines",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-wet-look",
+    "text": "wet look",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-sweat",
+    "text": "sweat",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-oiled-skin",
+    "text": "oiled skin",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-high-gloss",
+    "text": "high gloss",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-reflections",
+    "text": "reflections",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-boudoir-photography",
+    "text": "boudoir photography",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-soft-focus",
+    "text": "soft focus",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-warm-lighting",
+    "text": "warm lighting",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-intense-intimacy",
+    "text": "intense intimacy",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-erotic-fantasy",
+    "text": "erotic fantasy",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-grimdark",
+    "text": "grimdark",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-synthetic-skin",
+    "text": "synthetic skin",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-futuristic-lingerie",
+    "text": "futuristic lingerie",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-pov",
+    "text": "pov",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-first-person",
+    "text": "first person",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-reaching-out",
+    "text": "reaching out",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-immersive",
+    "text": "immersive",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-macro",
+    "text": "macro",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-hip-focus",
+    "text": "hip focus",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-thighs",
+    "text": "thighs",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-crotch",
+    "text": "crotch",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-close-up-body",
+    "text": "close up body",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-close-up-chest",
+    "text": "close up chest",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-breasts",
+    "text": "breasts",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-looking-down",
+    "text": "looking down",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-booty",
+    "text": "booty",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-looking-over-shoulder",
+    "text": "looking over shoulder",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-rear-view",
+    "text": "rear view",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-low-angle",
+    "text": "low angle",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-high-angle",
+    "text": "high angle",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-submissive-pose",
+    "text": "submissive pose",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-ahegao",
+    "text": "ahegao",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-rolled-back-eyes",
+    "text": "rolled back eyes",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-blushing",
+    "text": "blushing",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-tongue-out",
+    "text": "tongue out",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-climax",
+    "text": "climax",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-sex-toys",
+    "text": "sex toys",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-vibrator",
+    "text": "vibrator",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-dildo",
+    "text": "dildo",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-butt-plug",
+    "text": "butt plug",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-tentacles",
+    "text": "tentacles",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-tentacle-wrapping",
+    "text": "tentacle wrapping",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-tentacle-probing",
+    "text": "tentacle probing",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-slime",
+    "text": "slime",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-monster",
+    "text": "monster",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-messy",
+    "text": "messy",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-bodily-fluids",
+    "text": "bodily fluids",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-breathless",
+    "text": "breathless",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-aftermath",
+    "text": "aftermath",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-facial",
+    "text": "facial",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-fluids-on-face",
+    "text": "fluids on face",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-eyes-closed",
+    "text": "eyes closed",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-rope-bondage",
+    "text": "rope bondage",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-suspension",
+    "text": "suspension",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-red-marks",
+    "text": "red marks",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-intricate-knots",
+    "text": "intricate knots",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-multiple-bodies",
+    "text": "multiple bodies",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-multiple-hands",
+    "text": "multiple hands",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-sharing",
+    "text": "sharing",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-impact-play",
+    "text": "impact play",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-red-handprints",
+    "text": "red handprints",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-paddle",
+    "text": "paddle",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-crying-out",
+    "text": "crying out",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-vaginal-sex",
+    "text": "vaginal sex",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-anal-beads",
+    "text": "anal beads",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-gaping",
+    "text": "gaping",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-x-ray",
+    "text": "x ray",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-cross-section",
+    "text": "cross section",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-internal-anatomy",
+    "text": "internal anatomy",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-penetration-view",
+    "text": "penetration view",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-womb-view",
+    "text": "womb view",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-internal",
+    "text": "internal",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-view-through-legs",
+    "text": "view through legs",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-between-legs",
+    "text": "between legs",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-creative-framing",
+    "text": "creative framing",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-crotch-focus",
+    "text": "crotch focus",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-groin-level-shot",
+    "text": "groin level shot",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-blowjob-pov",
+    "text": "blowjob pov",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-spread-legs",
+    "text": "spread legs",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-open-legs",
+    "text": "open legs",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-front-view",
+    "text": "front view",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-reverse-cowgirl-pov",
+    "text": "reverse cowgirl pov",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-futa",
+    "text": "futa",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-hermaphrodite",
+    "text": "hermaphrodite",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-mixed-anatomy",
+    "text": "mixed anatomy",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-milf",
+    "text": "milf",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-mature-female",
+    "text": "mature female",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-older",
+    "text": "older",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-tomboy",
+    "text": "tomboy",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-abs",
+    "text": "abs",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-fit",
+    "text": "fit",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-monster-girl",
+    "text": "monster girl",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-slime-girl",
+    "text": "slime girl",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-lamia",
+    "text": "lamia",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-arachne",
+    "text": "arachne",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-nun",
+    "text": "nun",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-revealing-nun",
+    "text": "revealing nun",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-train",
+    "text": "train",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-public-transport",
+    "text": "public transport",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-subway",
+    "text": "subway",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-chikan",
+    "text": "chikan",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-locker-room",
+    "text": "locker room",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-public-showers",
+    "text": "public showers",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-tiles",
+    "text": "tiles",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-steam",
+    "text": "steam",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-bathhouse",
+    "text": "bathhouse",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-mixed-baths",
+    "text": "mixed baths",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-japanese-onsen",
+    "text": "japanese onsen",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-alleyway",
+    "text": "alleyway",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-brick-walls",
+    "text": "brick walls",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-urban-decay",
+    "text": "urban decay",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-dark",
+    "text": "dark",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-3d-cgi",
+    "text": "3d cgi",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-source-filmmaker",
+    "text": "source filmmaker",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-blender",
+    "text": "blender",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-glossy",
+    "text": "glossy",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-bara",
+    "text": "bara",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-muscular-art",
+    "text": "muscular art",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-homoerotic",
+    "text": "homoerotic",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-eroge-style",
+    "text": "eroge style",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-visual-novel",
+    "text": "visual novel",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-90s-anime",
+    "text": "90s anime",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-renaissance",
+    "text": "renaissance",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-classicism",
+    "text": "classicism",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-artistic-nude",
+    "text": "artistic nude",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-chest-focus",
+    "text": "chest focus",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-voyeur",
+    "text": "voyeur",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-keyhole-view",
+    "text": "keyhole view",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-peeping",
+    "text": "peeping",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-hidden-camera",
+    "text": "hidden camera",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-foot-focus",
+    "text": "foot focus",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-feet",
+    "text": "feet",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-stomping",
+    "text": "stomping",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-pinned-down",
+    "text": "pinned down",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-looking-up-from-floor",
+    "text": "looking up from floor",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-wrists-held",
+    "text": "wrists held",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-submissive-perspective",
+    "text": "submissive perspective",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-titjob",
+    "text": "titjob",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-paizuri",
+    "text": "paizuri",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-breast-smothering",
+    "text": "breast smothering",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-feet-worship",
+    "text": "feet worship",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-barefoot",
+    "text": "barefoot",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-toes",
+    "text": "toes",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-yuri",
+    "text": "yuri",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-2girls",
+    "text": "2girls",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-lesbian",
+    "text": "lesbian",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-mind-break",
+    "text": "mind break",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-blank-eyes",
+    "text": "blank eyes",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-hypnosis",
+    "text": "hypnosis",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-drooling",
+    "text": "drooling",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-expression-spirals-in-eyes",
+    "text": "spirals in eyes",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-gloryhole",
+    "text": "gloryhole",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-wall-partition",
+    "text": "wall partition",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-anonymous",
+    "text": "anonymous",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-1boy",
+    "text": "1boy",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-man",
+    "text": "man",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-handsome",
+    "text": "handsome",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-masculine",
+    "text": "masculine",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-wizard",
+    "text": "wizard",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-old-man",
+    "text": "old man",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-long-beard",
+    "text": "long beard",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-mercenary",
+    "text": "mercenary",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-bionic-arm",
+    "text": "bionic arm",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-space-marine",
+    "text": "space marine",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-heavy-armor",
+    "text": "heavy armor",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-formal",
+    "text": "formal",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-professional",
+    "text": "professional",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-cafe",
+    "text": "cafe",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-cozy",
+    "text": "cozy",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-indoor",
+    "text": "indoor",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-rainy",
+    "text": "rainy",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-crowded-street",
+    "text": "crowded street",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-snow-capped-peaks",
+    "text": "snow capped peaks",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-landscape",
+    "text": "landscape",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-serene",
+    "text": "serene",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-sunlight-through-trees",
+    "text": "sunlight through trees",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-tranquil",
+    "text": "tranquil",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-foliage",
+    "text": "foliage",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-marketplace",
+    "text": "marketplace",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-bazaar",
+    "text": "bazaar",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-fantasy",
+    "text": "fantasy",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-tents",
+    "text": "tents",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-analog-photography",
+    "text": "analog photography",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-vintage",
+    "text": "vintage",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-kodak-portra",
+    "text": "kodak portra",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-minimalist",
+    "text": "minimalist",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-flat-colors",
+    "text": "flat colors",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-retrowave",
+    "text": "retrowave",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-80s-aesthetic",
+    "text": "80s aesthetic",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-grid",
+    "text": "grid",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-watercolor",
+    "text": "watercolor",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-fluid-strokes",
+    "text": "fluid strokes",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-soft-edges",
+    "text": "soft edges",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-comic-book",
+    "text": "comic book",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-noir",
+    "text": "noir",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-ink-drawing",
+    "text": "ink drawing",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-heavy-shadows",
+    "text": "heavy shadows",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-shallow-depth-of-field",
+    "text": "shallow depth of field",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-focus-on-background",
+    "text": "focus on background",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-hero-shot",
+    "text": "hero shot",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-detailed-texture",
+    "text": "detailed texture",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-depth-of-field",
+    "text": "depth of field",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-symmetrical-composition",
+    "text": "symmetrical composition",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-centered",
+    "text": "centered",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-wes-anderson",
+    "text": "wes anderson",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-quality-best-quality",
+    "text": "best quality",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-quality-ultra-detailed",
+    "text": "ultra detailed",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-intricate-details",
+    "text": "intricate details",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-sharp-focus",
+    "text": "sharp focus",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-dramatic-shadows",
+    "text": "dramatic shadows",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-raw-photo",
+    "text": "raw photo",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-skin-texture",
+    "text": "skin texture",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-8k-uhd",
+    "text": "8k uhd",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-vibrant-colors",
+    "text": "vibrant colors",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-style-colorful",
+    "text": "colorful",
+    "step": "style",
+    "majorGroup": "Styles & Quality",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-rich-saturation",
+    "text": "rich saturation",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-dynamic-lighting",
+    "text": "dynamic lighting",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-bloom",
+    "text": "bloom",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-glowing",
+    "text": "glowing",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-detailed-background",
+    "text": "detailed background",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-intricate-environment",
+    "text": "intricate environment",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-scenery",
+    "text": "scenery",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-filled-background",
+    "text": "filled background",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-bokeh",
+    "text": "bokeh",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-blurred-background",
+    "text": "blurred background",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-action-focus-on-subject",
+    "text": "focus on subject",
+    "step": "action",
+    "majorGroup": "Actions & Poses",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-floating-particles",
+    "text": "floating particles",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-dust-motes",
+    "text": "dust motes",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-sparks",
+    "text": "sparks",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-light-rays",
+    "text": "light rays",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-detailed-plants",
+    "text": "detailed plants",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-vibrant-foliage",
+    "text": "vibrant foliage",
+    "step": "scene",
+    "majorGroup": "Locations & Settings",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-catgirl",
+    "text": "catgirl",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-nekomimi",
+    "text": "nekomimi",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-fang",
+    "text": "fang",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-foxgirl",
+    "text": "foxgirl",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-kitsune",
+    "text": "kitsune",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-multiple-tails",
+    "text": "multiple tails",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-bunny-girl",
+    "text": "bunny girl",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-wolfgirl",
+    "text": "wolfgirl",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-wild",
+    "text": "wild",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-dragon-girl",
+    "text": "dragon girl",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-horns",
+    "text": "horns",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-dragon-tail",
+    "text": "dragon tail",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-scales",
+    "text": "scales",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-mythical",
+    "text": "mythical",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-furry",
+    "text": "furry",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-anthro",
+    "text": "anthro",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-fur",
+    "text": "fur",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-animal-snout",
+    "text": "animal snout",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-paws",
+    "text": "paws",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-tiara",
+    "text": "tiara",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-elegant-dress",
+    "text": "elegant dress",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-jewelry",
+    "text": "jewelry",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-regal",
+    "text": "regal",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-goth",
+    "text": "goth",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-black-makeup",
+    "text": "black makeup",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-fishnets",
+    "text": "fishnets",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-office-lady",
+    "text": "office lady",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-pencil-skirt",
+    "text": "pencil skirt",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-glasses",
+    "text": "glasses",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-amazonian",
+    "text": "amazonian",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-tribal-tattoos",
+    "text": "tribal tattoos",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-fur-armor",
+    "text": "fur armor",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-magical-girl",
+    "text": "magical girl",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-frilled-dress",
+    "text": "frilled dress",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-ribbons",
+    "text": "ribbons",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-magic-wand",
+    "text": "magic wand",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-sparkling",
+    "text": "sparkling",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere & Mood",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-subject-gyaru",
+    "text": "gyaru",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-tanned",
+    "text": "tanned",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-heavy-makeup",
+    "text": "heavy makeup",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-futuristic-kimono",
+    "text": "futuristic kimono",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-appearance-cybernetics",
+    "text": "cybernetics",
+    "step": "appearance",
+    "majorGroup": "Appearance & Characters",
+    "minorGroup": "Explicit / Wizard Expansion",
+    "groupOrder": 100,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-scene-beach-bungalow",
+    "text": "beach bungalow",
+    "step": "scene",
+    "majorGroup": "Locations",
+    "minorGroup": "Tropical",
+    "groupOrder": 110,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-setting-bamboo-walls",
+    "text": "bamboo walls",
+    "step": "scene",
+    "majorGroup": "Architecture",
+    "minorGroup": "Structure",
+    "groupOrder": 110,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-lighting-ocean-sunset",
+    "text": "ocean sunset lighting",
+    "step": "atmosphere",
+    "majorGroup": "Lighting",
+    "minorGroup": "Natural",
+    "groupOrder": 110,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-tropical-breeze",
+    "text": "tropical breeze",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere",
+    "minorGroup": "Weather",
+    "groupOrder": 110,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-detail-tropical-foliage",
+    "text": "tropical foliage",
+    "step": "appearance",
+    "majorGroup": "Details",
+    "minorGroup": "Flora",
+    "groupOrder": 110,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-warm-sunlight",
+    "text": "warm sunlight",
+    "step": "atmosphere",
+    "majorGroup": "Lighting",
+    "minorGroup": "Natural",
+    "groupOrder": 110,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-detail-seashell-decorations",
+    "text": "seashell decorations",
+    "step": "scene",
+    "majorGroup": "Details",
+    "minorGroup": "Decor",
+    "groupOrder": 110,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-scene-ocean-view",
+    "text": "ocean view out window",
+    "step": "scene",
+    "majorGroup": "Locations",
+    "minorGroup": "Views",
+    "groupOrder": 110,
+    "minorOrder": 10
+  },
+  {
+    "id": "tag-atmosphere-dust-particles-in-light",
+    "text": "dust particles floating in light",
+    "step": "atmosphere",
+    "majorGroup": "Atmosphere",
+    "minorGroup": "Air",
+    "groupOrder": 110,
+    "minorOrder": 10
   }
 ]
