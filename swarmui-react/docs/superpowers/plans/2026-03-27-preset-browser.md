@@ -723,7 +723,7 @@ export const PromptWizardBrowser = memo(function PromptWizardBrowser({
   }, []);
 
   const editingPreset = editingPresetId
-    ? [...defaultPresets, ...userPresets].find((p) => p.id === editingPresetId)
+    ? allPresets.find((p) => p.id === editingPresetId)
     : undefined;
 
   return (
@@ -1122,7 +1122,39 @@ Wrap the existing narrow-mode horizontal step tabs (between the header and the m
 
 - [ ] **Step 11: Fix pre-existing bug in bottom stacked preview**
 
-The existing `PromptWizard.tsx` bottom stacked preview (around line 494) references undefined callbacks `handleApplyPrompt` and `handleApplyNegative`. These should be `handleSendToGenerate` and `handleAppendToGenerate` respectively, or use the same props pattern as the side panel preview. Fix by matching the props to the side panel preview instance above it (around line 438).
+The existing `PromptWizard.tsx` bottom stacked preview (around line 485–503) references undefined callbacks. Replace the broken props in the bottom stacked `<PromptWizardPreview>` to match the side panel preview exactly. The broken lines are:
+
+```tsx
+// BROKEN (remove these two lines):
+                  onApplyToPrompt={handleApplyPrompt}
+                  onApplyToNegative={handleApplyNegative}
+```
+
+Replace the entire bottom stacked `<PromptWizardPreview>` props to match the side panel instance:
+
+```tsx
+                <PromptWizardPreview
+                  positivePreview={assembled.positive}
+                  negativePreview={mergedNegativePreview}
+                  positiveCount={selectedTags.length}
+                  negativeCount={mergedNegativePreview ? mergedNegativePreview.split(profile?.tagSeparator ?? ', ').filter(Boolean).length : 0}
+                  explicitCount={explicitCount}
+                  profileName={profile?.name ?? 'Unknown'}
+                  profileStepSummary={profileStepSummary}
+                  healthIssues={promptHealth}
+                  onSendToGenerate={handleSendToGenerate}
+                  onAppendToGenerate={handleAppendToGenerate}
+                  onCopyPositive={handleCopyPositive}
+                  onCopyNegative={handleCopyNegative}
+                  onClear={clearSelections}
+                  hasSelection={totalSelected > 0}
+                  selectedTags={selectedTags}
+                  tagWeights={tagWeights}
+                  onDeselectTag={deselectTag}
+                  activeStep={activeStep}
+                  onJumpStep={setActiveStep}
+                />
+```
 
 - [ ] **Step 12: Verify TypeScript compiles**
 
