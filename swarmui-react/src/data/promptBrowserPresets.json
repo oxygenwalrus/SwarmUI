@@ -1,0 +1,921 @@
+[
+  {
+    "id": "bp-characters-beautiful-asian-girl",
+    "name": "Beautiful Asian Girl",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-1girl",
+      "tag-appearance-asian",
+      "tag-appearance-beautiful",
+      "tag-appearance-long-hair",
+      "tag-appearance-delicate-features"
+    ],
+    "description": "A beautiful Asian girl with long hair and delicate features",
+    "thumbnail": "👧",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-slim-elf-girl",
+    "name": "Slim Elf Girl",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-1girl",
+      "tag-subject-elf",
+      "tag-appearance-slim",
+      "tag-subject-pointed-ears",
+      "tag-atmosphere-ethereal"
+    ],
+    "description": "A slim and ethereal elf girl with pointed ears",
+    "thumbnail": "🧝",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-anthro-wolf-girl",
+    "name": "Anthro Wolf Girl",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-1girl",
+      "tag-appearance-wolf-ears",
+      "tag-appearance-wolf-tail",
+      "tag-appearance-anthro",
+      "tag-appearance-furry"
+    ],
+    "description": "An anthropomorphic wolf girl with ears and tail",
+    "thumbnail": "🐺",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-fierce-dragon",
+    "name": "Fierce Dragon",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-dragon",
+      "tag-subject-fierce",
+      "tag-subject-scales",
+      "tag-subject-wings",
+      "tag-setting-fire"
+    ],
+    "description": "A fierce dragon with scales, wings, and fire",
+    "thumbnail": "🐉",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-heroic-knight",
+    "name": "Heroic Knight",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-knight",
+      "tag-appearance-armor",
+      "tag-subject-sword",
+      "tag-appearance-heroic",
+      "tag-subject-shield"
+    ],
+    "description": "A heroic knight in armor wielding a sword and shield",
+    "thumbnail": "⚔️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-mysterious-mage",
+    "name": "Mysterious Mage",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-mage",
+      "tag-subject-robes",
+      "tag-subject-magic",
+      "tag-setting-mysterious",
+      "tag-subject-staff"
+    ],
+    "description": "A mysterious mage in robes wielding magic and a staff",
+    "thumbnail": "🧙",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-dark-sorceress",
+    "name": "Dark Sorceress",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-sorceress",
+      "tag-subject-dark-magic",
+      "tag-subject-black-robes",
+      "tag-subject-glowing-eyes"
+    ],
+    "description": "A dark sorceress with black robes and glowing eyes",
+    "thumbnail": "🔮",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-cute-catgirl",
+    "name": "Cute Catgirl",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-1girl",
+      "tag-appearance-cat-ears",
+      "tag-appearance-cat-tail",
+      "tag-style-cute",
+      "tag-atmosphere-playful"
+    ],
+    "description": "A cute and playful catgirl with cat ears and tail",
+    "thumbnail": "🐱",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-royal-princess",
+    "name": "Royal Princess",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-1girl",
+      "tag-subject-princess",
+      "tag-subject-royal-gown",
+      "tag-subject-tiara",
+      "tag-style-elegant"
+    ],
+    "description": "An elegant royal princess in a gown with a tiara",
+    "thumbnail": "👑",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-cyberpunk-hacker",
+    "name": "Cyberpunk Hacker",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-hacker",
+      "tag-style-cyberpunk",
+      "tag-style-neon",
+      "tag-appearance-goggles",
+      "tag-appearance-tech"
+    ],
+    "description": "A cyberpunk hacker with neon accents and tech goggles",
+    "thumbnail": "💻",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-samurai-warrior",
+    "name": "Samurai Warrior",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-samurai",
+      "tag-subject-katana",
+      "tag-appearance-armor",
+      "tag-appearance-japanese",
+      "tag-subject-warrior"
+    ],
+    "description": "A Japanese samurai warrior in armor with a katana",
+    "thumbnail": "🗡️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-angel",
+    "name": "Angel",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-angel",
+      "tag-subject-wings",
+      "tag-subject-halo",
+      "tag-subject-divine",
+      "tag-subject-white-robes"
+    ],
+    "description": "A divine angel with wings, halo, and white robes",
+    "thumbnail": "😇",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-demon-girl",
+    "name": "Demon Girl",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-1girl",
+      "tag-subject-demon",
+      "tag-subject-horns",
+      "tag-subject-dark-wings",
+      "tag-subject-red-eyes"
+    ],
+    "description": "A demon girl with horns, dark wings, and red eyes",
+    "thumbnail": "😈",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-school-girl",
+    "name": "School Girl",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-1girl",
+      "tag-subject-school-uniform",
+      "tag-appearance-sailor-uniform",
+      "tag-appearance-young"
+    ],
+    "description": "A young girl in a school sailor uniform",
+    "thumbnail": "🎒",
+    "isDefault": true
+  },
+  {
+    "id": "bp-characters-vampire",
+    "name": "Vampire",
+    "category": "characters",
+    "tagIds": [
+      "tag-subject-vampire",
+      "tag-subject-fangs",
+      "tag-subject-pale-skin",
+      "tag-subject-red-eyes",
+      "tag-setting-gothic"
+    ],
+    "description": "A gothic vampire with fangs, pale skin, and red eyes",
+    "thumbnail": "🧛",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-castle-setting",
+    "name": "Castle Setting",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-castle",
+      "tag-setting-medieval",
+      "tag-setting-stone-walls",
+      "tag-setting-towers",
+      "tag-setting-banners"
+    ],
+    "description": "A grand medieval castle with stone walls, towers, and banners",
+    "thumbnail": "🏰",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-night-club-scene",
+    "name": "Night Club Scene",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-nightclub",
+      "tag-setting-neon-lights",
+      "tag-setting-dance-floor",
+      "tag-style-dark",
+      "tag-setting-crowd"
+    ],
+    "description": "A dark nightclub with neon lights, a dance floor, and crowd",
+    "thumbnail": "🎵",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-rooftop-bar",
+    "name": "Rooftop Bar",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-rooftop",
+      "tag-setting-bar",
+      "tag-setting-city-skyline",
+      "tag-setting-evening",
+      "tag-setting-cocktails"
+    ],
+    "description": "A rooftop bar overlooking the city skyline in the evening",
+    "thumbnail": "🍹",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-beach-sunset",
+    "name": "Beach Sunset",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-beach",
+      "tag-style-sunset",
+      "tag-setting-ocean",
+      "tag-setting-sand",
+      "tag-atmosphere-golden-hour"
+    ],
+    "description": "A beautiful beach at sunset with golden hour lighting",
+    "thumbnail": "🌅",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-water-bungalow-night",
+    "name": "Water Bungalow at Night",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-overwater-bungalow",
+      "tag-subject-night",
+      "tag-setting-stars",
+      "tag-setting-tropical",
+      "tag-setting-ocean"
+    ],
+    "description": "An overwater bungalow at night under the stars in a tropical setting",
+    "thumbnail": "🌃",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-bedroom-scene",
+    "name": "Bedroom Scene",
+    "category": "scenes",
+    "tagIds": [
+      "tag-action-bedroom",
+      "tag-setting-bed",
+      "tag-setting-pillows",
+      "tag-setting-warm-lighting",
+      "tag-setting-cozy"
+    ],
+    "description": "A cozy bedroom with a bed, pillows, and warm lighting",
+    "thumbnail": "🛏️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-apartment",
+    "name": "Apartment",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-apartment",
+      "tag-setting-modern-interior",
+      "tag-setting-window",
+      "tag-setting-urban"
+    ],
+    "description": "A modern apartment interior with a window view of the urban landscape",
+    "thumbnail": "🏢",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-library-setting",
+    "name": "Library Setting",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-library",
+      "tag-setting-bookshelves",
+      "tag-setting-reading",
+      "tag-atmosphere-quiet",
+      "tag-setting-wood"
+    ],
+    "description": "A quiet library with bookshelves, reading nooks, and wood details",
+    "thumbnail": "📚",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-cherry-blossom-garden",
+    "name": "Cherry Blossom Garden",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-cherry-blossoms",
+      "tag-setting-garden",
+      "tag-setting-petals",
+      "tag-setting-spring",
+      "tag-appearance-japanese"
+    ],
+    "description": "A Japanese cherry blossom garden in spring with falling petals",
+    "thumbnail": "🌸",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-dark-forest",
+    "name": "Dark Forest",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-dark-forest",
+      "tag-setting-fog",
+      "tag-setting-twisted-trees",
+      "tag-setting-eerie",
+      "tag-atmosphere-moonlight"
+    ],
+    "description": "An eerie dark forest with fog, twisted trees, and moonlight",
+    "thumbnail": "🌲",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-space-station",
+    "name": "Space Station",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-space-station",
+      "tag-subject-sci-fi",
+      "tag-setting-stars",
+      "tag-setting-control-panel",
+      "tag-setting-zero-gravity"
+    ],
+    "description": "A sci-fi space station with control panels and zero gravity",
+    "thumbnail": "🚀",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-medieval-tavern",
+    "name": "Medieval Tavern",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-tavern",
+      "tag-setting-medieval",
+      "tag-setting-wood",
+      "tag-setting-candles",
+      "tag-setting-ale",
+      "tag-setting-fireplace"
+    ],
+    "description": "A cozy medieval tavern with wood, candles, ale, and a fireplace",
+    "thumbnail": "🍺",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-hot-spring",
+    "name": "Hot Spring",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-hot-spring",
+      "tag-action-steam",
+      "tag-setting-rocks",
+      "tag-setting-outdoor",
+      "tag-setting-onsen"
+    ],
+    "description": "An outdoor Japanese onsen hot spring with steam and rocks",
+    "thumbnail": "♨️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-underwater-temple",
+    "name": "Underwater Temple",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-underwater",
+      "tag-setting-temple",
+      "tag-setting-ruins",
+      "tag-setting-ocean",
+      "tag-atmosphere-bioluminescent"
+    ],
+    "description": "Ancient underwater temple ruins with bioluminescent ocean light",
+    "thumbnail": "🏛️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-scenes-city-skyline-night",
+    "name": "City Skyline at Night",
+    "category": "scenes",
+    "tagIds": [
+      "tag-setting-city",
+      "tag-setting-skyline",
+      "tag-subject-night",
+      "tag-setting-lights",
+      "tag-setting-skyscrapers",
+      "tag-setting-urban"
+    ],
+    "description": "A glittering city skyline at night with lights and skyscrapers",
+    "thumbnail": "🌆",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-anime",
+    "name": "Anime",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-anime-style",
+      "tag-style-anime-art"
+    ],
+    "description": "Classic anime art style",
+    "thumbnail": "✨",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-realistic",
+    "name": "Realistic",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-realistic",
+      "tag-style-photorealistic",
+      "tag-style-hyperrealistic"
+    ],
+    "description": "Photorealistic and hyperrealistic rendering",
+    "thumbnail": "📷",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-semi-realistic",
+    "name": "Semi-Realistic",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-semi-realistic",
+      "tag-style-detailed",
+      "tag-style-blend-of-anime-and-realism"
+    ],
+    "description": "A blend of anime and realistic art styles with detail",
+    "thumbnail": "🎨",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-low-light",
+    "name": "Low Light",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-low-light",
+      "tag-style-dim",
+      "tag-subject-shadows",
+      "tag-style-moody",
+      "tag-style-dark"
+    ],
+    "description": "Moody low-light atmosphere with dim shadows",
+    "thumbnail": "🌑",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-bright-light",
+    "name": "Bright Light",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-bright",
+      "tag-style-well-lit",
+      "tag-style-vivid",
+      "tag-style-clean-lighting"
+    ],
+    "description": "Bright, well-lit, and vivid with clean lighting",
+    "thumbnail": "☀️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-golden-glow",
+    "name": "Golden Glow",
+    "category": "styles",
+    "tagIds": [
+      "tag-atmosphere-golden-hour",
+      "tag-atmosphere-warm-glow",
+      "tag-style-golden-light",
+      "tag-atmosphere-soft"
+    ],
+    "description": "Warm golden hour glow with soft, golden light",
+    "thumbnail": "🌟",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-studio-ghibli",
+    "name": "Studio Ghibli",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-studio-ghibli-style",
+      "tag-style-ghibli",
+      "tag-style-miyazaki",
+      "tag-style-hand-drawn",
+      "tag-style-whimsical"
+    ],
+    "description": "Studio Ghibli and Miyazaki inspired hand-drawn whimsical style",
+    "thumbnail": "🏞️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-chainsaw-man",
+    "name": "Chainsaw Man",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-chainsaw-man-style",
+      "tag-style-tatsuki-fujimoto",
+      "tag-style-gritty",
+      "tag-style-horror-manga"
+    ],
+    "description": "Chainsaw Man inspired gritty Tatsuki Fujimoto horror manga style",
+    "thumbnail": "⛓️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-dark-souls-aesthetic",
+    "name": "Dark Souls Aesthetic",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-dark-souls",
+      "tag-style-dark-fantasy",
+      "tag-style-grim",
+      "tag-setting-gothic",
+      "tag-style-foreboding"
+    ],
+    "description": "Dark Souls inspired dark fantasy with grim gothic atmosphere",
+    "thumbnail": "🗡️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-pastel-soft",
+    "name": "Pastel Soft",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-pastel-colors",
+      "tag-atmosphere-soft",
+      "tag-atmosphere-dreamy",
+      "tag-style-gentle",
+      "tag-style-light"
+    ],
+    "description": "Soft pastel colors with a dreamy, gentle, light aesthetic",
+    "thumbnail": "🌷",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-high-contrast-noir",
+    "name": "High Contrast Noir",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-noir-style",
+      "tag-style-black-and-white",
+      "tag-style-high-contrast",
+      "tag-subject-shadows"
+    ],
+    "description": "Classic noir black and white with high contrast shadows",
+    "thumbnail": "🎬",
+    "isDefault": true
+  },
+  {
+    "id": "bp-styles-vibrant-pop-art",
+    "name": "Vibrant Pop Art",
+    "category": "styles",
+    "tagIds": [
+      "tag-style-pop-art",
+      "tag-style-vibrant",
+      "tag-style-bold-colors",
+      "tag-style-warhol",
+      "tag-style-graphic"
+    ],
+    "description": "Vibrant Warhol-inspired pop art with bold colors and graphic style",
+    "thumbnail": "🎭",
+    "isDefault": true
+  },
+  {
+    "id": "bp-perspectives-close-up-portrait",
+    "name": "Close-Up Portrait",
+    "category": "perspectives",
+    "tagIds": [
+      "tag-action-close-up",
+      "tag-action-portrait",
+      "tag-action-face-focus",
+      "tag-action-head-shot"
+    ],
+    "description": "A close-up portrait with face focus and head shot framing",
+    "thumbnail": "🔍",
+    "isDefault": true
+  },
+  {
+    "id": "bp-perspectives-full-body-shot",
+    "name": "Full Body Shot",
+    "category": "perspectives",
+    "tagIds": [
+      "tag-action-full-body",
+      "tag-action-standing",
+      "tag-action-wide-frame"
+    ],
+    "description": "Full body standing shot with wide frame",
+    "thumbnail": "🧍",
+    "isDefault": true
+  },
+  {
+    "id": "bp-perspectives-dutch-angle",
+    "name": "Dutch Angle",
+    "category": "perspectives",
+    "tagIds": [
+      "tag-setting-dutch-angle",
+      "tag-setting-tilted-camera",
+      "tag-atmosphere-dynamic"
+    ],
+    "description": "Dynamic dutch angle with tilted camera",
+    "thumbnail": "📐",
+    "isDefault": true
+  },
+  {
+    "id": "bp-perspectives-birds-eye-view",
+    "name": "Bird's Eye View",
+    "category": "perspectives",
+    "tagIds": [
+      "tag-action-birds-eye-view",
+      "tag-action-from-above",
+      "tag-action-overhead"
+    ],
+    "description": "Overhead bird's eye view looking down from above",
+    "thumbnail": "🦅",
+    "isDefault": true
+  },
+  {
+    "id": "bp-perspectives-worms-eye-view",
+    "name": "Worm's Eye View",
+    "category": "perspectives",
+    "tagIds": [
+      "tag-action-worms-eye-view",
+      "tag-action-from-below",
+      "tag-action-looking-up"
+    ],
+    "description": "Low worm's eye view looking up from below",
+    "thumbnail": "🐛",
+    "isDefault": true
+  },
+  {
+    "id": "bp-perspectives-over-the-shoulder",
+    "name": "Over the Shoulder",
+    "category": "perspectives",
+    "tagIds": [
+      "tag-action-over-the-shoulder",
+      "tag-action-behind",
+      "tag-action-depth"
+    ],
+    "description": "Over-the-shoulder perspective from behind with depth",
+    "thumbnail": "👁️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-perspectives-wide-establishing-shot",
+    "name": "Wide Establishing Shot",
+    "category": "perspectives",
+    "tagIds": [
+      "tag-setting-wide-shot",
+      "tag-setting-establishing-shot",
+      "tag-action-landscape",
+      "tag-action-panoramic"
+    ],
+    "description": "Wide establishing shot with panoramic landscape view",
+    "thumbnail": "🌄",
+    "isDefault": true
+  },
+  {
+    "id": "bp-perspectives-dynamic-action-angle",
+    "name": "Dynamic Action Angle",
+    "category": "perspectives",
+    "tagIds": [
+      "tag-action-dynamic-angle",
+      "tag-action-action-shot",
+      "tag-action-motion-blur"
+    ],
+    "description": "Dynamic action angle with motion blur for energy",
+    "thumbnail": "💥",
+    "isDefault": true
+  },
+  {
+    "id": "bp-perspectives-side-profile",
+    "name": "Side Profile",
+    "category": "perspectives",
+    "tagIds": [
+      "tag-action-side-view",
+      "tag-action-profile",
+      "tag-action-silhouette"
+    ],
+    "description": "Side profile view with silhouette framing",
+    "thumbnail": "🎭",
+    "isDefault": true
+  },
+  {
+    "id": "bp-perspectives-three-quarter-view",
+    "name": "Three-Quarter View",
+    "category": "perspectives",
+    "tagIds": [
+      "tag-action-three-quarter-view",
+      "tag-action-angled",
+      "tag-action-natural-pose"
+    ],
+    "description": "Natural three-quarter angled view pose",
+    "thumbnail": "🖼️",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-lingerie",
+    "name": "Lingerie",
+    "category": "explicit",
+    "tagIds": [
+      "tag-appearance-lingerie",
+      "tag-appearance-lace",
+      "tag-appearance-bra",
+      "tag-appearance-panties",
+      "tag-appearance-stockings"
+    ],
+    "description": "Lingerie with lace, bra, panties, and stockings",
+    "thumbnail": "🌹",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-nude-pose",
+    "name": "Nude Pose",
+    "category": "explicit",
+    "tagIds": [
+      "tag-subject-nude",
+      "tag-subject-naked",
+      "tag-appearance-bare-skin",
+      "tag-appearance-exposed"
+    ],
+    "description": "Nude pose with bare, exposed skin",
+    "thumbnail": "🌺",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-suggestive-position",
+    "name": "Suggestive Position",
+    "category": "explicit",
+    "tagIds": [
+      "tag-appearance-suggestive",
+      "tag-appearance-seductive",
+      "tag-appearance-alluring",
+      "tag-action-teasing"
+    ],
+    "description": "Suggestive, seductive, and alluring position",
+    "thumbnail": "💋",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-dominant-pose",
+    "name": "Dominant Pose",
+    "category": "explicit",
+    "tagIds": [
+      "tag-action-dominant",
+      "tag-appearance-commanding",
+      "tag-appearance-assertive",
+      "tag-appearance-power-pose"
+    ],
+    "description": "Dominant commanding power pose",
+    "thumbnail": "👊",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-submissive-pose",
+    "name": "Submissive Pose",
+    "category": "explicit",
+    "tagIds": [
+      "tag-appearance-submissive",
+      "tag-action-kneeling",
+      "tag-appearance-yielding",
+      "tag-appearance-shy"
+    ],
+    "description": "Submissive kneeling and yielding pose",
+    "thumbnail": "🙏",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-bondage",
+    "name": "Bondage",
+    "category": "explicit",
+    "tagIds": [
+      "tag-action-bondage",
+      "tag-action-rope",
+      "tag-action-tied",
+      "tag-action-restrained",
+      "tag-action-shibari"
+    ],
+    "description": "Bondage with rope, tied and restrained in shibari style",
+    "thumbnail": "🎀",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-riding",
+    "name": "Riding",
+    "category": "explicit",
+    "tagIds": [
+      "tag-action-riding",
+      "tag-action-cowgirl",
+      "tag-action-straddling",
+      "tag-action-on-top"
+    ],
+    "description": "Riding cowgirl position straddling on top",
+    "thumbnail": "🔥",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-missionary",
+    "name": "Missionary",
+    "category": "explicit",
+    "tagIds": [
+      "tag-action-missionary",
+      "tag-action-lying-down",
+      "tag-atmosphere-intimate"
+    ],
+    "description": "Intimate missionary position lying down",
+    "thumbnail": "💞",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-doggy-style",
+    "name": "Doggy Style",
+    "category": "explicit",
+    "tagIds": [
+      "tag-action-doggy-style",
+      "tag-action-from-behind",
+      "tag-action-bent-over"
+    ],
+    "description": "Doggy style from behind with bent over position",
+    "thumbnail": "🔞",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-oral",
+    "name": "Oral",
+    "category": "explicit",
+    "tagIds": [
+      "tag-action-oral",
+      "tag-action-fellatio",
+      "tag-action-licking",
+      "tag-action-mouth"
+    ],
+    "description": "Oral with fellatio, licking and mouth focus",
+    "thumbnail": "👅",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-provocative-outfit",
+    "name": "Provocative Outfit",
+    "category": "explicit",
+    "tagIds": [
+      "tag-appearance-provocative",
+      "tag-appearance-revealing",
+      "tag-appearance-tight",
+      "tag-appearance-short-skirt",
+      "tag-appearance-cleavage"
+    ],
+    "description": "Provocative and revealing tight outfit with short skirt and cleavage",
+    "thumbnail": "👗",
+    "isDefault": true
+  },
+  {
+    "id": "bp-explicit-stripping",
+    "name": "Stripping",
+    "category": "explicit",
+    "tagIds": [
+      "tag-action-stripping",
+      "tag-action-undressing",
+      "tag-action-removing-clothes",
+      "tag-action-tease"
+    ],
+    "description": "Stripping and undressing tease with clothes removal",
+    "thumbnail": "🎪",
+    "isDefault": true
+  }
+]
