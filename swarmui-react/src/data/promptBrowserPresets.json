@@ -449,24 +449,6 @@
     "isDefault": true
   },
   {
-    "id": "bp-scenes-beach-bungalow",
-    "name": "Beach Bungalow",
-    "category": "scenes",
-    "description": "A relaxing tropical beach bungalow with bamboo walls, tropical foliage, and a warm ocean sunset breeze.",
-    "thumbnail": "🥥",
-    "tagIds": [
-      "tag-scene-beach-bungalow",
-      "tag-setting-bamboo-walls",
-      "tag-lighting-ocean-sunset",
-      "tag-atmosphere-tropical-breeze",
-      "tag-detail-tropical-foliage",
-      "tag-atmosphere-warm-sunlight",
-      "tag-detail-seashell-decorations",
-      "tag-scene-ocean-view",
-      "tag-atmosphere-dust-particles-in-light"
-    ]
-  },
-  {
     "id": "bp-styles-anime",
     "name": "Anime",
     "category": "styles",

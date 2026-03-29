@@ -7,6 +7,7 @@ import type {
     RoleplayInteractionStyle,
     RoleplayMemoryFact,
     RoleplayMemoryStatus,
+    RoleplayModelCompatibilitySettings,
 } from '../types/roleplay';
 import type { AssistantModel, AssistantServerMode } from '../types/assistant';
 import {
@@ -58,6 +59,13 @@ type LegacyRoleplayCharacter = Omit<
 };
 
 const DEFAULT_CHAT_MAX_TOKENS = 768;
+
+function createDefaultModelCompatibilitySettings(): RoleplayModelCompatibilitySettings {
+    return {
+        forceFinalUserTurn: false,
+        inlineSystemPrompt: false,
+    };
+}
 
 function normalizeCharacter(character: RoleplayCharacter | LegacyRoleplayCharacter): RoleplayCharacter {
     const defaultPromptSet = createDefaultPromptSet();
@@ -151,6 +159,7 @@ interface RoleplayStoreState {
     selectedModelId: string;
     detectedServerMode: AssistantServerMode | null;
     availableModels: AssistantModel[];
+    modelCompatibilityByModelId: Record<string, RoleplayModelCompatibilitySettings>;
 
     // Image generation parameters (persisted)
     imageSteps: number;
@@ -219,6 +228,7 @@ interface RoleplayStoreState {
     setSelectedModelId: (modelId: string) => void;
     setDetectedServerMode: (mode: AssistantServerMode | null) => void;
     setAvailableModels: (models: AssistantModel[]) => void;
+    setModelCompatibility: (modelId: string, updates: Partial<RoleplayModelCompatibilitySettings>) => void;
 
     // Actions - Image params
     setImageSteps: (v: number) => void;
@@ -259,6 +269,7 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                 selectedModelId: '',
                 detectedServerMode: null,
                 availableModels: [],
+                modelCompatibilityByModelId: {},
 
                 // Image params
                 imageSteps: 20,
@@ -651,6 +662,23 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                 setSelectedModelId: (modelId) => set({ selectedModelId: modelId }),
                 setDetectedServerMode: (mode) => set({ detectedServerMode: mode }),
                 setAvailableModels: (models) => set({ availableModels: models }),
+                setModelCompatibility: (modelId, updates) =>
+                    set((state) => {
+                        const normalizedModelId = modelId.trim();
+                        if (!normalizedModelId) {
+                            return {};
+                        }
+
+                        return {
+                            modelCompatibilityByModelId: {
+                                ...state.modelCompatibilityByModelId,
+                                [normalizedModelId]: {
+                                    ...(state.modelCompatibilityByModelId[normalizedModelId] ?? createDefaultModelCompatibilitySettings()),
+                                    ...updates,
+                                },
+                            },
+                        };
+                    }),
 
                 // Image param actions
                 setImageSteps: (v) => set({ imageSteps: v }),
@@ -679,7 +707,7 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
             }),
             {
                 name: 'swarmui-roleplay-v1',
-                version: 8,
+                version: 9,
                 migrate: (persistedState) => {
                     const state = persistedState as Partial<RoleplayStoreState> & {
                         characters?: LegacyRoleplayCharacter[];
@@ -696,6 +724,7 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                             typeof state.chatMaxTokens === 'number'
                                 ? (state.chatMaxTokens === 2048 ? DEFAULT_CHAT_MAX_TOKENS : state.chatMaxTokens)
                                 : DEFAULT_CHAT_MAX_TOKENS,
+                        modelCompatibilityByModelId: state.modelCompatibilityByModelId ?? {},
                     } as any;
                 },
                 partialize: (state) => ({
@@ -704,6 +733,7 @@ export const useRoleplayStore = create<RoleplayStoreState>()(
                     activeCharacterId: state.activeCharacterId,
                     lmStudioEndpoint: state.lmStudioEndpoint,
                     selectedModelId: state.selectedModelId,
+                    modelCompatibilityByModelId: state.modelCompatibilityByModelId,
                     imageSteps: state.imageSteps,
                     imageCfgScale: state.imageCfgScale,
                     imageClipStopAtLayer: state.imageClipStopAtLayer,
