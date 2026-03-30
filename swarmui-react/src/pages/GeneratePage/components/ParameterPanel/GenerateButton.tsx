@@ -18,6 +18,8 @@ export interface GenerateButtonProps {
     onApplyQualityCoachFixes?: (overrides: Partial<GenerateParams>) => void;
     currentValues?: Partial<GenerateParams>;
     selectedModel?: Model | null;
+    disabled?: boolean;
+    disabledReason?: string;
 }
 
 function getSeverityColor(severity: QualityCoachSeverity): string {
@@ -55,6 +57,8 @@ export const GenerateButton = memo(function GenerateButton({
     onApplyQualityCoachFixes,
     currentValues,
     selectedModel,
+    disabled,
+    disabledReason,
 }: GenerateButtonProps) {
     const contextMenu = useContextMenu();
     const [coachOpened, setCoachOpened] = useState(false);
@@ -162,19 +166,26 @@ export const GenerateButton = memo(function GenerateButton({
         <>
             <Stack gap="xs">
                 <Group align="stretch" gap="xs" wrap="nowrap">
-                    <SwarmButton
-                        type="submit"
-                        size="lg"
-                        fullWidth
-                        tone="primary"
-                        emphasis="solid"
-                        className="gradient-button with-glow"
-                        leftSection={<IconPlayerPlay size={18} />}
-                        onContextMenu={contextMenu.open}
-                        style={{ flex: '1 1 auto' }}
+                    <Tooltip
+                        label={disabledReason ?? 'Cannot generate'}
+                        disabled={!disabled}
+                        withArrow
                     >
-                        Generate
-                    </SwarmButton>
+                        <SwarmButton
+                            type="submit"
+                            size="lg"
+                            fullWidth
+                            tone="primary"
+                            emphasis="solid"
+                            className="gradient-button with-glow"
+                            leftSection={<IconPlayerPlay size={18} />}
+                            onContextMenu={disabled ? undefined : contextMenu.open}
+                            style={{ flex: '1 1 auto', opacity: disabled ? 0.5 : 1, pointerEvents: disabled ? 'none' : undefined }}
+                            disabled={disabled}
+                        >
+                            Generate
+                        </SwarmButton>
+                    </Tooltip>
 
                     <Popover
                         opened={coachOpened}
