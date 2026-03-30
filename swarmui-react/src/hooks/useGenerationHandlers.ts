@@ -21,6 +21,7 @@ import { usePromptCacheStore } from '../stores/promptCacheStore';
 import { resolveAssetUrl } from '../config/runtimeEndpoints';
 import type { ModelMediaCapabilities } from '../utils/modelCapabilities';
 import { imageUrlToDataUrl } from '../utils/imageData';
+import { matchVideoProfile } from '../pages/GeneratePage/components/VideoSidebar/videoModelProfiles';
 
 interface GenerationFeatureToggles {
     enableInitImage: boolean;
@@ -476,6 +477,20 @@ export function useGenerationHandlers({
             normalizedValues.refinercontrolpercentage = normalizedValues.refinercontrol as number;
         }
 
+        // --- Video workflow injection ---
+        // If video is enabled and the model matches a known profile, inject the workflow ID
+        if (enableVideo && normalizedModel) {
+            const videoProfile = matchVideoProfile(normalizedModel);
+            if (videoProfile) {
+                // Determine workflow type from init image presence
+                const videoWorkflow = normalizedValues.initimage ? 'i2v' : 't2v';
+                const workflowId = videoProfile.workflowId[videoWorkflow];
+                if (workflowId) {
+                    (normalizedValues as Record<string, unknown>)['comfyuiworkflow'] = workflowId;
+                }
+            }
+        }
+
         paramsRef.current = normalizedValues;
 
         const coreParams = new Set([
@@ -538,6 +553,7 @@ export function useGenerationHandlers({
             if (['text2videoframes', 'text2videofps', 'text2videoformat'].includes(key)) {
                 return enableVideo && mediaCapabilities.supportsTextToVideo;
             }
+            if (key === 'comfyuiworkflow') return enableVideo;
 
             if (key === 'batchsize') return normalizedValues.batchsize !== undefined && normalizedValues.batchsize !== 1;
             if (key === 'vae') return normalizedValues.vae !== undefined && normalizedValues.vae !== 'Automatic' && normalizedValues.vae !== '';
