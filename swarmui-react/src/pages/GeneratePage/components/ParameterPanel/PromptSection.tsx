@@ -3,7 +3,7 @@ import { Stack, Group, Badge, Text, Box, Tooltip } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import type { GenerateParams } from '../../../../api/types';
 import { IconRefresh, IconX } from '@tabler/icons-react';
-import { PromptPresetSelector } from '../../../../components/PromptPresetSelector';
+import { PromptWizard } from '../../../../components/PromptWizard';
 import { PromptInput } from '../../../../components/PromptInput';
 import { QuickModeIndicator } from '../../../../components/QuickModeIndicator';
 import { SwarmActionIcon } from '../../../../components/ui';
@@ -16,7 +16,7 @@ import {
     stripManagedBlocks,
     upsertManagedBlock,
 } from '../../../../features/promptBuilder';
-import { prependPromptText } from '../../../../utils/promptPresetApply';
+import { prependPromptText } from '../../../../utils/promptTextTools';
 
 export interface PromptSectionProps {
     /** Form instance */
@@ -73,7 +73,7 @@ export const PromptSection = memo(function PromptSection({
         <Stack gap="sm" className="generate-studio__prompt-section">
             {/* Prompt Presets */}
             <Box className="generate-studio__prompt-library-trigger">
-                <PromptPresetSelector
+                <PromptWizard
                     compact
                     onApplyToPrompt={(text, mode) => {
                         if (mode === 'replace') {
