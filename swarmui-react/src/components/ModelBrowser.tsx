@@ -427,9 +427,11 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                 key={model.name}
                 withBorder
                 padding="md"
+                className="swarm-selectable-card"
+                data-selected={isSelected ? 'true' : undefined}
                 style={{
                     cursor: 'pointer',
-                    borderColor: isSelected ? 'var(--theme-info)' : undefined,
+                    borderColor: isSelected ? 'var(--theme-selected-border)' : undefined,
                     borderWidth: isSelected ? 2 : 1,
                 }}
                 onClick={() => handleSelectModel(model.name)}
@@ -443,7 +445,7 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                backgroundColor: 'var(--theme-gray-6)',
+                                backgroundColor: 'var(--theme-surface-input)',
                                 borderRadius: 4,
                                 overflow: 'hidden',
                             }}
@@ -475,7 +477,11 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                             )}
                         </Box>
                         <Group gap={4} wrap="nowrap">
-                            {loadedModelNames.has(model.name) && <Badge color="green" size="xs">Loaded</Badge>}
+                            {loadedModelNames.has(model.name) && (
+                                <SwarmBadge tone="success" size="xs">
+                                    Loaded
+                                </SwarmBadge>
+                            )}
                             {isSelected && <SwarmBadge tone="info" size="sm">Active</SwarmBadge>}
                             <SwarmActionIcon
                                 size="xs"
@@ -484,7 +490,7 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                                 label={starredModels.has(model.name) ? `Unstar ${model.title || model.name}` : `Star ${model.title || model.name}`}
                                 onClick={(e: MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); handleToggleStar(model.name); }}
                             >
-                                {starredModels.has(model.name) ? <IconStarFilled size={14} color="var(--mantine-color-yellow-5)" /> : <IconStar size={14} />}
+                                {starredModels.has(model.name) ? <IconStarFilled size={14} style={{ color: 'var(--theme-warning)' }} /> : <IconStar size={14} />}
                             </SwarmActionIcon>
                             <Menu shadow="md" width={160} position="bottom-end" withinPortal>
                                 <Menu.Target>
@@ -568,8 +574,10 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                 key={model.name}
                 withBorder
                 padding="sm"
+                className="swarm-selectable-card"
+                data-selected={isSelected ? 'true' : undefined}
                 style={{
-                    borderColor: isSelected ? 'var(--theme-info)' : undefined,
+                    borderColor: isSelected ? 'var(--theme-selected-border)' : undefined,
                     borderWidth: isSelected ? 2 : 1,
                     cursor: 'pointer'
                 }}
@@ -588,7 +596,7 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        backgroundColor: 'var(--theme-gray-6)',
+                                        backgroundColor: 'var(--theme-surface-input)',
                                         borderRadius: 4,
                                         overflow: 'hidden',
                                     }}
@@ -623,7 +631,11 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
 
                         {/* Right side - Actions */}
                         <Group gap="xs">
-                            {loadedModelNames.has(model.name) && <Badge color="green" size="xs">Loaded</Badge>}
+                            {loadedModelNames.has(model.name) && (
+                                <SwarmBadge tone="success" size="xs">
+                                    Loaded
+                                </SwarmBadge>
+                            )}
                             <SwarmActionIcon
                                 size="sm"
                                 tone="secondary"
@@ -631,7 +643,7 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                                 label={starredModels.has(model.name) ? `Unstar ${model.title || model.name}` : `Star ${model.title || model.name}`}
                                 onClick={(e: MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); handleToggleStar(model.name); }}
                             >
-                                {starredModels.has(model.name) ? <IconStarFilled size={16} color="var(--mantine-color-yellow-5)" /> : <IconStar size={16} />}
+                                {starredModels.has(model.name) ? <IconStarFilled size={16} style={{ color: 'var(--theme-warning)' }} /> : <IconStar size={16} />}
                             </SwarmActionIcon>
                             <SwarmActionIcon
                                 size="sm"
@@ -724,9 +736,11 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                 <Card
                     withBorder
                     padding="xs"
+                    className="swarm-selectable-card"
+                    data-selected={isSelected ? 'true' : undefined}
                     style={{
                         cursor: 'pointer',
-                        borderColor: isSelected ? 'var(--theme-info)' : undefined,
+                        borderColor: isSelected ? 'var(--theme-selected-border)' : undefined,
                         borderWidth: isSelected ? 2 : 1,
                         position: 'relative',
                     }}
@@ -760,9 +774,9 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                         </Menu.Dropdown>
                     </Menu>
                     {loadedModelNames.has(model.name) && (
-                        <Badge color="green" size="xs" style={{ position: 'absolute', top: 2, left: 2, zIndex: 1 }}>
+                        <SwarmBadge tone="success" size="xs" style={{ position: 'absolute', top: 2, left: 2, zIndex: 1 }}>
                             Loaded
-                        </Badge>
+                        </SwarmBadge>
                     )}
                     <SwarmActionIcon
                         size="xs"
@@ -772,7 +786,7 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                         onClick={(e: MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); handleToggleStar(model.name); }}
                         style={{ position: 'absolute', bottom: 2, right: 2, zIndex: 1 }}
                     >
-                        {starredModels.has(model.name) ? <IconStarFilled size={12} color="var(--mantine-color-yellow-5)" /> : <IconStar size={12} />}
+                        {starredModels.has(model.name) ? <IconStarFilled size={12} style={{ color: 'var(--theme-warning)' }} /> : <IconStar size={12} />}
                     </SwarmActionIcon>
                     <Stack gap={4} align="center">
                         {previewUrl ? (
@@ -783,7 +797,7 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    backgroundColor: 'var(--theme-gray-6)',
+                                    backgroundColor: 'var(--theme-surface-input)',
                                     borderRadius: 4,
                                     overflow: 'hidden',
                                 }}
@@ -802,11 +816,11 @@ export function ModelBrowser({ opened, onClose, selectedModel, onModelSelect, on
                                 style={{
                                     width: BROWSER_THUMBNAIL_SIZES[thumbnailSize].icon,
                                     height: BROWSER_THUMBNAIL_SIZES[thumbnailSize].icon,
-                                    backgroundColor: 'var(--theme-gray-6)',
+                                    backgroundColor: 'var(--theme-surface-input)',
                                     borderRadius: 4,
                                 }}
                             >
-                                <IconPhoto size={24} color="var(--theme-gray-3)" />
+                                <IconPhoto size={24} color="var(--theme-text-secondary)" />
                             </Center>
                         )}
                         <Text size="xs" fw={500} ta="center" lineClamp={2} w="100%">

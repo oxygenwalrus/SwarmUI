@@ -95,6 +95,70 @@ const WORKFLOW_STEPS: Array<{
     { id: 'segments', label: '4. Segments', helper: 'Use segment helpers for face, hair, clothing, or background cleanup.' },
     { id: 'generate', label: '5. Generate', helper: 'Sync back to Generate, run the inpaint step, or continue refining from the new result.' },
 ];
+const TOOL_GUIDANCE: Record<CanvasTool, {
+    title: string;
+    description: string;
+    recipeLabel: string;
+    steps: string[];
+    followUp: string;
+}> = {
+    brush: {
+        title: 'Brush',
+        description: 'Paint mask where you want the model to change or refine the image.',
+        recipeLabel: 'Masking Recipe',
+        steps: ['1. Paint only the areas you want regenerated.', '2. Use this after SAM2 to add missing mask coverage.', '3. Generate once the mask matches the change you want.'],
+        followUp: 'When the mask looks right, use Generate Actions to send it back to Generate.',
+    },
+    eraser: {
+        title: 'Eraser',
+        description: 'Remove mask from places you do not want changed.',
+        recipeLabel: 'Cleanup Recipe',
+        steps: ['1. Erase mask from areas you want protected.', '2. Use this after SAM2 or Brush to clean edges.', '3. Switch back to Brush if you still need more masked area.'],
+        followUp: 'Switch back to Brush once the protected areas are clear.',
+    },
+    pan: {
+        title: 'Pan',
+        description: 'Move around the workspace without editing the image or mask.',
+        recipeLabel: 'Navigation Recipe',
+        steps: ['1. Zoom in on the detail you want to inspect.', '2. Pan to the exact area.', '3. Switch back to an editing tool when you are ready to change something.'],
+        followUp: 'Return to Brush, Select, Region, or SAM2 when you are ready to edit.',
+    },
+    select: {
+        title: 'Select Box',
+        description: 'Create a temporary working area that limits brush, fill, invert, and SAM2 actions.',
+        recipeLabel: 'Selection Recipe',
+        steps: ['1. Draw a box over the area you want to work on.', '2. Run SAM2 or paint inside that box only.', '3. Clear the selection when you want to return to the full image.'],
+        followUp: 'Clear the selection when you want to edit the full canvas again.',
+    },
+    region: {
+        title: 'Region Box',
+        description: 'Draw prompt-controlled areas, then describe what each box is and what should appear inside it.',
+        recipeLabel: 'Regional Prompt Recipe',
+        steps: ['1. Draw a box over the part of the image you want to guide.', '2. Name what that area is in the Region card.', '3. Describe what you want added, changed, or emphasized in that area.'],
+        followUp: 'Use Region Label for what it is, and Region Prompt for what should be added or changed.',
+    },
+    crop: {
+        title: 'Move Layer',
+        description: 'Reposition the base image or any imported overlay layer inside the workspace.',
+        recipeLabel: 'Composition Recipe',
+        steps: ['1. Extend the canvas if you need more room.', '2. Move the base image or an imported layer into place.', '3. Start masking only after the composition is where you want it.'],
+        followUp: 'Use this before masking so the composition is in the right place.',
+    },
+    sam2points: {
+        title: 'SAM2 Points',
+        description: 'Use point prompts to automatically create a mask from the image content.',
+        recipeLabel: 'SAM2 Recipe',
+        steps: ['1. Optional: use Select first to limit the area.', '2. Left click what should be included and right click what should be excluded.', '3. Clean the resulting mask with Brush or Eraser.'],
+        followUp: 'SAM2 only builds the mask. Afterward, use Brush/Eraser to clean it up or Region boxes to describe the content.',
+    },
+    sam2bbox: {
+        title: 'SAM2 BBox',
+        description: 'Drag a box around an object to ask SAM2 for a mask inside that box.',
+        recipeLabel: 'SAM2 Recipe',
+        steps: ['1. Optional: use Select first to limit the area.', '2. Drag a box around the object you want masked.', '3. Clean the resulting mask with Brush or Eraser.'],
+        followUp: 'After the mask appears, switch to Brush/Eraser for cleanup or Region boxes for text guidance.',
+    },
+};
 
 function clamp(value: number, min: number, max: number): number {
     return Math.max(min, Math.min(max, value));
@@ -173,6 +237,7 @@ export const CanvasEditor = memo(function CanvasEditor({
     const [layerImageMap, setLayerImageMap] = useState<Record<string, HTMLImageElement>>({});
     const [sam2Available, setSam2Available] = useState<boolean | null>(null);
     const [sam2Busy, setSam2Busy] = useState(false);
+    const [sam2MaskReady, setSam2MaskReady] = useState(false);
     const [sam2Points, setSam2Points] = useState<{ positive: SamPoint[]; negative: SamPoint[] }>({ positive: [], negative: [] });
     const [sam2BoxStart, setSam2BoxStart] = useState<SamPoint | null>(null);
     const [sam2BoxDraft, setSam2BoxDraft] = useState<CanvasSelection | null>(null);
@@ -262,6 +327,7 @@ export const CanvasEditor = memo(function CanvasEditor({
     const layerRows = [{ id: null, name: 'Base Image', visible: true, opacity: 1, x: imageOffsetX, y: imageOffsetY, width: originalWidth, height: originalHeight }, ...imageLayers];
     const regionSummary = activeRegion?.label?.trim() || activeRegion?.prompt.trim().split(/\s+/).slice(0, 3).join(' ') || null;
     const activeWorkflowStep = WORKFLOW_STEPS.find((step) => step.id === workflowStep) ?? WORKFLOW_STEPS[0];
+    const currentToolGuidance = TOOL_GUIDANCE[currentTool];
     const primaryWorkflowAction = isWorkflowMode
         ? (() => {
             switch (workflowStep) {
@@ -284,6 +350,20 @@ export const CanvasEditor = memo(function CanvasEditor({
         setSam2BoxStart(null);
         setSam2BoxDraft(null);
     }, []);
+
+    const handleClearMask = useCallback(() => {
+        clearMask();
+        setSam2MaskReady(false);
+    }, [clearMask]);
+
+    const handlePromoteSam2ToRegions = useCallback(() => {
+        setTool('region');
+        onWorkflowStepChange?.('regions');
+    }, [onWorkflowStepChange, setTool]);
+
+    const handleReviewGenerateStep = useCallback(() => {
+        onWorkflowStepChange?.('generate');
+    }, [onWorkflowStepChange]);
 
     const handleImportImage = useCallback(async (src: string, suggestedName?: string) => {
         try {
@@ -349,6 +429,7 @@ export const CanvasEditor = memo(function CanvasEditor({
     useEffect(() => {
         previousLayoutRef.current = null;
         clearSam2State();
+        setSam2MaskReady(false);
         const img = new window.Image();
         let retried = false;
         img.onload = () => {
@@ -487,7 +568,7 @@ export const CanvasEditor = memo(function CanvasEditor({
                     if (activeImageLayerId) {
                         removeImageLayer(activeImageLayerId);
                     } else if (selectionRect) {
-                        clearMask();
+                        handleClearMask();
                     }
                     break;
                 case 'escape':
@@ -499,7 +580,7 @@ export const CanvasEditor = memo(function CanvasEditor({
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [activeImageLayerId, brushSettings.size, clearMask, clearSam2State, clearSelection, onClose, redo, removeImageLayer, selectionRect, setBrushSettings, setTool, undo]);
+    }, [activeImageLayerId, brushSettings.size, clearSam2State, clearSelection, handleClearMask, onClose, redo, removeImageLayer, selectionRect, setBrushSettings, setTool, undo]);
 
     useEffect(() => {
         const handlePaste = async (event: ClipboardEvent) => {
@@ -527,6 +608,7 @@ export const CanvasEditor = memo(function CanvasEditor({
         }
         clearSam2State();
         clearSelection();
+        setSam2MaskReady(false);
     }, [clearMaskVersion, clearSam2State, clearSelection, maskCanvasRef]);
 
     const buildApplyPayload = useCallback((): CanvasApplyPayload => {
@@ -639,6 +721,7 @@ export const CanvasEditor = memo(function CanvasEditor({
                 });
             });
             applyMaskImage(await loadImageElement(imageUrlResult), targetSelection);
+            setSam2MaskReady(true);
             notifications.show({ title: 'SAM2 Mask Updated', message: 'The mask was updated from the SAM2 result.', color: 'green' });
         } catch (error) {
             notifications.show({ title: 'SAM2 Failed', message: error instanceof Error ? error.message : 'Could not generate a SAM2 mask.', color: 'red' });
@@ -888,6 +971,42 @@ export const CanvasEditor = memo(function CanvasEditor({
                             )}
                             <Paper p="sm" radius="md" bg="invokeGray.8" withBorder>
                                 <Stack gap="xs">
+                                    <Text size="sm" fw={600} c="invokeGray.0">Mask vs Region vs Selection</Text>
+                                    <Text size="xs" c="invokeGray.4"><strong>Mask:</strong> where the model is allowed to change pixels.</Text>
+                                    <Text size="xs" c="invokeGray.4"><strong>Region:</strong> what should be in a named area, using prompt guidance.</Text>
+                                    <Text size="xs" c="invokeGray.4"><strong>Selection:</strong> a temporary editing boundary for Brush, Fill, Invert, and SAM2.</Text>
+                                    <Text size="xs" c="invokeGray.3">Common pattern: use Selection to limit the area, use SAM2 or Brush to build the Mask, then use Region boxes to describe what belongs there.</Text>
+                                </Stack>
+                            </Paper>
+                            <Paper p="sm" radius="md" bg="invokeGray.8" withBorder>
+                                <Stack gap="xs">
+                                    <Group justify="space-between">
+                                        <Text size="sm" fw={600} c="invokeGray.0">Current Tool</Text>
+                                        <Badge color="invokeBrand" variant="light">{currentToolGuidance.title}</Badge>
+                                    </Group>
+                                    <Text size="xs" c="invokeGray.3">
+                                        {currentToolGuidance.description}
+                                    </Text>
+                                    <Text size="xs" fw={600} c="invokeGray.2">
+                                        {currentToolGuidance.recipeLabel}
+                                    </Text>
+                                    {currentToolGuidance.steps.map((step) => (
+                                        <Text key={step} size="xs" c="invokeGray.4">
+                                            {step}
+                                        </Text>
+                                    ))}
+                                    <Text size="xs" c="invokeGray.3">
+                                        {currentToolGuidance.followUp}
+                                    </Text>
+                                    {currentTool === 'region' && activeRegion && (
+                                        <Text size="xs" c="invokeGray.4">
+                                            Active region: {activeRegion.label?.trim() || regionSummary || 'Unnamed region'}.
+                                        </Text>
+                                    )}
+                                </Stack>
+                            </Paper>
+                            <Paper p="sm" radius="md" bg="invokeGray.8" withBorder>
+                                <Stack gap="xs">
                                     <Group justify="space-between">
                                         <Text size="sm" fw={600} c="invokeGray.0">Image Layers</Text>
                                         {imageLayers.length > 0 && <SwarmButton size="compact-xs" emphasis="ghost" tone="secondary" onClick={clearImageLayers}>Clear Overlays</SwarmButton>}
@@ -906,6 +1025,7 @@ export const CanvasEditor = memo(function CanvasEditor({
                             <Paper p="sm" radius="md" bg="invokeGray.8" withBorder>
                                 <Stack gap="xs">
                                     <Group justify="space-between"><Text size="sm" fw={600} c="invokeGray.0">Selection + SAM2</Text><Badge color={sam2Available === false ? 'yellow' : sam2Available ? 'green' : 'gray'} variant="light">{sam2Available === false ? 'SAM2 unavailable' : sam2Available ? 'SAM2 ready' : 'SAM2 unknown'}</Badge></Group>
+                                    <Text size="xs" c="invokeGray.4">Use Select to limit the working area first. Then use SAM2 Points for click-based masking or SAM2 BBox for drag-a-box masking. SAM2 updates the mask only, not the prompt text.</Text>
                                     <Group grow>
                                         <SwarmButton size="xs" emphasis="soft" tone={currentTool === 'select' ? 'primary' : 'secondary'} onClick={() => setTool('select')}>Select Box</SwarmButton>
                                         <SwarmButton size="xs" emphasis="soft" tone={currentTool === 'sam2points' ? 'primary' : 'secondary'} disabled={sam2Busy} onClick={() => setTool('sam2points')}>SAM2 Points</SwarmButton>
@@ -917,16 +1037,31 @@ export const CanvasEditor = memo(function CanvasEditor({
                                     </Group>
                                     {(sam2Points.positive.length > 0 || sam2Points.negative.length > 0) && <Text size="xs" c="invokeGray.4">Positive: {sam2Points.positive.length} | Negative: {sam2Points.negative.length}</Text>}
                                     {sam2Busy && <Text size="xs" c="invokeGray.4">Requesting a SAM2 mask from the backend...</Text>}
+                                    {sam2MaskReady && (
+                                        <>
+                                            <Divider color="invokeGray.7" />
+                                            <Text size="xs" fw={600} c="invokeGray.2">Next Step After SAM2</Text>
+                                            <Text size="xs" c="invokeGray.4">SAM2 has created the mask. Most workflows now clean the mask, then optionally add Region boxes to describe what should appear there.</Text>
+                                            <Group grow>
+                                                <SwarmButton size="xs" emphasis="soft" onClick={() => setTool('brush')}>Clean With Brush</SwarmButton>
+                                                <SwarmButton size="xs" emphasis="soft" tone="secondary" onClick={() => setTool('eraser')}>Trim With Eraser</SwarmButton>
+                                            </Group>
+                                            <Group grow>
+                                                <SwarmButton size="xs" emphasis="soft" tone="secondary" onClick={handlePromoteSam2ToRegions}>Describe With Region Box</SwarmButton>
+                                                {isWorkflowMode && <SwarmButton size="xs" emphasis="ghost" tone="secondary" onClick={handleReviewGenerateStep}>Review Generate Step</SwarmButton>}
+                                            </Group>
+                                        </>
+                                    )}
                                 </Stack>
                             </Paper>
-                            {supportsPromptBuilder && <><Group justify="space-between"><Text size="sm" fw={500} c="invokeGray.1">Prompt Builder</Text><Badge color={syncState === 'synced' ? 'green' : syncState === 'manual_override' ? 'yellow' : 'gray'} variant="light">{syncState.replace('_', ' ')}</Badge></Group>{(workflowStep === 'regions' || workflowStep === 'source' || workflowStep === 'mask') && <RegionalPromptEditor />}{(workflowStep === 'segments' || workflowStep === 'generate') && <SegmentRulesPanel />}{!regions.length && !segments.length && workflowStep === 'regions' && <Text size="xs" c="invokeGray.4">Tip: label regions with simple names like Character A or Background.</Text>}<Divider color="invokeGray.7" /></>}
+                            {supportsPromptBuilder && <><Group justify="space-between"><Text size="sm" fw={500} c="invokeGray.1">Prompt Builder</Text><Badge color={syncState === 'synced' ? 'green' : syncState === 'manual_override' ? 'yellow' : 'gray'} variant="light">{syncState.replace('_', ' ')}</Badge></Group><Text size="xs" c="invokeGray.4">When you draw a region box, its card appears below. Name what the area is, then describe what you want changed or added inside it.</Text>{(workflowStep === 'regions' || workflowStep === 'source' || workflowStep === 'mask') && <RegionalPromptEditor />}{(workflowStep === 'segments' || workflowStep === 'generate') && <SegmentRulesPanel />}{!regions.length && !segments.length && workflowStep === 'regions' && <Text size="xs" c="invokeGray.4">Tip: label regions with simple names like Character A or Background.</Text>}<Divider color="invokeGray.7" /></>}
                             <Box><Text size="sm" fw={500} c="invokeGray.1" mb="xs">Brush Size: {brushSettings.size}px</Text><SwarmSlider value={brushSettings.size} onChange={(value) => setBrushSettings({ size: value })} min={1} max={200} /><Group gap="xs" mt="xs">{BRUSH_SIZES.map((size) => <SwarmActionIcon key={size} size="sm" emphasis={brushSettings.size === size ? 'solid' : 'soft'} tone={brushSettings.size === size ? 'primary' : 'secondary'} label={`Set brush size to ${size}`} onClick={() => setBrushSettings({ size })}><Text size="xs">{size}</Text></SwarmActionIcon>)}</Group></Box>
                             <Divider color="invokeGray.7" />
                             <Box><Text size="sm" fw={500} c="invokeGray.1" mb="xs">Mask Opacity: {Math.round(maskOpacity * 100)}%</Text><SwarmSlider value={maskOpacity} onChange={setMaskOpacity} min={0.1} max={1} step={0.1} /></Box>
                             <Divider color="invokeGray.7" />
                             <Box><Text size="sm" fw={500} c="invokeGray.1" mb="xs">Mask Color</Text><ColorInput value={maskColor} onChange={setMaskColor} format="hex" withPicker swatches={['#ff0000', '#ff9900', '#ffff00', '#00ff66', '#00ffff', '#3388ff', '#ff00ff']} /></Box>
                             <Divider color="invokeGray.7" />
-                            <Box><Text size="sm" fw={500} c="invokeGray.1" mb="xs">Mask Actions</Text><Stack gap="xs"><SwarmButton emphasis="soft" size="xs" fullWidth leftSection={<IconPaint size={14} />} onClick={fillMask}>Fill Mask</SwarmButton><SwarmButton emphasis="soft" tone="secondary" size="xs" fullWidth leftSection={<IconTrash size={14} />} onClick={clearMask}>{selectionRect ? 'Clear Selection Mask' : 'Clear Mask'}</SwarmButton><SwarmButton emphasis="soft" tone="secondary" size="xs" fullWidth leftSection={<IconSwitchHorizontal size={14} />} onClick={invertMask}>{selectionRect ? 'Invert Selection Mask' : 'Invert Mask'}</SwarmButton><SwarmButton emphasis="soft" tone="secondary" size="xs" fullWidth onClick={toggleMaskVisibility}>{showMask ? 'Hide Mask' : 'Show Mask'}</SwarmButton></Stack></Box>
+                            <Box><Text size="sm" fw={500} c="invokeGray.1" mb="xs">Mask Actions</Text><Stack gap="xs"><SwarmButton emphasis="soft" size="xs" fullWidth leftSection={<IconPaint size={14} />} onClick={fillMask}>Fill Mask</SwarmButton><SwarmButton emphasis="soft" tone="secondary" size="xs" fullWidth leftSection={<IconTrash size={14} />} onClick={handleClearMask}>{selectionRect ? 'Clear Selection Mask' : 'Clear Mask'}</SwarmButton><SwarmButton emphasis="soft" tone="secondary" size="xs" fullWidth leftSection={<IconSwitchHorizontal size={14} />} onClick={invertMask}>{selectionRect ? 'Invert Selection Mask' : 'Invert Mask'}</SwarmButton><SwarmButton emphasis="soft" tone="secondary" size="xs" fullWidth onClick={toggleMaskVisibility}>{showMask ? 'Hide Mask' : 'Show Mask'}</SwarmButton></Stack></Box>
                             {activeLayer && <><Divider color="invokeGray.7" /><Box><Text size="sm" fw={500} c="invokeGray.1" mb="xs">Active Layer Opacity</Text><SwarmSlider value={activeLayer.opacity} onChange={(value) => updateImageLayer(activeLayer.id, { opacity: value })} min={0.1} max={1} step={0.05} /></Box></>}
                             {isWorkflowMode && <><Divider color="invokeGray.7" /><Box><Text size="sm" fw={500} c="invokeGray.1" mb="xs">Generate Actions</Text><Stack gap="xs"><SwarmButton emphasis="soft" size="xs" fullWidth onClick={() => handleWorkflowAction('apply')}>Apply to Generate</SwarmButton><SwarmButton emphasis="solid" size="xs" fullWidth disabled={!getMaskDataUrl()} onClick={() => handleWorkflowAction('generate')}>Generate Inpaint</SwarmButton><SwarmButton emphasis="soft" tone="secondary" size="xs" fullWidth onClick={onOpenUpscaler}>Open Upscaler</SwarmButton></Stack></Box>{pendingResult && <Paper p="sm" radius="md" bg="invokeGray.8" withBorder><Stack gap="xs"><Group justify="space-between"><Text size="sm" fw={600} c="invokeGray.0">New Result Ready</Text><Badge color={pendingResult.source === 'upscale' ? 'teal' : 'green'} variant="light">{pendingResult.source === 'upscale' ? 'Upscale' : 'Generate'}</Badge></Group><img src={pendingResult.imageUrl} alt="Pending workflow result" style={{ width: '100%', borderRadius: 8, border: '1px solid var(--mantine-color-invokeGray-7)' }} /><Group grow><SwarmButton size="xs" emphasis="soft" onClick={onUsePendingResult}>Use Result</SwarmButton><SwarmButton size="xs" emphasis="solid" onClick={onContinueRefining}>Continue Refining</SwarmButton></Group></Stack></Paper>}</>}
                             <Divider color="invokeGray.7" />

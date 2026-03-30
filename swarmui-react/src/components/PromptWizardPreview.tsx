@@ -218,7 +218,6 @@ export const PromptWizardPreview = memo(function PromptWizardPreview({
                 fontFamily: 'monospace',
                 fontSize: 'var(--mantine-font-size-xs)',
                 padding: '6px 8px',
-                minHeight: 32,
               },
             }}
           />
@@ -236,7 +235,6 @@ export const PromptWizardPreview = memo(function PromptWizardPreview({
                   fontSize: 'var(--mantine-font-size-xs)',
                   color: 'var(--mantine-color-red-text)',
                   padding: '6px 8px',
-                  minHeight: 28,
                 },
               }}
             />

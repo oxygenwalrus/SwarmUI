@@ -16,6 +16,8 @@
     "test": "vitest run",
     "lint": "eslint .",
     "audit:prompt-wizard": "node scripts/prompt-wizard-audit.mjs",
+    "theme:audit": "node scripts/theme-audit.mjs",
+    "theme:contrast-audit": "node scripts/theme-contrast-audit.mjs",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "prepare": "husky"
   },

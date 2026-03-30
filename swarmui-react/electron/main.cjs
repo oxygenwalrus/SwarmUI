@@ -1076,6 +1076,23 @@ ipcMain.handle('restart-swarmui', async () => {
   return { success: true };
 });
 
+ipcMain.handle('shutdown-app', async () => {
+  isQuitting = true;
+  await stopProcesses();
+  setImmediate(() => {
+    app.quit();
+  });
+  return true;
+});
+
+ipcMain.handle('reload-wrapper', async () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.reload();
+    return true;
+  }
+  return false;
+});
+
 ipcMain.on('set-prompt-target-active', (event, payload) => {
   const wcId = event.sender.id;
   const isActive = !!(payload && payload.active);

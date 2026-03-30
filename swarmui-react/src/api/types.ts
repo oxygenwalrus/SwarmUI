@@ -268,6 +268,14 @@ export interface BackendStatus {
   type: string;
   modcount: number;
   class: string;
+  enabled?: boolean;
+  title?: string;
+  can_load_models?: boolean;
+  max_usages?: number;
+  current_model?: string | null;
+  settings?: Record<string, unknown>;
+  seconds_since_used?: number;
+  time_since_used?: string;
   [key: string]: unknown;
 }
 
@@ -480,6 +488,9 @@ export interface BackendDetail {
   title: string;
   can_load_models: boolean;
   max_usages: number;
+  current_model?: string | null;
+  seconds_since_used?: number;
+  time_since_used?: string;
 }
 
 // === Log Types ===

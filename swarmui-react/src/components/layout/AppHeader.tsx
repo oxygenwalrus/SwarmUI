@@ -1,8 +1,6 @@
 import {
-    ActionIcon,
     Group,
     Menu,
-    SegmentedControl,
     Text,
     Tooltip,
 } from '@mantine/core';
@@ -22,6 +20,7 @@ import { QueueStatusBadge } from '../QueueStatusBadge';
 import { useThemeStore } from '../../store/themeStore';
 import type { AppPage } from '../../stores/navigationStore';
 import { useShallow } from 'zustand/react/shallow';
+import { SwarmActionIcon, SwarmSegmentedControl } from '../ui';
 
 interface AppHeaderProps {
     currentPage: AppPage;
@@ -43,16 +42,16 @@ function LightDarkToggle() {
 
     return (
         <Tooltip label={isLightMode ? 'Switch to Dark Mode' : 'Switch to Light Mode'}>
-            <ActionIcon
+            <SwarmActionIcon
                 aria-label={isLightMode ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-                variant="subtle"
+                tone="secondary"
+                emphasis="ghost"
                 size="md"
                 onClick={toggleLightMode}
-                color="gray"
                 className="swarm-app-header-action swarm-app-header-action--theme"
             >
                 {isLightMode ? <IconMoon size={18} /> : <IconSun size={18} />}
-            </ActionIcon>
+            </SwarmActionIcon>
         </Tooltip>
     );
 }
@@ -89,12 +88,12 @@ export function AppHeader({
 
     return (
         <div className="swarm-app-header" data-layout={layoutMode}>
-            <Text size="lg" fw={700} c="invokeGray.0" className="swarm-app-header__title">
+            <Text size="lg" fw={700} className="swarm-app-header__title">
                 {layoutMode === 'full' ? 'SwarmUI' : 'Swarm'}
             </Text>
 
             <div className="swarm-app-header__nav-wrap">
-                <SegmentedControl
+                <SwarmSegmentedControl
                     value={currentPage}
                     onChange={(value) => onPageChange(value as AppPage)}
                     data={navItems.map((item) => ({
@@ -108,7 +107,6 @@ export function AppHeader({
                             </span>
                         ),
                     }))}
-                    color="invokeBrand"
                     size={layoutMode === 'full' ? 'sm' : 'xs'}
                     className="swarm-app-header__nav"
                 />
@@ -122,15 +120,15 @@ export function AppHeader({
                 {showOverflowActions ? (
                     <Menu position="bottom-end" shadow="md" withArrow>
                         <Menu.Target>
-                            <ActionIcon
+                            <SwarmActionIcon
                                 aria-label="Open header actions menu"
-                                variant="subtle"
+                                tone="secondary"
+                                emphasis="ghost"
                                 size="md"
-                                color="gray"
                                 className="swarm-app-header-action"
                             >
                                 <IconDotsVertical size={18} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Menu.Target>
                         <Menu.Dropdown>
                             <Menu.Item leftSection={<IconSearch size={14} />} onClick={onOpenCommandPalette}>
@@ -153,64 +151,64 @@ export function AppHeader({
                 ) : (
                     <>
                         <Tooltip label="Command palette">
-                            <ActionIcon
+                            <SwarmActionIcon
                                 aria-label="Open command palette"
-                                variant="subtle"
+                                tone="secondary"
+                                emphasis="ghost"
                                 size="md"
-                                color="gray"
                                 onClick={onOpenCommandPalette}
                                 className="swarm-app-header-action"
                             >
                                 <IconSearch size={18} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
                         <Tooltip label="Model Downloader">
-                            <ActionIcon
+                            <SwarmActionIcon
                                 aria-label="Open Model Downloader"
-                                variant="subtle"
+                                tone="secondary"
+                                emphasis="ghost"
                                 size="md"
-                                color="gray"
                                 onClick={onOpenModelDownloader}
                                 className="swarm-app-header-action swarm-app-header-action--download"
                             >
                                 <IconDownload size={18} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
                         <Tooltip label="Reload desktop wrapper">
-                            <ActionIcon
+                            <SwarmActionIcon
                                 aria-label="Reload desktop wrapper"
-                                variant="subtle"
+                                tone="secondary"
+                                emphasis="ghost"
                                 size="md"
-                                color="gray"
                                 onClick={onReloadWrapper}
                                 className="swarm-app-header-action swarm-app-header-action--reload"
                             >
                                 <IconReload size={18} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
                         <Tooltip label="Log Out">
-                            <ActionIcon
+                            <SwarmActionIcon
                                 aria-label="Log out"
-                                variant="subtle"
+                                tone="secondary"
+                                emphasis="ghost"
                                 size="md"
-                                color="gray"
                                 onClick={onLogout}
                                 className="swarm-app-header-action swarm-app-header-action--logout"
                             >
                                 <IconLogout size={18} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
                         <Tooltip label="Shutdown SwarmUI">
-                            <ActionIcon
+                            <SwarmActionIcon
                                 aria-label="Shutdown SwarmUI"
-                                variant="subtle"
+                                tone="danger"
+                                emphasis="ghost"
                                 size="md"
-                                color="gray"
                                 onClick={onShutdown}
                                 className="swarm-app-header-action swarm-app-header-action--shutdown"
                             >
                                 <IconPower size={18} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
                     </>
                 )}

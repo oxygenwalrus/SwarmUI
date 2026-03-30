@@ -1,5 +1,11 @@
 import { probeAssistantConnection } from './magicPromptService';
 import type { AssistantServerMode } from '../types/assistant';
+import type {
+    ChatMessage,
+    RoleplayCharacter,
+    RoleplayModelCompatibilitySettings,
+} from '../types/roleplay';
+import { ROLEPLAY_MAX_MEMORY_FACTS } from '../features/roleplay/roleplayMemory';
 
 export { probeAssistantConnection };
 
@@ -34,6 +40,24 @@ interface StreamChatInput {
     signal?: AbortSignal;
     temperature?: number;
     maxTokens?: number;
+    compatibility?: RoleplayModelCompatibilitySettings;
+}
+
+interface NonStreamingChatInput {
+    endpointUrl: string;
+    serverMode: AssistantServerMode;
+    modelId: string;
+    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>;
+    temperature?: number;
+    maxTokens?: number;
+    compatibility?: RoleplayModelCompatibilitySettings;
+}
+
+interface NonStreamingChatResult {
+    success: boolean;
+    content: string;
+    error?: string;
+    correctedMode?: AssistantServerMode;
 }
 
 interface SSEChunk {
@@ -265,10 +289,11 @@ async function doStreamRequest(
 
 export async function streamRoleplayChat(input: StreamChatInput): Promise<void> {
     const base = normalizeUrl(input.endpointUrl);
+    const compatibleMessages = applyCompatibilitySettings(input.messages, input.compatibility);
 
     try {
         const url = getChatUrl(base, input.serverMode);
-        const body = buildChatBody(input.serverMode, input.modelId, input.messages, {
+        const body = buildChatBody(input.serverMode, input.modelId, compatibleMessages, {
             temperature: input.temperature,
             max_tokens: input.maxTokens,
         });
@@ -283,7 +308,7 @@ export async function streamRoleplayChat(input: StreamChatInput): Promise<void> 
                 isInputRequiredError(result.errorText)
             ) {
                 const retryUrl = getChatUrl(base, 'openai-responses');
-                const retryBody = buildChatBody('openai-responses', input.modelId, input.messages, {
+                const retryBody = buildChatBody('openai-responses', input.modelId, compatibleMessages, {
                     temperature: input.temperature,
                     max_tokens: input.maxTokens,
                 });
@@ -314,24 +339,156 @@ export async function streamRoleplayChat(input: StreamChatInput): Promise<void> 
     }
 }
 
-export async function generateSceneDescription(input: {
-    endpointUrl: string;
-    serverMode: AssistantServerMode;
-    modelId: string;
-    conversationContext: string;
-    sceneSuggestionPrompt: string;
-}): Promise<{ success: boolean; description: string; error?: string }> {
+async function extractTextFromResponse(
+    response: Response,
+    serverMode: AssistantServerMode
+): Promise<NonStreamingChatResult> {
+    const data = await response.json();
+
+    let content: string | undefined;
+
+    if (serverMode === 'openai-responses') {
+        // Responses API format: prefer assistant message output_text over reasoning_text.
+        const output = (data as Record<string, unknown>).output;
+        if (Array.isArray(output)) {
+            for (const item of output) {
+                const typedItem = item as Record<string, unknown>;
+                if (typedItem.type !== 'message' || typedItem.role !== 'assistant') {
+                    continue;
+                }
+
+                const itemContent = typedItem.content;
+                if (Array.isArray(itemContent)) {
+                    for (const part of itemContent) {
+                        const typedPart = part as Record<string, unknown>;
+                        const text = typedPart.text;
+                        if (
+                            (typedPart.type === 'output_text' || typedPart.type === 'text') &&
+                            typeof text === 'string'
+                        ) {
+                            content = text.trim();
+                            break;
+                        }
+                    }
+                }
+                if (content) break;
+            }
+        }
+
+        if (!content) {
+            const fallbackOutput = (data as Record<string, unknown>).output;
+            if (Array.isArray(fallbackOutput)) {
+                for (const item of fallbackOutput) {
+                    const itemContent = (item as Record<string, unknown>).content;
+                    if (Array.isArray(itemContent)) {
+                        for (const part of itemContent) {
+                            const typedPart = part as Record<string, unknown>;
+                            const text = typedPart.text;
+                            if (typeof text === 'string') {
+                                content = text.trim();
+                                break;
+                            }
+                        }
+                    }
+                    if (content) break;
+                }
+            }
+        }
+    } else {
+        // Chat Completions format
+        const choices = (data as { choices?: Array<{ message?: { content?: string } }> }).choices;
+        content = choices?.[0]?.message?.content?.trim();
+    }
+
+    if (!content) {
+        return { success: false, content: '', error: 'Empty response from server' };
+    }
+
+    return { success: true, content };
+}
+
+function applyCompatibilitySettings(
+    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
+    compatibility?: RoleplayModelCompatibilitySettings
+): Array<{ role: 'system' | 'user' | 'assistant'; content: string }> {
+    let nextMessages = messages
+        .map((message) => ({
+            ...message,
+            content: message.content.trim(),
+        }))
+        .filter((message) => message.content)
+        .filter((message, index, source) => {
+            const previousMessage = source[index - 1];
+            if (!previousMessage) {
+                return true;
+            }
+
+            return !(
+                previousMessage.role === message.role &&
+                previousMessage.content === message.content
+            );
+        });
+
+    if (!compatibility) {
+        return nextMessages;
+    }
+
+    if (compatibility.inlineSystemPrompt) {
+        const systemInstructions = nextMessages
+            .filter((message) => message.role === 'system')
+            .map((message) => message.content)
+            .join('\n\n')
+            .trim();
+        nextMessages = nextMessages.filter((message) => message.role !== 'system');
+
+        if (systemInstructions) {
+            const firstUserIndex = nextMessages.findIndex((message) => message.role === 'user');
+            const instructionPrefix =
+                'Follow these instructions for the entire conversation:\n' +
+                systemInstructions;
+
+            if (firstUserIndex >= 0) {
+                nextMessages[firstUserIndex] = {
+                    ...nextMessages[firstUserIndex],
+                    content:
+                        `${instructionPrefix}\n\nCurrent user request:\n` +
+                        nextMessages[firstUserIndex].content,
+                };
+            } else {
+                nextMessages.unshift({
+                    role: 'user',
+                    content:
+                        `${instructionPrefix}\n\nRespond to the conversation so far while staying in character.`,
+                });
+            }
+        }
+    }
+
+    if (!nextMessages.some((message) => message.role === 'user')) {
+        nextMessages.push({
+            role: 'user',
+            content: 'Respond appropriately while following all prior instructions and context.',
+        });
+    }
+
+    if (compatibility.forceFinalUserTurn && nextMessages[nextMessages.length - 1]?.role !== 'user') {
+        nextMessages.push({
+            role: 'user',
+            content:
+                'Continue naturally from the conversation so far while following all prior instructions and staying in character.',
+        });
+    }
+
+    return nextMessages;
+}
+
+async function requestNonStreamingChat(input: NonStreamingChatInput): Promise<NonStreamingChatResult> {
     const base = normalizeUrl(input.endpointUrl);
     const url = getChatUrl(base, input.serverMode);
-
-    const messages = [
-        { role: 'system', content: input.sceneSuggestionPrompt },
-        { role: 'user', content: input.conversationContext },
-    ];
-
-    const body = buildChatBody(input.serverMode, input.modelId, messages, {
-        temperature: 0.7,
-        max_tokens: 200,
+    const compatibleMessages = applyCompatibilitySettings(input.messages, input.compatibility);
+    const body = buildChatBody(input.serverMode, input.modelId, compatibleMessages, {
+        temperature: input.temperature,
+        max_tokens: input.maxTokens,
         stream: false,
     });
 
@@ -345,12 +502,11 @@ export async function generateSceneDescription(input: {
         if (!response.ok) {
             const errText = await response.text().catch(() => response.statusText);
 
-            // Auto-retry with Responses API if needed
             if (response.status === 400 && input.serverMode !== 'openai-responses' && isInputRequiredError(errText)) {
                 const retryUrl = getChatUrl(base, 'openai-responses');
-                const retryBody = buildChatBody('openai-responses', input.modelId, messages, {
-                    temperature: 0.7,
-                    max_tokens: 200,
+                const retryBody = buildChatBody('openai-responses', input.modelId, compatibleMessages, {
+                    temperature: input.temperature,
+                    max_tokens: input.maxTokens,
                     stream: false,
                 });
                 const retryResponse = await fetch(retryUrl, {
@@ -359,62 +515,234 @@ export async function generateSceneDescription(input: {
                     body: retryBody,
                 });
 
-                if (retryResponse.ok) {
-                    return extractSceneFromResponse(retryResponse, input.serverMode);
+                if (!retryResponse.ok) {
+                    const retryErr = await retryResponse.text().catch(() => retryResponse.statusText);
+                    return {
+                        success: false,
+                        content: '',
+                        error: `Server error ${retryResponse.status}: ${retryErr}`,
+                    };
                 }
 
-                const retryErr = await retryResponse.text().catch(() => retryResponse.statusText);
-                return { success: false, description: '', error: `Server error ${retryResponse.status}: ${retryErr}` };
+                const retryResult = await extractTextFromResponse(retryResponse, 'openai-responses');
+                return {
+                    ...retryResult,
+                    correctedMode: retryResult.success ? 'openai-responses' : undefined,
+                };
             }
 
-            return { success: false, description: '', error: `Server error ${response.status}: ${errText}` };
+            return { success: false, content: '', error: `Server error ${response.status}: ${errText}` };
         }
 
-        return extractSceneFromResponse(response, input.serverMode);
+        return extractTextFromResponse(response, input.serverMode);
     } catch (error) {
         return {
             success: false,
-            description: '',
+            content: '',
             error: `Failed to reach server: ${error instanceof Error ? error.message : 'Unknown error'}`,
         };
     }
 }
 
-async function extractSceneFromResponse(
-    response: Response,
-    serverMode: AssistantServerMode
-): Promise<{ success: boolean; description: string; error?: string }> {
-    const data = await response.json();
+function extractJsonObject(text: string): string | null {
+    const fencedMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    const candidate = fencedMatch?.[1]?.trim() || text.trim();
+    const start = candidate.indexOf('{');
+    const end = candidate.lastIndexOf('}');
 
-    let content: string | undefined;
-
-    if (serverMode === 'openai-responses') {
-        // Responses API format: { output: [{ content: [{ text: "..." }] }] }
-        const output = (data as Record<string, unknown>).output;
-        if (Array.isArray(output)) {
-            for (const item of output) {
-                const itemContent = (item as Record<string, unknown>).content;
-                if (Array.isArray(itemContent)) {
-                    for (const part of itemContent) {
-                        const text = (part as Record<string, unknown>).text;
-                        if (typeof text === 'string') {
-                            content = text.trim();
-                            break;
-                        }
-                    }
-                }
-                if (content) break;
-            }
-        }
-    } else {
-        // Chat Completions format
-        const choices = (data as { choices?: Array<{ message?: { content?: string } }> }).choices;
-        content = choices?.[0]?.message?.content?.trim();
+    if (start === -1 || end === -1 || end <= start) {
+        return null;
     }
 
-    if (!content) {
-        return { success: false, description: '', error: 'Empty response from server' };
+    return candidate.slice(start, end + 1);
+}
+
+export async function generateSceneDescription(input: {
+    endpointUrl: string;
+    serverMode: AssistantServerMode;
+    modelId: string;
+    conversationContext: string;
+    sceneSuggestionPrompt: string;
+    compatibility?: RoleplayModelCompatibilitySettings;
+}): Promise<{ success: boolean; description: string; error?: string; correctedMode?: AssistantServerMode }> {
+    const result = await requestNonStreamingChat({
+        endpointUrl: input.endpointUrl,
+        serverMode: input.serverMode,
+        modelId: input.modelId,
+        messages: [
+            { role: 'system', content: input.sceneSuggestionPrompt },
+            { role: 'user', content: input.conversationContext },
+        ],
+        temperature: 0.7,
+        maxTokens: 200,
+        compatibility: input.compatibility,
+    });
+
+    if (!result.success) {
+        return { success: false, description: '', error: result.error };
     }
 
-    return { success: true, description: content };
+    return {
+        success: true,
+        description: result.content,
+        correctedMode: result.correctedMode,
+    };
+}
+
+export async function generateRoleplayMemory(input: {
+    endpointUrl: string;
+    serverMode: AssistantServerMode;
+    modelId: string;
+    character: Pick<RoleplayCharacter, 'name' | 'interactionStyle' | 'personality' | 'systemPrompt' | 'conversationSummary' | 'continuity' | 'memoryFacts'>;
+    sourceMessages: ChatMessage[];
+    conversationContext: string;
+    compatibility?: RoleplayModelCompatibilitySettings;
+}): Promise<{
+    success: boolean;
+    conversationSummary: string;
+    continuity: RoleplayCharacter['continuity'];
+    memoryFacts: string[];
+    error?: string;
+    correctedMode?: AssistantServerMode;
+}> {
+    const existingPinnedFacts = input.character.memoryFacts
+        .filter((fact) => fact.pinned)
+        .map((fact) => fact.text.trim())
+        .filter((fact) => fact);
+    const existingFacts = input.character.memoryFacts
+        .map((fact) => fact.text.trim())
+        .filter((fact) => fact);
+
+    const result = await requestNonStreamingChat({
+        endpointUrl: input.endpointUrl,
+        serverMode: input.serverMode,
+        modelId: input.modelId,
+        messages: [
+            {
+                role: 'system',
+                content:
+                    'You maintain long-term memory for a roleplay conversation. ' +
+                    'Summarize only durable context and extract only stable, important facts. ' +
+                    'Keep names, relationship state, promises, preferences, unresolved threads, ' +
+                    'major events, current location, current situation, and lasting details. Exclude fluff, one-off wording, and purely ' +
+                    'stylistic phrases. Return JSON only with this exact shape: ' +
+                    '{"conversationSummary":"string","continuity":{"relationshipSummary":"string","currentLocation":"string","currentSituation":"string","openThreads":["thread 1"]},"memoryFacts":["fact 1","fact 2"]}.',
+            },
+            {
+                role: 'user',
+                content: JSON.stringify({
+                    characterName: input.character.name,
+                    interactionStyle: input.character.interactionStyle,
+                    personality: input.character.personality,
+                    systemPrompt: input.character.systemPrompt,
+                    existingSummary: input.character.conversationSummary,
+                    existingContinuity: input.character.continuity,
+                    existingFacts,
+                    pinnedFacts: existingPinnedFacts,
+                    maxFacts: ROLEPLAY_MAX_MEMORY_FACTS,
+                    sourceMessageCount: input.sourceMessages.length,
+                    conversationContext: input.conversationContext,
+                }),
+            },
+        ],
+        temperature: 0.3,
+        maxTokens: 800,
+        compatibility: input.compatibility,
+    });
+
+    if (!result.success) {
+        return {
+            success: false,
+            conversationSummary: '',
+            continuity: {
+                relationshipSummary: '',
+                currentLocation: '',
+                currentSituation: '',
+                openThreads: [],
+            },
+            memoryFacts: [],
+            error: result.error,
+        };
+    }
+
+    const jsonText = extractJsonObject(result.content);
+    if (!jsonText) {
+        return {
+            success: false,
+            conversationSummary: '',
+            continuity: {
+                relationshipSummary: '',
+                currentLocation: '',
+                currentSituation: '',
+                openThreads: [],
+            },
+            memoryFacts: [],
+            error: 'Memory response was not valid JSON.',
+        };
+    }
+
+    try {
+        const parsed = JSON.parse(jsonText) as {
+            conversationSummary?: unknown;
+            continuity?: unknown;
+            memoryFacts?: unknown;
+        };
+        const conversationSummary =
+            typeof parsed.conversationSummary === 'string'
+                ? parsed.conversationSummary.trim()
+                : '';
+        const parsedContinuity =
+            parsed.continuity && typeof parsed.continuity === 'object'
+                ? (parsed.continuity as Record<string, unknown>)
+                : {};
+        const continuity = {
+            relationshipSummary:
+                typeof parsedContinuity.relationshipSummary === 'string'
+                    ? parsedContinuity.relationshipSummary.trim()
+                    : '',
+            currentLocation:
+                typeof parsedContinuity.currentLocation === 'string'
+                    ? parsedContinuity.currentLocation.trim()
+                    : '',
+            currentSituation:
+                typeof parsedContinuity.currentSituation === 'string'
+                    ? parsedContinuity.currentSituation.trim()
+                    : '',
+            openThreads: Array.isArray(parsedContinuity.openThreads)
+                ? parsedContinuity.openThreads
+                      .filter((thread): thread is string => typeof thread === 'string')
+                      .map((thread) => thread.trim())
+                      .filter((thread) => thread)
+                      .slice(0, 6)
+                : [],
+        };
+        const memoryFacts = Array.isArray(parsed.memoryFacts)
+            ? parsed.memoryFacts
+                  .filter((fact): fact is string => typeof fact === 'string')
+                  .map((fact) => fact.trim())
+                  .filter((fact) => fact)
+                  .slice(0, ROLEPLAY_MAX_MEMORY_FACTS)
+            : [];
+
+        return {
+            success: true,
+            conversationSummary,
+            continuity,
+            memoryFacts,
+            correctedMode: result.correctedMode,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            conversationSummary: '',
+            continuity: {
+                relationshipSummary: '',
+                currentLocation: '',
+                currentSituation: '',
+                openThreads: [],
+            },
+            memoryFacts: [],
+            error: `Failed to parse memory JSON: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        };
+    }
 }

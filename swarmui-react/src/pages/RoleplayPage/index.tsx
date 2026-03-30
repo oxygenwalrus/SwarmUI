@@ -10,31 +10,33 @@ import { useResizablePanel } from '../../hooks/useResizablePanel';
 import { useRoleplayStore } from '../../stores/roleplayStore';
 import { probeAssistantConnection } from '../../services/roleplayChatService';
 import { CharacterSidebar } from './CharacterSidebar';
+import { CharacterSelectionPanel } from './CharacterSelectionPanel';
 import { ChatPanel } from './ChatPanel';
 import { ControlsPanel } from './ControlsPanel';
 
 export function RoleplayPage() {
     const [controlsPanelOpen, setControlsPanelOpen] = useState(true);
+    const [showCharacterPicker, setShowCharacterPicker] = useState(true);
     const generateSceneRef = useRef<(() => void) | null>(null);
     const generateSceneWithPromptRef = useRef<((prompt: string) => void) | null>(null);
 
     const {
+        activeCharacterId,
         lmStudioEndpoint,
         setConnectionStatus,
         setConnectionMessage,
         setDetectedServerMode,
         setAvailableModels,
         setSelectedModelId,
-        selectedModelId,
     } = useRoleplayStore(
         useShallow((s) => ({
+            activeCharacterId: s.activeCharacterId,
             lmStudioEndpoint: s.lmStudioEndpoint,
             setConnectionStatus: s.setConnectionStatus,
             setConnectionMessage: s.setConnectionMessage,
             setDetectedServerMode: s.setDetectedServerMode,
             setAvailableModels: s.setAvailableModels,
             setSelectedModelId: s.setSelectedModelId,
-            selectedModelId: s.selectedModelId,
         }))
     );
 
@@ -56,7 +58,8 @@ export function RoleplayPage() {
             setConnectionMessage(result.connection.message);
             setDetectedServerMode(result.connection.serverMode);
             setAvailableModels(result.connection.models);
-            if (!selectedModelId && result.connection.models.length > 0) {
+            const currentSelectedModelId = useRoleplayStore.getState().selectedModelId;
+            if (!currentSelectedModelId && result.connection.models.length > 0) {
                 setSelectedModelId(result.connection.models[0].id);
             }
         } else {
@@ -67,7 +70,6 @@ export function RoleplayPage() {
         }
     }, [
         lmStudioEndpoint,
-        selectedModelId,
         setConnectionStatus,
         setConnectionMessage,
         setDetectedServerMode,
@@ -79,6 +81,8 @@ export function RoleplayPage() {
         probeConnection();
     }, [probeConnection]);
 
+    const isShowingCharacterPicker = showCharacterPicker || !activeCharacterId;
+
     return (
         <PageScaffold
             density="compact"
@@ -89,6 +93,14 @@ export function RoleplayPage() {
                     icon={<IconTheater size={24} />}
                     rightSection={
                         <Group gap="xs">
+                            <SwarmButton
+                                tone="brand"
+                                emphasis={isShowingCharacterPicker ? 'solid' : 'ghost'}
+                                size="xs"
+                                onClick={() => setShowCharacterPicker((value) => !value)}
+                            >
+                                {isShowingCharacterPicker ? 'Back To Chat' : 'Choose Character'}
+                            </SwarmButton>
                             <SwarmButton
                                 tone="brand"
                                 emphasis="ghost"
@@ -109,24 +121,32 @@ export function RoleplayPage() {
                     overflow: 'hidden',
                 }}
             >
-                {/* Character Sidebar */}
-                <div style={{ width: sidebar.size, flexShrink: 0, overflow: 'hidden' }}>
-                    <CharacterSidebar />
-                </div>
+                {!isShowingCharacterPicker && (
+                    <>
+                        {/* Character Sidebar */}
+                        <div style={{ width: sidebar.size, flexShrink: 0, overflow: 'hidden' }}>
+                            <CharacterSidebar />
+                        </div>
 
-                <ResizeHandle
-                    direction="horizontal"
-                    onPointerDown={sidebar.handlePointerDown}
-                    onNudge={sidebar.nudgeSize}
-                    isResizing={sidebar.isResizing}
-                />
+                        <ResizeHandle
+                            direction="horizontal"
+                            onPointerDown={sidebar.handlePointerDown}
+                            onNudge={sidebar.nudgeSize}
+                            isResizing={sidebar.isResizing}
+                        />
+                    </>
+                )}
 
-                {/* Chat Panel */}
+                {/* Main Panel */}
                 <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
-                    <ChatPanel
-                        onRegenerateScene={() => generateSceneRef.current?.()}
-                        onGenerateSceneWithPrompt={(prompt) => generateSceneWithPromptRef.current?.(prompt)}
-                    />
+                    {isShowingCharacterPicker ? (
+                        <CharacterSelectionPanel onSelectCharacter={() => setShowCharacterPicker(false)} />
+                    ) : (
+                        <ChatPanel
+                            onRegenerateScene={() => generateSceneRef.current?.()}
+                            onGenerateSceneWithPrompt={(prompt) => generateSceneWithPromptRef.current?.(prompt)}
+                        />
+                    )}
                 </div>
 
                 {/* Controls Panel */}

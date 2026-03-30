@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import {
-    ActionIcon,
-    Badge,
     Box,
-    Button,
     Divider,
     Drawer,
     Group,
@@ -31,6 +28,7 @@ import { chatWithAssistant, probeAssistantConnection } from '../services/magicPr
 import { useAssistantStore } from '../stores/assistantStore';
 import { usePromptEnhanceStore } from '../stores/promptEnhanceStore';
 import type { AssistantApplyPatch, AssistantChatTurn, AssistantResponseDraft } from '../types/assistant';
+import { SwarmActionIcon, SwarmBadge, SwarmButton } from './ui';
 
 interface AssistantWorkspaceContext {
     prompt: string;
@@ -81,20 +79,6 @@ function draftToParameterPatch(draft?: AssistantResponseDraft | null): Assistant
 
     return {
         parameters,
-    };
-}
-
-function turnBubbleTone(role: AssistantChatTurn['role']) {
-    if (role === 'assistant') {
-        return {
-            background: 'rgba(139, 92, 246, 0.12)',
-            border: '1px solid rgba(139, 92, 246, 0.35)',
-        };
-    }
-
-    return {
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.08)',
     };
 }
 
@@ -261,43 +245,44 @@ export function GenerateAssistantPanel({
                     </Stack>
                     <Group gap="xs">
                         <Tooltip label="Refresh assistant connection">
-                            <ActionIcon variant="subtle" onClick={() => void refreshConnection()}>
+                            <SwarmActionIcon tone="secondary" emphasis="ghost" onClick={() => void refreshConnection()}>
                                 <IconRefresh size={16} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
                         <Tooltip label="Clear conversation">
-                            <ActionIcon variant="subtle" color="red" onClick={clearConversation}>
+                            <SwarmActionIcon tone="danger" emphasis="ghost" onClick={clearConversation}>
                                 <IconTrash size={16} />
-                            </ActionIcon>
+                            </SwarmActionIcon>
                         </Tooltip>
                     </Group>
                 </Group>
 
                 <Group gap="xs" wrap="wrap">
                     {quickActions.map((action) => (
-                        <Button
+                        <SwarmButton
                             key={action.label}
                             size="xs"
-                            variant="light"
+                            tone="info"
+                            emphasis="soft"
                             leftSection={action.icon}
                             onClick={() => void sendPrompt(action.message)}
                             disabled={loading}
                         >
                             {action.label}
-                        </Button>
+                        </SwarmButton>
                     ))}
                 </Group>
 
-                <Paper withBorder p="sm" radius="md">
+                <Paper withBorder p="sm" radius="md" className="swarm-contrast-panel">
                     <Stack gap={4}>
                         <Text size="xs" c="dimmed">Current context</Text>
                         <Group gap="xs" wrap="wrap">
-                            <Badge variant="light">{context.model || 'No model'}</Badge>
-                            {context.activeLoras.length > 0 && <Badge variant="light" color="grape">{`${context.activeLoras.length} LoRAs`}</Badge>}
-                            {context.activeEmbeddings.length > 0 && <Badge variant="light" color="cyan">{`${context.activeEmbeddings.length} Embeddings`}</Badge>}
-                            {context.activeWildcards.length > 0 && <Badge variant="light" color="lime">{`${context.activeWildcards.length} Wildcards`}</Badge>}
+                            <SwarmBadge tone="secondary">{context.model || 'No model'}</SwarmBadge>
+                            {context.activeLoras.length > 0 && <SwarmBadge tone="primary">{`${context.activeLoras.length} LoRAs`}</SwarmBadge>}
+                            {context.activeEmbeddings.length > 0 && <SwarmBadge tone="info">{`${context.activeEmbeddings.length} Embeddings`}</SwarmBadge>}
+                            {context.activeWildcards.length > 0 && <SwarmBadge tone="success">{`${context.activeWildcards.length} Wildcards`}</SwarmBadge>}
                             {context.featureFlags.map((flag) => (
-                                <Badge key={flag} variant="dot" color="orange">{flag}</Badge>
+                                <SwarmBadge key={flag} tone="warning" emphasis="outline">{flag}</SwarmBadge>
                             ))}
                         </Group>
                     </Stack>
@@ -306,7 +291,7 @@ export function GenerateAssistantPanel({
                 <ScrollArea flex={1} offsetScrollbars>
                     <Stack gap="sm">
                         {conversation.length === 0 && (
-                            <Paper withBorder p="md" radius="md">
+                            <Paper withBorder p="md" radius="md" className="swarm-contrast-panel">
                                 <Text size="sm" c="dimmed">
                                     Ask for a rewrite, a negative prompt, safer settings, or a more detailed prompt draft.
                                 </Text>
@@ -317,7 +302,8 @@ export function GenerateAssistantPanel({
                                 key={turn.id}
                                 p="md"
                                 radius="md"
-                                style={turnBubbleTone(turn.role)}
+                                className="swarm-contrast-bubble"
+                                data-role={turn.role}
                             >
                                 <Stack gap="xs">
                                     <Group justify="space-between" align="center">
@@ -339,7 +325,7 @@ export function GenerateAssistantPanel({
                                             {turn.draft.promptDraft && (
                                                 <Box>
                                                     <Text size="xs" fw={600} mb={4}>Prompt draft</Text>
-                                                    <Paper withBorder p="sm" radius="sm">
+                                                    <Paper withBorder p="sm" radius="sm" className="swarm-contrast-panel">
                                                         <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>{turn.draft.promptDraft}</Text>
                                                     </Paper>
                                                 </Box>
@@ -347,7 +333,7 @@ export function GenerateAssistantPanel({
                                             {turn.draft.negativePromptDraft && (
                                                 <Box>
                                                     <Text size="xs" fw={600} mb={4}>Negative prompt draft</Text>
-                                                    <Paper withBorder p="sm" radius="sm">
+                                                    <Paper withBorder p="sm" radius="sm" className="swarm-contrast-panel">
                                                         <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>{turn.draft.negativePromptDraft}</Text>
                                                     </Paper>
                                                 </Box>
@@ -379,46 +365,48 @@ export function GenerateAssistantPanel({
                                             <Group gap="xs" wrap="wrap">
                                                 {turn.draft.promptDraft && (
                                                     <>
-                                                        <Button
+                                                        <SwarmButton
                                                             size="xs"
-                                                            variant="light"
+                                                            tone="primary"
+                                                            emphasis="soft"
                                                             onClick={() => onApplyPatch({ prompt: turn.draft?.promptDraft || '' })}
                                                         >
                                                             Replace Prompt
-                                                        </Button>
-                                                        <Button
+                                                        </SwarmButton>
+                                                        <SwarmButton
                                                             size="xs"
-                                                            variant="subtle"
+                                                            tone="secondary"
+                                                            emphasis="ghost"
                                                             onClick={() => onApplyPatch({ promptAppend: turn.draft?.promptDraft || '' })}
                                                         >
                                                             Append Prompt
-                                                        </Button>
+                                                        </SwarmButton>
                                                     </>
                                                 )}
                                                 {turn.draft.negativePromptDraft && (
-                                                    <Button
+                                                    <SwarmButton
                                                         size="xs"
-                                                        variant="light"
-                                                        color="grape"
+                                                        tone="primary"
+                                                        emphasis="soft"
                                                         onClick={() => onApplyPatch({ negativeprompt: turn.draft?.negativePromptDraft || '' })}
                                                     >
                                                         Replace Negative
-                                                    </Button>
+                                                    </SwarmButton>
                                                 )}
                                                 {(turn.draft.parameterSuggestions || []).length > 0 && (
-                                                    <Button
+                                                    <SwarmButton
                                                         size="xs"
-                                                        variant="light"
-                                                        color="orange"
+                                                        tone="warning"
+                                                        emphasis="soft"
                                                         onClick={() => onApplyPatch(draftToParameterPatch(turn.draft))}
                                                     >
                                                         Apply Settings
-                                                    </Button>
+                                                    </SwarmButton>
                                                 )}
-                                                <Button
+                                                <SwarmButton
                                                     size="xs"
-                                                    variant="light"
-                                                    color="teal"
+                                                    tone="success"
+                                                    emphasis="soft"
                                                     onClick={() => onApplyAndGenerate({
                                                         ...(turn.draft?.promptDraft ? { prompt: turn.draft.promptDraft } : {}),
                                                         ...(turn.draft?.negativePromptDraft ? { negativeprompt: turn.draft.negativePromptDraft } : {}),
@@ -426,9 +414,10 @@ export function GenerateAssistantPanel({
                                                     })}
                                                 >
                                                     Generate With This Draft
-                                                </Button>
-                                                <ActionIcon
-                                                    variant="subtle"
+                                                </SwarmButton>
+                                                <SwarmActionIcon
+                                                    tone="secondary"
+                                                    emphasis="ghost"
                                                     onClick={() => void handleCopy([
                                                         turn.content,
                                                         turn.draft?.promptDraft ? `\n\nPrompt Draft:\n${turn.draft.promptDraft}` : '',
@@ -436,7 +425,7 @@ export function GenerateAssistantPanel({
                                                     ].join(''))}
                                                 >
                                                     <IconCopy size={14} />
-                                                </ActionIcon>
+                                                </SwarmActionIcon>
                                             </Group>
                                         </>
                                     )}
@@ -447,7 +436,7 @@ export function GenerateAssistantPanel({
                 </ScrollArea>
 
                 {error && (
-                    <Text size="sm" c="red">
+                    <Text size="sm" style={{ color: 'var(--theme-error)' }}>
                         {error}
                     </Text>
                 )}
@@ -464,13 +453,15 @@ export function GenerateAssistantPanel({
                     <Text size="xs" c="dimmed">
                         Suggestions stay separate until you apply them.
                     </Text>
-                    <Button
+                    <SwarmButton
                         rightSection={loading ? <Loader size={14} /> : <IconArrowUp size={14} />}
                         onClick={() => void sendPrompt(input)}
                         disabled={loading || !input.trim()}
+                        tone="primary"
+                        emphasis="soft"
                     >
                         Send
-                    </Button>
+                    </SwarmButton>
                 </Group>
             </Stack>
         </Drawer>

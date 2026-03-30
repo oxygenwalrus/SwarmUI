@@ -20,8 +20,8 @@ body,
   min-height: 100vh;
   min-height: 100dvh;
   overflow: hidden;
-  background-color: var(--theme-gray-9, #0b0f14) !important;
-  color: var(--theme-gray-0, #ffffff) !important;
+  background-color: var(--theme-surface-app, #0b0f14) !important;
+  color: var(--theme-text-on-app, #ffffff) !important;
   font-family: var(--theme-font-family, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
 }
 
@@ -47,13 +47,13 @@ h6 {
 
 /* Mantine Text component - use theme text color */
 .mantine-Text-root {
-  color: var(--theme-gray-0) !important;
+  color: var(--theme-text-primary) !important;
 }
 
 /* Mantine Text with dimmed color - use theme gray (gray-2 for better readability) */
 .mantine-Text-root[data-c="dimmed"],
 [class*="dimmed"] {
-  color: var(--theme-gray-2) !important;
+  color: var(--theme-text-secondary) !important;
 }
 
 @font-face {
@@ -147,7 +147,14 @@ h6 {
   --theme-gray-7: #1f2937;
   --theme-gray-8: #111827;
   --theme-gray-9: #0b0f14;
-  --theme-canvas-bg: color-mix(in srgb, var(--theme-gray-8) 40%, var(--theme-gray-9));
+  --theme-surface-app: #0b0f14;
+  --theme-surface-panel: #101722;
+  --theme-surface-card: #16202d;
+  --theme-surface-raised: #1e2a38;
+  --theme-surface-header: #111827;
+  --theme-surface-input: #1e2a38;
+  --theme-surface-dropdown: #16202d;
+  --theme-canvas-bg: var(--theme-surface-app);
   --theme-style-family: classic;
   --theme-style-motif: none;
   --theme-style-motif-intensity: 0;
@@ -164,11 +171,19 @@ h6 {
   /* UI Interaction Colors - defaults (computed from brand/accent) */
   --theme-selection-bg: color-mix(in srgb, var(--theme-brand) 25%, transparent);
   --theme-selection-border: var(--theme-brand);
+  --theme-selected-surface: #2b2144;
+  --theme-selected-surface-hover: #372a57;
+  --theme-selected-text: #ffffff;
+  --theme-selected-border: var(--theme-brand);
+  --theme-selected-scrim: rgba(124, 58, 237, 0.22);
   --theme-focus-ring: var(--theme-brand);
   --theme-highlight-bg: color-mix(in srgb, var(--theme-warning) 30%, transparent);
   --theme-line-highlight: color-mix(in srgb, var(--theme-gray-6) 50%, var(--theme-gray-7));
   --theme-link-underline: var(--theme-accent);
   --theme-bracket-match: color-mix(in srgb, var(--theme-brand) 25%, transparent);
+  --theme-interactive-hover-surface: #1b2735;
+  --theme-interactive-active-surface: #223247;
+  --theme-interactive-text: #ffffff;
 
   /* Scrollbar theming */
   --theme-scrollbar-thumb: var(--theme-gray-5);
@@ -204,11 +219,20 @@ h6 {
   --theme-muted-text: var(--theme-gray-4);
   --theme-text-primary: var(--theme-gray-0);
   --theme-text-secondary: var(--theme-gray-2);
+  --theme-text-on-app: var(--theme-gray-0);
+  --theme-text-on-panel: var(--theme-gray-0);
+  --theme-text-on-card: var(--theme-gray-0);
+  --theme-text-on-input: var(--theme-gray-0);
+  --theme-text-on-dropdown: var(--theme-gray-0);
   --theme-disabled-opacity: 0.45;
-  --theme-interactive-bg: var(--theme-gray-6);
+  --theme-interactive-bg: var(--theme-interactive-hover-surface);
   --theme-border-subtle: color-mix(in srgb, var(--theme-gray-5) 50%, transparent);
   --theme-overlay-blur: 4px;
   --theme-blur-strength: 4px;
+  --theme-surface-overlay-opacity: 0.12;
+  --theme-header-overlay-opacity: 0.08;
+  --theme-input-overlay-opacity: 0.07;
+  --theme-control-overlay-opacity: 0.1;
   /* Semantic tone matrix */
   --theme-tone-primary-bg: var(--theme-brand-gradient);
   --theme-tone-primary-soft: color-mix(in srgb, var(--theme-brand) 20%, transparent);
@@ -892,13 +916,14 @@ h1 {
 .mantine-AppShell-header,
 .mantine-AppShell-navbar,
 .mantine-AppShell-aside {
-  background-color: var(--theme-gray-8) !important;
+  background-color: var(--theme-surface-panel) !important;
   border-color: var(--theme-gray-5) !important;
 }
 
 .mantine-AppShell-header {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--theme-gray-8) 96%, transparent), color-mix(in srgb, var(--theme-gray-8) 88%, transparent)) !important;
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 16%, transparent), transparent 72%),
+    var(--theme-surface-header) !important;
   border-bottom: 1px solid color-mix(in srgb, var(--theme-brand) 14%, var(--theme-gray-5)) !important;
   box-shadow: 0 10px 28px color-mix(in srgb, black 22%, transparent);
   backdrop-filter: blur(16px);
@@ -906,24 +931,24 @@ h1 {
 
 /* === SURFACE ELEVATION UTILITY CLASSES === */
 .surface-floor {
-  background-color: var(--elevation-floor) !important;
+  background-color: var(--theme-surface-app) !important;
 }
 
 .surface-table {
-  background-color: var(--elevation-table) !important;
-  background-image: linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-tint) 35%, transparent), transparent 60%);
+  background-color: var(--theme-surface-panel) !important;
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-tint) 12%, transparent), transparent 64%);
   border: var(--elevation-border-subtle);
 }
 
 .surface-paper {
-  background-color: var(--elevation-paper) !important;
+  background-color: var(--theme-surface-card) !important;
   border: var(--elevation-border);
   border-radius: calc(8px * var(--theme-radius-multiplier));
   box-shadow: var(--elevation-shadow-sm);
 }
 
 .surface-raised {
-  background-color: var(--elevation-raised) !important;
+  background-color: var(--theme-surface-raised) !important;
   border: var(--elevation-border);
   border-radius: calc(8px * var(--theme-radius-multiplier));
   box-shadow: var(--elevation-shadow-md);
@@ -931,15 +956,15 @@ h1 {
 
 /* Nested elevation - paper inside table */
 .surface-table .surface-paper {
-  background-color: var(--elevation-paper) !important;
+  background-color: var(--theme-surface-card) !important;
 }
 
 [data-theme-surface="tonal"] .surface-table,
 [data-theme-surface="tonal"] .surface-paper,
 [data-theme-surface="tonal"] .surface-raised {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 22%, transparent), transparent 62%),
-    linear-gradient(180deg, color-mix(in srgb, var(--theme-gray-7) 92%, var(--theme-gray-8)), color-mix(in srgb, var(--theme-gray-8) 94%, var(--theme-gray-9))) !important;
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 14%, transparent), transparent 70%),
+    var(--theme-surface-card) !important;
   border-color: color-mix(in srgb, var(--theme-brand) 14%, var(--theme-gray-5)) !important;
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--theme-gray-0) 5%, transparent),
@@ -949,9 +974,9 @@ h1 {
 [data-theme-surface="ornamented"] .surface-table,
 [data-theme-surface="ornamented"] .surface-paper,
 [data-theme-surface="ornamented"] .surface-raised {
-  background-color: color-mix(in srgb, var(--theme-gray-8) 88%, var(--theme-gray-9)) !important;
+  background-color: var(--theme-surface-card) !important;
   background-image:
-    linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-tint) 34%, transparent), transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-tint) 16%, transparent), transparent 66%),
     var(--theme-motif-overlay-panel);
   border-color: color-mix(in srgb, var(--theme-accent-2) 28%, var(--theme-gray-5)) !important;
   box-shadow:
@@ -965,8 +990,8 @@ h1 {
 [data-theme-family="material"] .mantine-Accordion-item,
 [data-theme-family="material"] .mantine-Tabs-panel {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 18%, transparent), transparent 62%),
-    linear-gradient(180deg, color-mix(in srgb, var(--theme-gray-7) 92%, var(--theme-gray-8)), color-mix(in srgb, var(--theme-gray-8) 94%, var(--theme-gray-9))) !important;
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 12%, transparent), transparent 70%),
+    var(--theme-surface-card) !important;
   border-color: color-mix(in srgb, var(--theme-brand) 14%, var(--theme-gray-5)) !important;
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--theme-gray-0) 5%, transparent),
@@ -979,9 +1004,9 @@ h1 {
 [data-theme-family="glyph"] .mantine-Accordion-item,
 [data-theme-family="glyph"] .mantine-Tabs-panel {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-tint) 28%, transparent), transparent 58%),
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-tint) 14%, transparent), transparent 68%),
     var(--theme-motif-overlay-panel),
-    color-mix(in srgb, var(--theme-gray-8) 88%, var(--theme-gray-9)) !important;
+    var(--theme-surface-card) !important;
   border-color: color-mix(in srgb, var(--theme-accent-2) 28%, var(--theme-gray-5)) !important;
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--theme-accent-2) 12%, transparent),
@@ -993,8 +1018,8 @@ h1 {
 [data-theme-family="material"] .mantine-Combobox-dropdown,
 [data-theme-family="material"] .mantine-Tabs-tab {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 12%, transparent), transparent 72%),
-    color-mix(in srgb, var(--theme-gray-7) 90%, var(--theme-gray-8)) !important;
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 10%, transparent), transparent 76%),
+    var(--theme-surface-input) !important;
   border-color: color-mix(in srgb, var(--theme-brand) 14%, var(--theme-gray-5)) !important;
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--theme-gray-0) 5%, transparent);
 }
@@ -1004,9 +1029,9 @@ h1 {
 [data-theme-family="glyph"] .mantine-Combobox-dropdown,
 [data-theme-family="glyph"] .mantine-Tabs-tab {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-tint) 20%, transparent), transparent 68%),
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-tint) 10%, transparent), transparent 74%),
     var(--theme-motif-overlay-input),
-    color-mix(in srgb, var(--theme-input-bg) 94%, var(--theme-gray-9)) !important;
+    var(--theme-surface-input) !important;
   border-color: color-mix(in srgb, var(--theme-accent-2) 24%, var(--theme-gray-5)) !important;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--theme-accent-2) 10%, transparent);
 }
@@ -1034,10 +1059,10 @@ h1 {
 
 /* === CARDS, PAPER, PANELS === */
 .mantine-Card-root {
-  background-color: var(--theme-gray-7) !important;
+  background-color: var(--theme-surface-card) !important;
   border: var(--theme-border-width) var(--theme-border-style) var(--theme-gray-5) !important;
   border-radius: calc(8px * var(--theme-radius-multiplier)) !important;
-  background-image: linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-tint) 35%, transparent), transparent 50%);
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--theme-surface-tint) 12%, transparent), transparent 68%);
   box-shadow: 0 1px 3px var(--theme-shadow-color) !important;
   transition: transform calc(120ms * var(--motion-factor)) var(--theme-family-animation-curve),
     box-shadow calc(120ms * var(--motion-factor)) ease,
@@ -1054,10 +1079,91 @@ h1 {
 }
 
 .mantine-Paper-root {
-  background-color: var(--theme-gray-7) !important;
+  background-color: var(--theme-surface-card) !important;
   border: var(--theme-border-width) var(--theme-border-style) var(--theme-gray-5) !important;
   border-radius: calc(8px * var(--theme-radius-multiplier)) !important;
-  color: var(--theme-gray-0) !important;
+  color: var(--theme-text-on-card) !important;
+}
+
+.swarm-contrast-panel {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 10%, transparent), transparent 74%),
+    var(--theme-surface-card) !important;
+  color: var(--theme-text-on-card) !important;
+}
+
+.swarm-contrast-bubble {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 9%, transparent), transparent 74%),
+    var(--theme-surface-card) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-selected-border) 14%, var(--theme-gray-5)) !important;
+  color: var(--theme-text-on-card) !important;
+}
+
+.swarm-contrast-bubble[data-role="assistant"] {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 18%, transparent), transparent 68%),
+    var(--theme-surface-raised) !important;
+  border-color: color-mix(in srgb, var(--theme-selected-border) 38%, transparent) !important;
+}
+
+.swarm-selectable-card[data-selected="true"] {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-selected-border) 12%, transparent), transparent 72%),
+    var(--theme-selected-surface) !important;
+  border-color: var(--theme-selected-border) !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--theme-selected-border) 26%, transparent),
+    var(--elevation-shadow-md) !important;
+  color: var(--theme-selected-text) !important;
+}
+
+.swarm-selectable-card[data-selected="true"] .mantine-Text-root,
+.swarm-selectable-card[data-selected="true"] .mantine-Badge-root,
+.swarm-selectable-card[data-selected="true"] .mantine-ActionIcon-root,
+.swarm-selectable-card[data-selected="true"] .mantine-InputWrapper-label,
+.swarm-selectable-card[data-selected="true"] .mantine-NumberInput-input,
+.swarm-selectable-card[data-selected="true"] .mantine-Checkbox-label {
+  color: var(--theme-selected-text) !important;
+}
+
+.swarm-selectable-card[data-selected="true"] .mantine-Text-root[data-c="dimmed"],
+.swarm-selectable-card[data-selected="true"] [class*="dimmed"] {
+  color: color-mix(in srgb, var(--theme-selected-text) 78%, var(--theme-selected-surface)) !important;
+}
+
+.swarm-selected-table-row td {
+  background: var(--theme-selected-surface) !important;
+  color: var(--theme-selected-text) !important;
+}
+
+.swarm-selected-table-row .mantine-Text-root,
+.swarm-selected-table-row .mantine-Badge-root,
+.swarm-selected-table-row .mantine-Checkbox-label {
+  color: var(--theme-selected-text) !important;
+}
+
+.swarm-selected-table-row .mantine-Text-root[data-c="dimmed"],
+.swarm-selected-table-row [class*="dimmed"] {
+  color: color-mix(in srgb, var(--theme-selected-text) 78%, var(--theme-selected-surface)) !important;
+}
+
+.swarm-gallery-image-card[data-selected="true"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-selected-border) 10%, transparent), transparent 72%),
+    var(--theme-selected-scrim);
+  z-index: 1;
+}
+
+.swarm-gallery-image-card[data-selected="true"] .mantine-Checkbox-root,
+.swarm-gallery-image-card[data-selected="true"] .mantine-Badge-root,
+.swarm-gallery-image-card[data-selected="true"] .mantine-ActionIcon-root {
+  position: relative;
+  z-index: 2;
 }
 
 /* Shared surface polish for elevated containers */
@@ -1072,10 +1178,10 @@ h1 {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(165deg, color-mix(in srgb, var(--theme-gray-0) 6%, transparent), transparent 42%),
-    radial-gradient(circle at 82% -8%, var(--theme-brand-soft), transparent 52%),
-    radial-gradient(circle at 12% 100%, var(--theme-accent-soft), transparent 50%);
-  opacity: calc(0.58 * var(--effects-intensity));
+    linear-gradient(165deg, color-mix(in srgb, var(--theme-gray-0) 4%, transparent), transparent 48%),
+    radial-gradient(circle at 82% -8%, var(--theme-brand-soft), transparent 56%),
+    radial-gradient(circle at 12% 100%, var(--theme-accent-soft), transparent 54%);
+  opacity: calc(var(--theme-surface-overlay-opacity) * var(--effects-intensity));
   z-index: 0;
 }
 
@@ -1085,10 +1191,10 @@ h1 {
 }
 
 .mantine-Paper-root {
-  background-color: var(--theme-gray-7) !important;
+  background-color: var(--theme-surface-card) !important;
   border: var(--theme-border-width) var(--theme-border-style) var(--theme-gray-5) !important;
   border-radius: calc(8px * var(--theme-radius-multiplier)) !important;
-  color: var(--theme-gray-0) !important;
+  color: var(--theme-text-on-card) !important;
 }
 
 /* === DIVIDERS & SEPARATORS === */
@@ -1105,10 +1211,10 @@ hr,
 .mantine-NumberInput-input,
 .mantine-MultiSelect-input,
 .mantine-PasswordInput-input {
-  background-color: var(--theme-input-bg) !important;
-  background-image: linear-gradient(180deg, color-mix(in srgb, var(--theme-accent-soft) 18%, transparent), transparent 58%);
+  background-color: var(--theme-surface-input) !important;
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--theme-accent-soft) 10%, transparent), transparent 70%);
   border-color: var(--theme-gray-5) !important;
-  color: var(--theme-gray-0) !important;
+  color: var(--theme-text-on-input) !important;
   transition:
     border-color calc(120ms * var(--motion-factor)) ease,
     box-shadow calc(120ms * var(--motion-factor)) ease,
@@ -1144,8 +1250,8 @@ hr,
 .mantine-Autocomplete-dropdown,
 .mantine-Combobox-dropdown {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 24%, transparent), transparent 46%),
-    var(--theme-dropdown-bg) !important;
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 12%, transparent), transparent 68%),
+    var(--theme-surface-dropdown) !important;
   border: var(--theme-border-width) var(--theme-border-style) var(--theme-gray-5) !important;
   box-shadow: var(--elevation-shadow-md) !important;
 }
@@ -1160,15 +1266,15 @@ hr,
 .mantine-Checkbox-label,
 .mantine-Radio-label,
 .mantine-Switch-label {
-  color: var(--theme-gray-0) !important;
+  color: var(--theme-text-primary) !important;
   font-weight: 500 !important;
 }
 
 /* NumberInput controls */
 .mantine-NumberInput-control {
-  background-color: var(--theme-gray-6) !important;
+  background-color: var(--theme-surface-raised) !important;
   border-color: var(--theme-gray-5) !important;
-  color: var(--theme-gray-2) !important;
+  color: var(--theme-text-secondary) !important;
 }
 
 .mantine-NumberInput-control:hover {
@@ -1187,7 +1293,7 @@ hr,
 }
 
 .mantine-Radio-label {
-  color: var(--theme-gray-1) !important;
+  color: var(--theme-text-primary) !important;
 }
 
 /* Checkbox */
@@ -1202,7 +1308,7 @@ hr,
 }
 
 .mantine-Checkbox-label {
-  color: var(--theme-gray-1) !important;
+  color: var(--theme-text-primary) !important;
 }
 
 /* === BUTTONS === */
@@ -1263,19 +1369,19 @@ button[class*="invokeBrand"],
 .mantine-Button-root[data-variant="outline"] {
   background-color: transparent !important;
   border-color: var(--theme-gray-4) !important;
-  color: var(--theme-gray-1) !important;
+  color: var(--theme-text-primary) !important;
 }
 
 .mantine-Button-root[data-variant="subtle"] {
-  background-color: color-mix(in srgb, var(--theme-gray-5) 22%, transparent) !important;
+  background-color: var(--theme-interactive-hover-surface) !important;
   border: 1px solid color-mix(in srgb, var(--theme-gray-4) 28%, transparent) !important;
-  color: var(--theme-gray-1) !important;
+  color: var(--theme-text-primary) !important;
 }
 
 .mantine-Button-root[data-variant="default"] {
-  background-color: var(--theme-gray-7) !important;
+  background-color: var(--theme-surface-raised) !important;
   border-color: var(--theme-gray-4) !important;
-  color: var(--theme-gray-1) !important;
+  color: var(--theme-text-primary) !important;
 }
 
 .mantine-Button-label {
@@ -1289,7 +1395,7 @@ button[class*="invokeBrand"],
 /* === ACTION ICONS === */
 .mantine-ActionIcon-root {
   border: 1px solid transparent !important;
-  color: var(--theme-gray-1) !important;
+  color: var(--theme-text-primary) !important;
   transition: all 0.1s ease !important;
   background-image: linear-gradient(150deg, color-mix(in srgb, var(--theme-brand-soft) 40%, transparent), transparent 58%);
   /* GPU acceleration for smooth hover */
@@ -1304,7 +1410,7 @@ button[class*="invokeBrand"],
 }
 
 .mantine-ActionIcon-root[data-variant="default"] {
-  background-color: var(--theme-gray-7) !important;
+  background-color: var(--theme-surface-raised) !important;
   border-color: var(--theme-gray-4) !important;
 }
 
@@ -1315,12 +1421,13 @@ button[class*="invokeBrand"],
 }
 
 .mantine-ActionIcon-root[data-variant="subtle"] {
-  background-color: color-mix(in srgb, var(--theme-gray-5) 28%, transparent) !important;
+  background-color: var(--theme-interactive-hover-surface) !important;
   border: 1px solid color-mix(in srgb, var(--theme-gray-4) 32%, transparent) !important;
 }
 
 .mantine-ActionIcon-root:hover {
-  background-color: var(--theme-gray-6) !important;
+  background-color: var(--theme-interactive-active-surface) !important;
+  color: var(--theme-interactive-text) !important;
 }
 
 .mantine-ActionIcon-root[data-variant="filled"]:hover,
@@ -1331,22 +1438,23 @@ button[class*="invokeBrand"],
 
 /* === SEGMENTED CONTROL === */
 .mantine-SegmentedControl-root {
-  background-color: var(--theme-gray-8) !important;
+  background-color: var(--theme-surface-panel) !important;
   border: var(--theme-border-width) var(--theme-border-style) var(--theme-gray-5) !important;
   box-shadow: var(--elevation-shadow-sm) !important;
 }
 
 .mantine-SegmentedControl-indicator {
-  background: var(--theme-brand-gradient) !important;
-  box-shadow: 0 6px 14px color-mix(in srgb, var(--theme-brand-soft) 70%, transparent) !important;
+  background: var(--theme-selected-surface) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-selected-border) 72%, transparent) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--theme-selected-border) 22%, transparent) !important;
 }
 
 .mantine-SegmentedControl-label {
-  color: var(--theme-gray-2) !important;
+  color: var(--theme-text-secondary) !important;
 }
 
 .mantine-SegmentedControl-label[data-active] {
-  color: var(--theme-gray-0) !important;
+  color: var(--theme-selected-text) !important;
 }
 
 .swarm-segmented-control .mantine-SegmentedControl-label {
@@ -1425,15 +1533,15 @@ button[class*="invokeBrand"],
 
 /* === CHIP === */
 .mantine-Chip-label {
-  background-color: var(--theme-gray-7) !important;
+  background-color: var(--theme-surface-raised) !important;
   border-color: var(--theme-gray-5) !important;
-  color: var(--theme-gray-1) !important;
+  color: var(--theme-text-primary) !important;
 }
 
 .mantine-Chip-label[data-checked] {
-  background-color: var(--theme-brand) !important;
-  border-color: var(--theme-brand) !important;
-  color: var(--theme-gray-0) !important;
+  background-color: var(--theme-selected-surface) !important;
+  border-color: var(--theme-selected-border) !important;
+  color: var(--theme-selected-text) !important;
 }
 
 /* === PROGRESS === */
@@ -1480,24 +1588,24 @@ button[class*="invokeBrand"],
 
 /* === BADGE === */
 .mantine-Badge-root {
-  color: var(--theme-gray-0) !important;
+  color: var(--theme-text-on-card) !important;
   background:
-    linear-gradient(150deg, color-mix(in srgb, var(--theme-accent-soft) 34%, transparent), transparent 68%),
-    var(--theme-gray-6) !important;
+    linear-gradient(150deg, color-mix(in srgb, var(--theme-accent-soft) 18%, transparent), transparent 74%),
+    var(--theme-surface-raised) !important;
   border: 1px solid var(--theme-gray-5) !important;
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--theme-gray-0) 9%, transparent);
 }
 
 .mantine-Badge-root[data-variant="filled"] {
-  background: var(--theme-brand-gradient) !important;
-  border-color: var(--theme-brand) !important;
-  color: var(--theme-brand-text, #fff) !important;
+  background: var(--theme-tone-primary-bg) !important;
+  border-color: var(--theme-tone-primary-border) !important;
+  color: var(--theme-tone-primary-text) !important;
 }
 
 .mantine-Badge-root[data-variant="light"] {
-  background-color: color-mix(in srgb, var(--theme-brand) 20%, transparent) !important;
-  color: var(--theme-brand) !important;
-  border-color: var(--theme-brand) !important;
+  background-color: var(--theme-interactive-hover-surface) !important;
+  color: var(--theme-text-primary) !important;
+  border-color: color-mix(in srgb, var(--theme-selected-border) 32%, transparent) !important;
 }
 
 .mantine-Badge-label,
@@ -1624,7 +1732,7 @@ button[class*="invokeBrand"],
 /* === TEXT & TYPOGRAPHY === */
 .mantine-Text-root,
 .mantine-Title-root {
-  color: var(--theme-gray-0) !important;
+  color: var(--theme-text-primary) !important;
 }
 
 /* Muted/secondary text */
@@ -1634,12 +1742,12 @@ button[class*="invokeBrand"],
 [data-c*=".1"],
 [data-c*=".2"],
 [data-c*=".3"] {
-  color: var(--theme-gray-2) !important;
+  color: var(--theme-text-secondary) !important;
 }
 
 /* === MODAL === */
 .mantine-Modal-content {
-  background-color: var(--theme-gray-8) !important;
+  background-color: var(--theme-surface-card) !important;
   /* GPU acceleration for smooth modal animations */
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -1648,46 +1756,44 @@ button[class*="invokeBrand"],
 }
 
 .mantine-Modal-header {
-  background-color: var(--theme-gray-8) !important;
+  background-color: var(--theme-surface-header) !important;
   border-bottom: 1px solid var(--theme-gray-5) !important;
 }
 
 .mantine-Modal-body {
-  background-color: var(--theme-gray-8) !important;
-  color: var(--theme-gray-0) !important;
+  background-color: var(--theme-surface-card) !important;
+  color: var(--theme-text-on-card) !important;
   /* Contain paint for scrollable content */
   contain: paint;
 }
 
 .mantine-Modal-title {
-  color: var(--theme-gray-0) !important;
+  color: var(--theme-text-primary) !important;
 }
 
 /* === TOOLTIP === */
 .mantine-Tooltip-tooltip {
-  background-color: var(--theme-gray-7) !important;
-  color: var(--theme-gray-0) !important;
+  background-color: var(--theme-surface-dropdown) !important;
+  color: var(--theme-text-on-dropdown) !important;
 }
 
 /* === POPOVER & MENU === */
 .mantine-Popover-dropdown,
 .mantine-Menu-dropdown {
-  background-color: var(--theme-dropdown-bg) !important;
+  background-color: var(--theme-surface-dropdown) !important;
   border-color: var(--theme-gray-5) !important;
 }
 
 .mantine-Menu-item {
-  color: var(--theme-gray-1) !important;
+  color: var(--theme-text-on-dropdown) !important;
   border-radius: calc(6px * var(--theme-radius-multiplier));
   transition: background-color 120ms ease, color 120ms ease, transform 120ms ease !important;
 }
 
 .mantine-Menu-item:hover {
-  background:
-    linear-gradient(120deg, color-mix(in srgb, var(--theme-brand-soft) 62%, transparent), transparent 70%),
-    var(--theme-line-highlight) !important;
-  color: var(--theme-gray-0) !important;
-  transform: translateX(1px);
+  background: var(--theme-interactive-hover-surface) !important;
+  color: var(--theme-text-primary) !important;
+  transform: none;
 }
 
 .mantine-Select-option,
@@ -1700,10 +1806,8 @@ button[class*="invokeBrand"],
 .mantine-Select-option[data-combobox-selected],
 .mantine-Autocomplete-option[data-combobox-selected],
 .mantine-Combobox-option[data-combobox-selected] {
-  background:
-    linear-gradient(120deg, color-mix(in srgb, var(--theme-brand-soft) 64%, transparent), transparent 72%),
-    var(--theme-line-highlight) !important;
-  color: var(--theme-gray-0) !important;
+  background: var(--theme-selected-surface) !important;
+  color: var(--theme-selected-text) !important;
 }
 
 /* === TABS === */
@@ -3815,7 +3919,9 @@ pre,
 
 .swarm-gallery-image-card,
 .swarm-gallery-panel-card {
-  background: color-mix(in srgb, var(--theme-gray-8) 88%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-brand-soft) 10%, transparent), transparent 74%),
+    var(--theme-surface-card);
 }
 
 .swarm-folder-tile {
@@ -3936,6 +4042,205 @@ pre,
   padding-bottom: 6px;
 }
 
+.swarm-resource-deck {
+  gap: 12px;
+}
+
+.swarm-resource-hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--theme-brand) 24%, transparent) !important;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--theme-accent-2) 28%, transparent), transparent 34%),
+    radial-gradient(circle at bottom left, color-mix(in srgb, var(--theme-brand) 20%, transparent), transparent 40%),
+    linear-gradient(145deg, color-mix(in srgb, var(--theme-gray-8) 92%, var(--theme-gray-9)), color-mix(in srgb, var(--theme-gray-8) 84%, var(--theme-gray-9))) !important;
+}
+
+.swarm-resource-hero::before {
+  content: "";
+  position: absolute;
+  inset: -18% auto auto -8%;
+  width: 220px;
+  height: 220px;
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--theme-brand) 28%, transparent), transparent 72%);
+  filter: blur(8px);
+  opacity: 0.9;
+  animation: swarm-resource-float 11s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.swarm-resource-hero__copy,
+.swarm-resource-hero__stats {
+  position: relative;
+  z-index: 1;
+}
+
+.swarm-resource-hero__copy {
+  flex: 1 1 460px;
+  min-width: 280px;
+}
+
+.swarm-resource-hero__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: min(100%, 420px);
+}
+
+.swarm-resource-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--theme-success) 28%, transparent);
+  background: color-mix(in srgb, var(--theme-success-soft) 30%, transparent);
+}
+
+.swarm-resource-live__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--theme-success);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--theme-success) 50%, transparent);
+  animation: swarm-resource-pulse 2.1s ease-out infinite;
+}
+
+.swarm-resource-gpu-card,
+.swarm-resource-model-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.swarm-resource-gpu-card::after,
+.swarm-resource-model-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, color-mix(in srgb, var(--theme-brand) 12%, transparent), transparent 42%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.swarm-resource-model-card--warm::after {
+  background: linear-gradient(125deg, color-mix(in srgb, var(--theme-warning) 18%, transparent), transparent 42%);
+}
+
+.swarm-resource-model-card--hot::after {
+  background: linear-gradient(125deg, color-mix(in srgb, var(--theme-error) 22%, transparent), transparent 42%);
+}
+
+.swarm-resource-model-card__media {
+  position: relative;
+  height: 92px;
+  margin: -4px -4px 2px;
+  border-radius: calc(12px * var(--theme-radius-multiplier));
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--theme-gray-1) 12%, transparent);
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--theme-brand) 28%, transparent), transparent 36%),
+    linear-gradient(135deg, color-mix(in srgb, var(--theme-gray-7) 90%, var(--theme-gray-8)), color-mix(in srgb, var(--theme-gray-8) 92%, var(--theme-gray-9)));
+}
+
+.swarm-resource-model-card__media-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.3;
+  filter: saturate(1.08);
+  transform: scale(1.04);
+}
+
+.swarm-resource-model-card__media-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-gray-9) 18%, transparent), color-mix(in srgb, var(--theme-gray-9) 72%, transparent)),
+    linear-gradient(90deg, color-mix(in srgb, var(--theme-brand) 26%, transparent), transparent 56%);
+}
+
+.swarm-resource-model-card__media-content {
+  position: relative;
+  z-index: 1;
+  padding: 10px;
+}
+
+.swarm-resource-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.swarm-resource-chip {
+  position: relative;
+  z-index: 1;
+  min-height: 82px;
+  padding: 10px;
+  border-radius: calc(12px * var(--theme-radius-multiplier));
+  border: 1px solid color-mix(in srgb, var(--theme-gray-1) 14%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-gray-0) 3%, transparent), transparent 44%),
+    color-mix(in srgb, var(--theme-gray-8) 88%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--theme-gray-0) 4%, transparent);
+}
+
+.swarm-resource-meter {
+  position: relative;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--theme-gray-1) 16%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-gray-0) 4%, transparent), transparent 54%),
+    color-mix(in srgb, var(--theme-gray-9) 74%, var(--theme-gray-8));
+}
+
+.swarm-resource-meter__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  transition: width 420ms ease, filter 220ms ease, box-shadow 220ms ease;
+}
+
+.swarm-resource-meter--cool .swarm-resource-meter__fill {
+  background: linear-gradient(90deg, var(--theme-accent-2), var(--theme-brand));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--theme-brand) 34%, transparent);
+}
+
+.swarm-resource-meter--warm .swarm-resource-meter__fill {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--theme-warning) 84%, white), var(--theme-warning));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--theme-warning) 34%, transparent);
+}
+
+.swarm-resource-meter--hot .swarm-resource-meter__fill {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--theme-error) 76%, white), var(--theme-error));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--theme-error) 36%, transparent);
+}
+
+.swarm-resource-hosts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swarm-resource-host-pill {
+  min-width: 130px;
+  max-width: 100%;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--theme-accent-2) 20%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--theme-gray-0) 3%, transparent), transparent 48%),
+    color-mix(in srgb, var(--theme-accent-soft) 20%, var(--theme-gray-8));
+}
+
+.swarm-resource-empty {
+  border-style: dashed !important;
+}
+
 .swarm-server-list {
   gap: 10px;
 }
@@ -4008,6 +4313,60 @@ pre,
 
   .swarm-server-controls {
     padding: 8px;
+  }
+
+  .swarm-resource-hero__stats {
+    width: 100%;
+  }
+}
+
+@media (max-width: 820px) {
+  .swarm-resource-chip-grid,
+  .swarm-resource-hero__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .swarm-resource-chip-grid,
+  .swarm-resource-hero__stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes swarm-resource-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--theme-success) 42%, transparent);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+@keyframes swarm-resource-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(22px, 14px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swarm-resource-hero::before,
+  .swarm-resource-live__dot {
+    animation: none !important;
+  }
+
+  .swarm-resource-meter__fill {
+    transition: none !important;
   }
 }
 

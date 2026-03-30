@@ -1265,8 +1265,14 @@ export class SwarmUIClient {
       .map(([id, value]) => this.normalizeBackendStatus(value as Record<string, unknown>, id));
   }
 
-  async listBackends(): Promise<BackendStatus[]> {
-    const response = await this.post<unknown>('ListBackends', {});
+  async listBackends(options?: {
+    fullData?: boolean;
+    nonreal?: boolean;
+  }): Promise<BackendStatus[]> {
+    const response = await this.post<unknown>('ListBackends', {
+      ...(options?.fullData ? { full_data: true } : {}),
+      ...(options?.nonreal ? { nonreal: true } : {}),
+    });
     return this.normalizeBackendsResponse(response);
   }
 

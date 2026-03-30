@@ -86,6 +86,21 @@ export interface ThemePalette {
         // Input/dropdown backgrounds
         inputBg?: string;
         dropdownBg?: string;
+        // Semantic readability surfaces
+        appBg?: string;
+        panelBg?: string;
+        cardBg?: string;
+        raisedBg?: string;
+        headerBg?: string;
+        selectedSurface?: string;
+        selectedSurfaceHover?: string;
+        selectedText?: string;
+        interactiveHoverBg?: string;
+        interactiveActiveBg?: string;
+        surfaceOverlayOpacity?: number;
+        headerOverlayOpacity?: number;
+        inputOverlayOpacity?: number;
+        controlOverlayOpacity?: number;
         // Syntax highlighting (for prompt editor)
         syntaxKeyword?: string;
         syntaxString?: string;
@@ -3417,7 +3432,7 @@ export const useThemeStore = create<ThemeStore>()(
                 removeItem: (name) => localStorage.removeItem(name),
             },
             // Migration for older versions
-            migrate: (persistedState: any, version: number) => {
+            migrate: (persistedState: Record<string, unknown>, version: number) => {
                 if (version < 2) {
                     // Add customThemes array if upgrading from version 1
                     return { ...persistedState, customThemes: [] };
@@ -3446,28 +3461,169 @@ export const useThemeStore = create<ThemeStore>()(
     )
 );
 
+interface RgbColor {
+    r: number;
+    g: number;
+    b: number;
+}
+
+function normalizeHexColor(input: string | undefined | null, fallback: string): string {
+    if (!input) {
+        return fallback;
+    }
+
+    const trimmed = input.trim();
+    const normalized = trimmed.startsWith('#') ? trimmed : `#${trimmed}`;
+    const shortMatch = /^#([0-9a-fA-F]{3})$/.exec(normalized);
+    if (shortMatch) {
+        const expanded = shortMatch[1].split('').map((value) => value + value).join('');
+        return `#${expanded.toLowerCase()}`;
+    }
+
+    if (/^#([0-9a-fA-F]{6})$/.test(normalized)) {
+        return normalized.toLowerCase();
+    }
+
+    return fallback;
+}
+
+function hexToRgb(hexColor: string): RgbColor {
+    const normalized = normalizeHexColor(hexColor, '#000000').replace('#', '');
+    return {
+        r: Number.parseInt(normalized.slice(0, 2), 16),
+        g: Number.parseInt(normalized.slice(2, 4), 16),
+        b: Number.parseInt(normalized.slice(4, 6), 16),
+    };
+}
+
+function rgbToHex(color: RgbColor): string {
+    const toHex = (value: number) => clamp(Math.round(value), 0, 255).toString(16).padStart(2, '0');
+    return `#${toHex(color.r)}${toHex(color.g)}${toHex(color.b)}`;
+}
+
+function mixHexColors(colorA: string, colorB: string, weightA: number): string {
+    const a = hexToRgb(colorA);
+    const b = hexToRgb(colorB);
+    const ratio = clamp(weightA, 0, 1);
+    return rgbToHex({
+        r: a.r * ratio + b.r * (1 - ratio),
+        g: a.g * ratio + b.g * (1 - ratio),
+        b: a.b * ratio + b.b * (1 - ratio),
+    });
+}
+
+function colorToRgbaString(hexColor: string, alpha: number): string {
+    const rgb = hexToRgb(hexColor);
+    return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${clamp(alpha, 0, 1).toFixed(3)})`;
+}
+
+function toLinearChannel(value: number): number {
+    const normalized = value / 255;
+    if (normalized <= 0.03928) {
+        return normalized / 12.92;
+    }
+    return ((normalized + 0.055) / 1.055) ** 2.4;
+}
+
+function getRelativeLuminance(hexColor: string): number {
+    const rgb = hexToRgb(hexColor);
+    return 0.2126 * toLinearChannel(rgb.r)
+        + 0.7152 * toLinearChannel(rgb.g)
+        + 0.0722 * toLinearChannel(rgb.b);
+}
+
+function getContrastRatio(foreground: string, background: string): number {
+    const light = Math.max(getRelativeLuminance(foreground), getRelativeLuminance(background));
+    const dark = Math.min(getRelativeLuminance(foreground), getRelativeLuminance(background));
+    return (light + 0.05) / (dark + 0.05);
+}
+
+function pickAccessibleTextColor(background: string, preferredText: string, alternateText: string, minRatio: number = 4.5): string {
+    const preferredRatio = getContrastRatio(preferredText, background);
+    if (preferredRatio >= minRatio) {
+        return preferredText;
+    }
+
+    const alternateRatio = getContrastRatio(alternateText, background);
+    if (alternateRatio >= minRatio) {
+        return alternateText;
+    }
+
+    return preferredRatio >= alternateRatio ? preferredText : alternateText;
+}
+
+function pickAccessibleTextColorForSurfaces(
+    backgrounds: string[],
+    preferredText: string,
+    alternateText: string,
+    minRatio: number = 4.5
+): string {
+    const uniqueCandidates = Array.from(new Set([
+        preferredText,
+        alternateText,
+        ...backgrounds.map((background) => getContrastTextColor(background)),
+    ]));
+
+    for (const candidate of uniqueCandidates) {
+        if (backgrounds.every((background) => getContrastRatio(candidate, background) >= minRatio)) {
+            return candidate;
+        }
+    }
+
+    let bestCandidate = uniqueCandidates[0] ?? preferredText;
+    let bestMinimumRatio = -1;
+    for (const candidate of uniqueCandidates) {
+        const minimumRatio = Math.min(...backgrounds.map((background) => getContrastRatio(candidate, background)));
+        if (minimumRatio > bestMinimumRatio) {
+            bestMinimumRatio = minimumRatio;
+            bestCandidate = candidate;
+        }
+    }
+
+    return bestCandidate;
+}
+
+function constrainSurfaceForText(
+    baseSurface: string,
+    candidateSurface: string,
+    textColor: string,
+    minRatio: number = 4.5
+): string {
+    if (getContrastRatio(textColor, candidateSurface) >= minRatio) {
+        return candidateSurface;
+    }
+
+    let best = candidateSurface;
+    for (let candidateWeight = 0.9; candidateWeight >= -0.001; candidateWeight -= 0.05) {
+        const adjusted = mixHexColors(candidateSurface, baseSurface, clamp(candidateWeight, 0, 1));
+        best = adjusted;
+        if (getContrastRatio(textColor, adjusted) >= minRatio) {
+            return adjusted;
+        }
+    }
+
+    return best;
+}
+
+function deriveReadableMutedText(baseText: string, surface: string, minRatio: number = 4.5): string {
+    let best = baseText;
+    for (let weight = 0.72; weight <= 1.001; weight += 0.04) {
+        const candidate = mixHexColors(baseText, surface, weight);
+        if (getContrastRatio(candidate, surface) >= minRatio) {
+            best = candidate;
+            break;
+        }
+    }
+    return best;
+}
+
 /**
- * Calculate the relative luminance of a hex color and return appropriate contrast text color
- * Uses the W3C formula for relative luminance
+ * Calculate the highest-contrast text color for a background using the W3C contrast formula.
  */
 function getContrastTextColor(hexColor: string): string {
-    // Remove # if present
-    const hex = hexColor.replace('#', '');
-
-    // Handle shorthand hex (e.g., #fff)
-    const fullHex = hex.length === 3
-        ? hex.split('').map(c => c + c).join('')
-        : hex;
-
-    const r = parseInt(fullHex.substr(0, 2), 16);
-    const g = parseInt(fullHex.substr(2, 2), 16);
-    const b = parseInt(fullHex.substr(4, 2), 16);
-
-    // Calculate relative luminance using sRGB formula
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-    // Return black for light colors (luminance > 0.5), white for dark colors
-    return luminance > 0.5 ? '#000000' : '#ffffff';
+    const whiteContrast = getContrastRatio('#ffffff', hexColor);
+    const blackContrast = getContrastRatio('#000000', hexColor);
+    return whiteContrast >= blackContrast ? '#ffffff' : '#000000';
 }
 
 interface ThemeVisualProfile {
@@ -3693,6 +3849,66 @@ export function applyThemeToCSS(theme: ThemePalette, isLightMode: boolean = fals
     const gray7 = isLightMode ? (theme.colors.lightGray7 || '#e8e8e8') : theme.colors.gray7;
     const gray8 = isLightMode ? (theme.colors.lightGray8 || '#efefef') : theme.colors.gray8;
     const gray9 = isLightMode ? (theme.colors.lightGray9 || '#f5f5f5') : theme.colors.gray9;
+    const appSurface = normalizeHexColor(theme.colors.appBg, gray9);
+    const panelSurface = normalizeHexColor(theme.colors.panelBg, mixHexColors(gray8, appSurface, isLightMode ? 0.62 : 0.76));
+    const cardSurface = normalizeHexColor(theme.colors.cardBg, mixHexColors(gray7, panelSurface, isLightMode ? 0.34 : 0.42));
+    const raisedSurface = normalizeHexColor(theme.colors.raisedBg, mixHexColors(gray6, cardSurface, isLightMode ? 0.20 : 0.24));
+    const headerSurface = normalizeHexColor(theme.colors.headerBg, mixHexColors(panelSurface, appSurface, isLightMode ? 0.84 : 0.9));
+    const inputSurface = normalizeHexColor(theme.colors.inputBg, mixHexColors(raisedSurface, cardSurface, isLightMode ? 0.44 : 0.52));
+    const dropdownSurface = normalizeHexColor(theme.colors.dropdownBg, mixHexColors(cardSurface, panelSurface, isLightMode ? 0.68 : 0.74));
+    const textOnApp = pickAccessibleTextColor(appSurface, gray0, getContrastTextColor(appSurface));
+    const textOnPanel = pickAccessibleTextColor(panelSurface, gray0, getContrastTextColor(panelSurface));
+    const textOnCard = pickAccessibleTextColor(cardSurface, textOnPanel, getContrastTextColor(cardSurface));
+    const textOnInput = pickAccessibleTextColor(inputSurface, textOnCard, getContrastTextColor(inputSurface));
+    const textOnDropdown = pickAccessibleTextColor(dropdownSurface, textOnCard, getContrastTextColor(dropdownSurface));
+    const textPrimaryCandidate = normalizeHexColor(theme.colors.textPrimary, textOnCard);
+    const textPrimaryResolved = pickAccessibleTextColor(cardSurface, textPrimaryCandidate, textOnCard);
+    const textSecondaryCandidate = normalizeHexColor(theme.colors.textSecondary, deriveReadableMutedText(textPrimaryResolved, cardSurface));
+    const textSecondaryResolved = pickAccessibleTextColor(cardSurface, textSecondaryCandidate, textPrimaryResolved);
+    const selectedSurfaceCandidate = normalizeHexColor(
+        theme.colors.selectedSurface,
+        mixHexColors(effectiveBrand, cardSurface, isLightMode ? 0.18 : 0.34)
+    );
+    const selectedSurfaceHoverCandidate = normalizeHexColor(
+        theme.colors.selectedSurfaceHover,
+        mixHexColors(effectiveBrand, selectedSurfaceCandidate, isLightMode ? 0.3 : 0.18)
+    );
+    const selectedBorder = normalizeHexColor(theme.colors.selectionBorder, effectiveBrand);
+    const selectedTextCandidate = normalizeHexColor(
+        theme.colors.selectedText,
+        pickAccessibleTextColorForSurfaces(
+            [selectedSurfaceCandidate, selectedSurfaceHoverCandidate],
+            textPrimaryResolved,
+            getContrastTextColor(selectedSurfaceCandidate)
+        )
+    );
+    const selectedSurface = constrainSurfaceForText(
+        cardSurface,
+        selectedSurfaceCandidate,
+        selectedTextCandidate
+    );
+    const selectedSurfaceHoverCandidateResolved = constrainSurfaceForText(
+        selectedSurface,
+        selectedSurfaceHoverCandidate,
+        selectedTextCandidate
+    );
+    const selectedText = pickAccessibleTextColorForSurfaces(
+        [selectedSurface, selectedSurfaceHoverCandidateResolved],
+        selectedTextCandidate,
+        getContrastTextColor(selectedSurface)
+    );
+    const selectedSurfaceHover = constrainSurfaceForText(
+        selectedSurface,
+        selectedSurfaceHoverCandidateResolved,
+        selectedText
+    );
+    const interactiveHoverSurface = normalizeHexColor(theme.colors.interactiveHoverBg, mixHexColors(theme.colors.accent, cardSurface, isLightMode ? 0.14 : 0.2));
+    const interactiveActiveSurface = normalizeHexColor(theme.colors.interactiveActiveBg, mixHexColors(effectiveBrand, cardSurface, isLightMode ? 0.12 : 0.18));
+    const interactiveText = pickAccessibleTextColor(interactiveActiveSurface, textPrimaryResolved, getContrastTextColor(interactiveActiveSurface));
+    const surfaceOverlayOpacity = clamp(theme.colors.surfaceOverlayOpacity ?? (style.surfaceMode === 'ornamented' ? 0.16 : 0.12), 0.04, 0.18);
+    const headerOverlayOpacity = clamp(theme.colors.headerOverlayOpacity ?? Math.min(surfaceOverlayOpacity, 0.1), 0.03, 0.12);
+    const inputOverlayOpacity = clamp(theme.colors.inputOverlayOpacity ?? Math.min(surfaceOverlayOpacity, 0.09), 0.02, 0.1);
+    const controlOverlayOpacity = clamp(theme.colors.controlOverlayOpacity ?? Math.min(surfaceOverlayOpacity + 0.02, 0.14), 0.04, 0.16);
     const secondaryAccent = theme.colors.secondaryAccent ||
         `color-mix(in srgb, ${theme.colors.accent} ${64 + (themeSeed % 12)}%, ${effectiveBrand})`;
     const tertiaryAccent = theme.colors.tertiaryAccent ||
@@ -3787,8 +4003,7 @@ export function applyThemeToCSS(theme: ThemePalette, isLightMode: boolean = fals
     // Set UI interaction colors with smart fallbacks
     const selectionBg = theme.colors.selectionBg ||
         `color-mix(in srgb, ${effectiveBrand} 25%, transparent)`;
-    const selectionBorder = theme.colors.selectionBorder || effectiveBrand;
-    const focusRing = theme.colors.focusRing || effectiveBrand;
+    const focusRing = theme.colors.focusRing || selectedBorder;
     const highlightBg = theme.colors.highlightBg ||
         `color-mix(in srgb, ${theme.colors.warning} 30%, transparent)`;
     const lineHighlight = theme.colors.lineHighlight ||
@@ -3798,12 +4013,37 @@ export function applyThemeToCSS(theme: ThemePalette, isLightMode: boolean = fals
         `color-mix(in srgb, ${effectiveBrand} 25%, transparent)`;
 
     root.style.setProperty('--theme-selection-bg', selectionBg);
-    root.style.setProperty('--theme-selection-border', selectionBorder);
+    root.style.setProperty('--theme-selection-border', selectedBorder);
     root.style.setProperty('--theme-focus-ring', focusRing);
     root.style.setProperty('--theme-highlight-bg', highlightBg);
     root.style.setProperty('--theme-line-highlight', lineHighlight);
     root.style.setProperty('--theme-link-underline', linkUnderline);
     root.style.setProperty('--theme-bracket-match', bracketMatch);
+    root.style.setProperty('--theme-surface-app', appSurface);
+    root.style.setProperty('--theme-surface-panel', panelSurface);
+    root.style.setProperty('--theme-surface-card', cardSurface);
+    root.style.setProperty('--theme-surface-raised', raisedSurface);
+    root.style.setProperty('--theme-surface-header', headerSurface);
+    root.style.setProperty('--theme-surface-input', inputSurface);
+    root.style.setProperty('--theme-surface-dropdown', dropdownSurface);
+    root.style.setProperty('--theme-canvas-bg', appSurface);
+    root.style.setProperty('--theme-text-on-app', textOnApp);
+    root.style.setProperty('--theme-text-on-panel', textOnPanel);
+    root.style.setProperty('--theme-text-on-card', textOnCard);
+    root.style.setProperty('--theme-text-on-input', textOnInput);
+    root.style.setProperty('--theme-text-on-dropdown', textOnDropdown);
+    root.style.setProperty('--theme-selected-surface', selectedSurface);
+    root.style.setProperty('--theme-selected-surface-hover', selectedSurfaceHover);
+    root.style.setProperty('--theme-selected-text', selectedText);
+    root.style.setProperty('--theme-selected-border', selectedBorder);
+    root.style.setProperty('--theme-selected-scrim', colorToRgbaString(selectedSurface, isLightMode ? 0.16 : 0.24));
+    root.style.setProperty('--theme-interactive-hover-surface', interactiveHoverSurface);
+    root.style.setProperty('--theme-interactive-active-surface', interactiveActiveSurface);
+    root.style.setProperty('--theme-interactive-text', interactiveText);
+    root.style.setProperty('--theme-surface-overlay-opacity', String(surfaceOverlayOpacity));
+    root.style.setProperty('--theme-header-overlay-opacity', String(headerOverlayOpacity));
+    root.style.setProperty('--theme-input-overlay-opacity', String(inputOverlayOpacity));
+    root.style.setProperty('--theme-control-overlay-opacity', String(controlOverlayOpacity));
 
     // Scrollbar theming
     const scrollbarThumb = theme.colors.scrollbarThumb || gray5;
@@ -3812,8 +4052,8 @@ export function applyThemeToCSS(theme: ThemePalette, isLightMode: boolean = fals
     root.style.setProperty('--theme-scrollbar-track', scrollbarTrack);
 
     // Input/dropdown backgrounds
-    const inputBg = theme.colors.inputBg || gray8;
-    const dropdownBg = theme.colors.dropdownBg || gray7;
+    const inputBg = inputSurface;
+    const dropdownBg = dropdownSurface;
     root.style.setProperty('--theme-input-bg', inputBg);
     root.style.setProperty('--theme-dropdown-bg', dropdownBg);
 
@@ -3831,9 +4071,9 @@ export function applyThemeToCSS(theme: ThemePalette, isLightMode: boolean = fals
 
     // Semantic colors
     const infoColor = theme.colors.infoColor || theme.colors.accent;
-    const mutedText = theme.colors.mutedText || gray4;
+    const mutedText = normalizeHexColor(theme.colors.mutedText, textSecondaryResolved);
     const disabledOpacity = theme.colors.disabledOpacity ?? 0.45;
-    const interactiveBg = theme.colors.interactiveBg || gray6;
+    const interactiveBg = normalizeHexColor(theme.colors.interactiveBg, interactiveHoverSurface);
     const borderSubtle = theme.colors.borderSubtle || (isLightMode
         ? `color-mix(in srgb, ${gray4} 56%, ${gray5})`
         : `color-mix(in srgb, ${gray4} 42%, ${gray5})`);
@@ -3861,63 +4101,65 @@ export function applyThemeToCSS(theme: ThemePalette, isLightMode: boolean = fals
     root.style.setProperty('--theme-success-text', getContrastTextColor(theme.colors.success));
     root.style.setProperty('--theme-warning-text', getContrastTextColor(theme.colors.warning));
     root.style.setProperty('--theme-error-text', getContrastTextColor(theme.colors.error));
-    const tonePrimaryBg = brandGradient;
+    const tonePrimarySolid = mixHexColors(effectiveBrand, panelSurface, isLightMode ? 0.52 : 0.72);
+    const tonePrimaryBg = `linear-gradient(${124 + (themeSeed % 42)}deg, color-mix(in srgb, ${effectiveBrand} ${Math.round(controlOverlayOpacity * 100)}%, transparent), transparent 62%), ${tonePrimarySolid}`;
     const tonePrimarySoft = `color-mix(in srgb, ${effectiveBrand} 22%, transparent)`;
     const tonePrimaryBorder = `color-mix(in srgb, ${effectiveBrand} 52%, transparent)`;
     const tonePrimaryGlow = `color-mix(in srgb, ${effectiveBrand} 40%, transparent)`;
-    const toneSecondaryBg = `linear-gradient(135deg, ${gray6}, ${gray5})`;
+    const toneSecondarySolid = mixHexColors(interactiveActiveSurface, panelSurface, 0.58);
+    const toneSecondaryBg = `linear-gradient(135deg, color-mix(in srgb, ${theme.colors.accent} ${Math.round(controlOverlayOpacity * 72)}%, transparent), transparent 68%), ${toneSecondarySolid}`;
     const toneSecondarySoft = `color-mix(in srgb, ${gray5} 36%, transparent)`;
     const toneSecondaryBorder = `color-mix(in srgb, ${gray4} 68%, transparent)`;
     const toneSecondaryGlow = `color-mix(in srgb, ${gray4} 28%, transparent)`;
-    const toneSuccessBg = `linear-gradient(135deg, ${theme.colors.success}, color-mix(in srgb, ${theme.colors.success} 78%, black))`;
+    const toneSuccessSolid = mixHexColors(theme.colors.success, panelSurface, isLightMode ? 0.42 : 0.62);
+    const toneSuccessBg = `linear-gradient(135deg, color-mix(in srgb, ${theme.colors.success} ${Math.round(controlOverlayOpacity * 100)}%, transparent), transparent 62%), ${toneSuccessSolid}`;
     const toneSuccessSoft = `color-mix(in srgb, ${theme.colors.success} 24%, transparent)`;
     const toneSuccessBorder = `color-mix(in srgb, ${theme.colors.success} 56%, transparent)`;
     const toneSuccessGlow = `color-mix(in srgb, ${theme.colors.success} 42%, transparent)`;
-    const toneWarningBg = isLightMode
-        ? `linear-gradient(135deg, color-mix(in srgb, ${theme.colors.warning} 56%, black), color-mix(in srgb, ${theme.colors.warning} 68%, black))`
-        : `linear-gradient(135deg, ${theme.colors.warning}, color-mix(in srgb, ${theme.colors.warning} 78%, black))`;
+    const toneWarningSolid = mixHexColors(theme.colors.warning, panelSurface, isLightMode ? 0.34 : 0.56);
+    const toneWarningBg = `linear-gradient(135deg, color-mix(in srgb, ${theme.colors.warning} ${Math.round(controlOverlayOpacity * 100)}%, transparent), transparent 62%), ${toneWarningSolid}`;
     const toneWarningSoft = `color-mix(in srgb, ${theme.colors.warning} 24%, transparent)`;
     const toneWarningBorder = `color-mix(in srgb, ${theme.colors.warning} 56%, transparent)`;
     const toneWarningGlow = `color-mix(in srgb, ${theme.colors.warning} 42%, transparent)`;
-    const toneDangerBg = isLightMode
-        ? `linear-gradient(135deg, color-mix(in srgb, ${theme.colors.error} 58%, black), color-mix(in srgb, ${theme.colors.error} 70%, black))`
-        : `linear-gradient(135deg, ${theme.colors.error}, color-mix(in srgb, ${theme.colors.error} 78%, black))`;
+    const toneDangerSolid = mixHexColors(theme.colors.error, panelSurface, isLightMode ? 0.36 : 0.58);
+    const toneDangerBg = `linear-gradient(135deg, color-mix(in srgb, ${theme.colors.error} ${Math.round(controlOverlayOpacity * 100)}%, transparent), transparent 62%), ${toneDangerSolid}`;
     const toneDangerSoft = `color-mix(in srgb, ${theme.colors.error} 24%, transparent)`;
     const toneDangerBorder = `color-mix(in srgb, ${theme.colors.error} 56%, transparent)`;
     const toneDangerGlow = `color-mix(in srgb, ${theme.colors.error} 42%, transparent)`;
-    const toneInfoBg = `linear-gradient(135deg, ${infoColor}, color-mix(in srgb, ${infoColor} 78%, black))`;
+    const toneInfoSolid = mixHexColors(infoColor, panelSurface, isLightMode ? 0.42 : 0.62);
+    const toneInfoBg = `linear-gradient(135deg, color-mix(in srgb, ${infoColor} ${Math.round(controlOverlayOpacity * 100)}%, transparent), transparent 62%), ${toneInfoSolid}`;
     const toneInfoSoft = `color-mix(in srgb, ${infoColor} 24%, transparent)`;
     const toneInfoBorder = `color-mix(in srgb, ${infoColor} 56%, transparent)`;
     const toneInfoGlow = `color-mix(in srgb, ${infoColor} 42%, transparent)`;
     root.style.setProperty('--theme-tone-primary-bg', tonePrimaryBg);
     root.style.setProperty('--theme-tone-primary-soft', tonePrimarySoft);
     root.style.setProperty('--theme-tone-primary-border', tonePrimaryBorder);
-    root.style.setProperty('--theme-tone-primary-text', getContrastTextColor(effectiveBrand));
+    root.style.setProperty('--theme-tone-primary-text', pickAccessibleTextColor(tonePrimarySolid, textPrimaryResolved, getContrastTextColor(tonePrimarySolid)));
     root.style.setProperty('--theme-tone-primary-glow', tonePrimaryGlow);
     root.style.setProperty('--theme-tone-secondary-bg', toneSecondaryBg);
     root.style.setProperty('--theme-tone-secondary-soft', toneSecondarySoft);
     root.style.setProperty('--theme-tone-secondary-border', toneSecondaryBorder);
-    root.style.setProperty('--theme-tone-secondary-text', gray0);
+    root.style.setProperty('--theme-tone-secondary-text', pickAccessibleTextColor(toneSecondarySolid, textPrimaryResolved, getContrastTextColor(toneSecondarySolid)));
     root.style.setProperty('--theme-tone-secondary-glow', toneSecondaryGlow);
     root.style.setProperty('--theme-tone-success-bg', toneSuccessBg);
     root.style.setProperty('--theme-tone-success-soft', toneSuccessSoft);
     root.style.setProperty('--theme-tone-success-border', toneSuccessBorder);
-    root.style.setProperty('--theme-tone-success-text', getContrastTextColor(theme.colors.success));
+    root.style.setProperty('--theme-tone-success-text', pickAccessibleTextColor(toneSuccessSolid, textPrimaryResolved, getContrastTextColor(toneSuccessSolid)));
     root.style.setProperty('--theme-tone-success-glow', toneSuccessGlow);
     root.style.setProperty('--theme-tone-warning-bg', toneWarningBg);
     root.style.setProperty('--theme-tone-warning-soft', toneWarningSoft);
     root.style.setProperty('--theme-tone-warning-border', toneWarningBorder);
-    root.style.setProperty('--theme-tone-warning-text', getContrastTextColor(theme.colors.warning));
+    root.style.setProperty('--theme-tone-warning-text', pickAccessibleTextColor(toneWarningSolid, textPrimaryResolved, getContrastTextColor(toneWarningSolid)));
     root.style.setProperty('--theme-tone-warning-glow', toneWarningGlow);
     root.style.setProperty('--theme-tone-danger-bg', toneDangerBg);
     root.style.setProperty('--theme-tone-danger-soft', toneDangerSoft);
     root.style.setProperty('--theme-tone-danger-border', toneDangerBorder);
-    root.style.setProperty('--theme-tone-danger-text', getContrastTextColor(theme.colors.error));
+    root.style.setProperty('--theme-tone-danger-text', pickAccessibleTextColor(toneDangerSolid, textPrimaryResolved, getContrastTextColor(toneDangerSolid)));
     root.style.setProperty('--theme-tone-danger-glow', toneDangerGlow);
     root.style.setProperty('--theme-tone-info-bg', toneInfoBg);
     root.style.setProperty('--theme-tone-info-soft', toneInfoSoft);
     root.style.setProperty('--theme-tone-info-border', toneInfoBorder);
-    root.style.setProperty('--theme-tone-info-text', getContrastTextColor(infoColor));
+    root.style.setProperty('--theme-tone-info-text', pickAccessibleTextColor(toneInfoSolid, textPrimaryResolved, getContrastTextColor(toneInfoSolid)));
     root.style.setProperty('--theme-tone-info-glow', toneInfoGlow);
 
     // Progress system tokens (theme-specific, high-contrast)
@@ -4044,19 +4286,12 @@ export function applyThemeToCSS(theme: ThemePalette, isLightMode: boolean = fals
     root.style.setProperty('--mantine-primary-color-outline', effectiveBrand);
     root.style.setProperty('--mantine-primary-color-contrast', getContrastTextColor(effectiveBrand));
 
-    root.style.setProperty('--mantine-color-text', gray0);
-    root.style.setProperty('--mantine-color-dimmed', gray3);
-    root.style.setProperty('--mantine-color-body', gray9);
+    root.style.setProperty('--mantine-color-text', textPrimaryResolved);
+    root.style.setProperty('--mantine-color-dimmed', textSecondaryResolved);
+    root.style.setProperty('--mantine-color-body', appSurface);
 
-    // Phase 5: Text hierarchy - fallback to appropriate grays
-    const textPrimary = theme.colors.textPrimary || (isLightMode
-        ? (theme.colors.lightGray0 || '#000000')
-        : theme.colors.gray0);
-    const textSecondary = theme.colors.textSecondary || (isLightMode
-        ? (theme.colors.lightGray2 || '#333333')
-        : theme.colors.gray2);
-    root.style.setProperty('--theme-text-primary', textPrimary);
-    root.style.setProperty('--theme-text-secondary', textSecondary);
+    root.style.setProperty('--theme-text-primary', textPrimaryResolved);
+    root.style.setProperty('--theme-text-secondary', textSecondaryResolved);
 
     // Phase 5: Typography - theme font stacks
     const defaultFontFamily = style.family === 'glyph'

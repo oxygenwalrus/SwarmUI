@@ -30,10 +30,18 @@
 
 ## Styling Contract
 - Tone variables are generated in `src/store/themeStore.ts` via `applyThemeToCSS`.
+- Readability-safe semantic surfaces and state tokens also come from `src/store/themeStore.ts`.
 - Global classes are defined in `src/index.css`:
   - `.swarm-tone--*`
   - `.swarm-emphasis--*`
   - `.swarm-button`, `.swarm-action-icon`, `.swarm-badge`, `.swarm-status-pill`
+  - `.swarm-contrast-panel`, `.swarm-contrast-bubble`, `.swarm-selectable-card`, `.swarm-selected-table-row`
+
+## Contrast Guardrails
+- Text-bearing surfaces should sit on semantic surface tokens, not raw gradients or ad hoc `color-mix(...)` backgrounds.
+- Selected and active states should use `--theme-selected-*` or `--theme-interactive-*` tokens.
+- Image-backed cards must add a readable scrim for selected/highlighted text and badges.
+- If a component needs a one-off readable surface, prefer the shared contrast classes before adding inline styles.
 
 ## Motion Guardrail
 - Buttons, sliders, and other primary controls should stay visually anchored to the UI plane.
@@ -49,3 +57,4 @@
 
 ## Guardrail
 - Run `npm run theme:audit` to report hardcoded color props/hex literals and legacy Mantine dark references.
+- Run `npm run theme:contrast-audit` to validate semantic text/surface combinations across built-in themes in dark and light mode.

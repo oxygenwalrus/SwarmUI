@@ -295,9 +295,11 @@ export function LoRABrowser({ opened, onClose, selectedLoras, onLoraChange, onAd
         key={lora.name}
         withBorder
         padding="sm"
+        className="swarm-selectable-card"
+        data-selected={selected ? 'true' : undefined}
         style={{
           cursor: 'pointer',
-          borderColor: selected ? 'var(--theme-info)' : undefined,
+          borderColor: selected ? 'var(--theme-selected-border)' : undefined,
           borderWidth: selected ? 2 : 1,
           display: 'flex',
           flexDirection: 'column',
@@ -312,7 +314,7 @@ export function LoRABrowser({ opened, onClose, selectedLoras, onLoraChange, onAd
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: 'var(--theme-gray-6)',
+                backgroundColor: 'var(--theme-surface-input)',
                 borderRadius: 4,
                 overflow: 'hidden',
               }}
@@ -398,8 +400,10 @@ export function LoRABrowser({ opened, onClose, selectedLoras, onLoraChange, onAd
         key={lora.name}
         withBorder
         padding="sm"
+        className="swarm-selectable-card"
+        data-selected={selected ? 'true' : undefined}
         style={{
-          borderColor: selected ? 'var(--theme-info)' : undefined,
+          borderColor: selected ? 'var(--theme-selected-border)' : undefined,
           borderWidth: selected ? 2 : 1,
         }}
       >
@@ -415,7 +419,7 @@ export function LoRABrowser({ opened, onClose, selectedLoras, onLoraChange, onAd
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: 'var(--theme-gray-6)',
+                  backgroundColor: 'var(--theme-surface-input)',
                   borderRadius: 4,
                   overflow: 'hidden',
                 }}
@@ -496,9 +500,11 @@ export function LoRABrowser({ opened, onClose, selectedLoras, onLoraChange, onAd
         <Card
           withBorder
           padding="xs"
+          className="swarm-selectable-card"
+          data-selected={selected ? 'true' : undefined}
           style={{
             cursor: 'pointer',
-            borderColor: selected ? 'var(--theme-info)' : undefined,
+            borderColor: selected ? 'var(--theme-selected-border)' : undefined,
             borderWidth: selected ? 2 : 1,
             position: 'relative',
           }}
@@ -514,7 +520,7 @@ export function LoRABrowser({ opened, onClose, selectedLoras, onLoraChange, onAd
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: 'var(--theme-gray-6)',
+                  backgroundColor: 'var(--theme-surface-input)',
                   borderRadius: 4,
                   overflow: 'hidden',
                 }}
@@ -533,11 +539,11 @@ export function LoRABrowser({ opened, onClose, selectedLoras, onLoraChange, onAd
                 style={{
                   width: BROWSER_THUMBNAIL_SIZES[thumbnailSize].icon,
                   height: BROWSER_THUMBNAIL_SIZES[thumbnailSize].icon,
-                  backgroundColor: 'var(--theme-gray-6)',
+                  backgroundColor: 'var(--theme-surface-input)',
                   borderRadius: 4,
                 }}
               >
-                <IconPhoto size={24} color="var(--theme-gray-3)" />
+                <IconPhoto size={24} color="var(--theme-text-secondary)" />
               </Center>
             )}
             <Text size="xs" fw={500} ta="center" lineClamp={2} w="100%">

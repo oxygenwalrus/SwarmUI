@@ -1,3 +1,5 @@
+import { getRoleplayInteractionStyleConfig } from './roleplayInteractionStyles';
+
 export interface PromptPreset {
     value: string;
     label: string;
@@ -9,17 +11,33 @@ export interface PromptPresetGroup {
     items: PromptPreset[];
 }
 
+export interface OpeningMessagePreset {
+    value: string;
+    label: string;
+    message: string;
+}
+
+export interface OpeningMessagePresetGroup {
+    group: string;
+    items: OpeningMessagePreset[];
+}
+
 export const ROLEPLAY_PROMPT_PRESETS: PromptPresetGroup[] = [
     {
         group: 'General',
         items: [
             {
+                value: 'personal-chat',
+                label: 'Personal Chat',
+                prompt: getRoleplayInteractionStyleConfig('personal-chat').systemPrompt,
+            },
+            {
                 value: 'default-roleplay',
-                label: 'Default Roleplay',
-                prompt:
-                    'You are a roleplay character. Stay in character at all times. Respond naturally and drive the story forward.\n\n' +
+                label: 'Storyteller (Classic Roleplay)',
+                prompt: getRoleplayInteractionStyleConfig('storyteller').systemPrompt,
+                /*
                     'When a scene is vivid and worth illustrating — a dramatic location, a creature, a key moment — write [SCENE: detailed image generation prompt] on its own line. ' +
-                    'Make the image prompt specific: describe lighting, mood, style, subject, and composition.',
+                */
             },
             {
                 value: 'narrator',
@@ -343,4 +361,204 @@ export const ROLEPLAY_PROMPT_PRESETS: PromptPresetGroup[] = [
 /** O(1) lookup: preset value key → full prompt string */
 export const PRESET_PROMPT_MAP: Map<string, string> = new Map(
     ROLEPLAY_PROMPT_PRESETS.flatMap((g) => g.items).map((p) => [p.value, p.prompt])
+);
+
+export const CHAT_PROMPT_PRESETS: PromptPresetGroup[] = [
+    {
+        group: 'Chat Basics',
+        items: [
+            {
+                value: 'personal-chat',
+                label: 'Personal Chat',
+                prompt: getRoleplayInteractionStyleConfig('personal-chat').systemPrompt,
+            },
+            {
+                value: 'romance-soft',
+                label: 'Soft Romance',
+                prompt: PRESET_PROMPT_MAP.get('romance-soft') ?? '',
+            },
+            {
+                value: 'scenario-slice-of-life',
+                label: 'Slice of Life',
+                prompt: PRESET_PROMPT_MAP.get('scenario-slice-of-life') ?? '',
+            },
+            {
+                value: 'archetype-love-interest',
+                label: 'Love Interest',
+                prompt: PRESET_PROMPT_MAP.get('archetype-love-interest') ?? '',
+            },
+        ].filter((preset) => preset.prompt),
+    },
+    {
+        group: 'Charged Dynamics',
+        items: [
+            {
+                value: 'romance-tease',
+                label: 'Seductive Tease',
+                prompt: PRESET_PROMPT_MAP.get('romance-tease') ?? '',
+            },
+            {
+                value: 'romance-passionate',
+                label: 'Passionate Lover',
+                prompt: PRESET_PROMPT_MAP.get('romance-passionate') ?? '',
+            },
+            {
+                value: 'scenario-new-neighbor',
+                label: 'New Neighbor',
+                prompt: PRESET_PROMPT_MAP.get('scenario-new-neighbor') ?? '',
+            },
+            {
+                value: 'scenario-vacation-stranger',
+                label: 'Vacation Stranger',
+                prompt: PRESET_PROMPT_MAP.get('scenario-vacation-stranger') ?? '',
+            },
+        ].filter((preset) => preset.prompt),
+    },
+];
+
+export const ROLEPLAY_MODE_PROMPT_PRESETS: PromptPresetGroup[] = [
+    {
+        group: 'Roleplay Basics',
+        items: [
+            {
+                value: 'default-roleplay',
+                label: 'Storyteller (Classic Roleplay)',
+                prompt: getRoleplayInteractionStyleConfig('storyteller').systemPrompt,
+            },
+            {
+                value: 'narrator',
+                label: 'Narrator / Storyteller',
+                prompt: PRESET_PROMPT_MAP.get('narrator') ?? '',
+            },
+            {
+                value: 'scenario-dm',
+                label: 'Dungeon Master',
+                prompt: PRESET_PROMPT_MAP.get('scenario-dm') ?? '',
+            },
+            {
+                value: 'dark-fantasy',
+                label: 'Dark Fantasy',
+                prompt: PRESET_PROMPT_MAP.get('dark-fantasy') ?? '',
+            },
+        ].filter((preset) => preset.prompt),
+    },
+    {
+        group: 'Story Frameworks',
+        items: [
+            {
+                value: 'horror',
+                label: 'Horror',
+                prompt: PRESET_PROMPT_MAP.get('horror') ?? '',
+            },
+            {
+                value: 'scenario-noir',
+                label: 'Thriller / Noir',
+                prompt: PRESET_PROMPT_MAP.get('scenario-noir') ?? '',
+            },
+            {
+                value: 'scenario-scifi',
+                label: 'Sci-Fi Crew',
+                prompt: PRESET_PROMPT_MAP.get('scenario-scifi') ?? '',
+            },
+            {
+                value: 'archetype-rival',
+                label: 'Rival',
+                prompt: PRESET_PROMPT_MAP.get('archetype-rival') ?? '',
+            },
+        ].filter((preset) => preset.prompt),
+    },
+];
+
+export const CHAT_OPENING_MESSAGE_PRESETS: OpeningMessagePresetGroup[] = [
+    {
+        group: 'Warm Openers',
+        items: [
+            {
+                value: 'chat-soft-check-in',
+                label: 'Soft Check-In',
+                message: 'Hey. I was hoping we would get a little time together. How are you feeling right now?',
+            },
+            {
+                value: 'chat-missed-you',
+                label: 'Missed You',
+                message: 'There you are. I have been carrying a thought about you around all day and I think I finally need to say it out loud.',
+            },
+            {
+                value: 'chat-late-night',
+                label: 'Late Night Mood',
+                message: 'It is one of those quiet late-night moments where I end up thinking about you more honestly than usual. Can I be a little real with you?',
+            },
+        ],
+    },
+    {
+        group: 'Playful Openers',
+        items: [
+            {
+                value: 'chat-flirty-tease',
+                label: 'Flirty Tease',
+                message: 'I had every intention of being normal when you showed up, and then you made that impossible almost immediately.',
+            },
+            {
+                value: 'chat-curious-question',
+                label: 'Curious Question',
+                message: 'Can I ask you something a little personal? I want the honest answer, not the safe one.',
+            },
+            {
+                value: 'chat-momentum',
+                label: 'Pick Up The Energy',
+                message: 'Come here for a second. I want to start this conversation with a little more spark than usual.',
+            },
+        ],
+    },
+];
+
+export const ROLEPLAY_OPENING_MESSAGE_PRESETS: OpeningMessagePresetGroup[] = [
+    {
+        group: 'Scene Openers',
+        items: [
+            {
+                value: 'roleplay-doorway',
+                label: 'Doorway Entrance',
+                message: 'I pause in the doorway, studying you for a beat before I let the corner of my mouth lift. "So. Are we finally doing this, or are we going to keep pretending this tension is subtle?"',
+            },
+            {
+                value: 'roleplay-tavern',
+                label: 'Tavern Arrival',
+                message: 'The room hums with low conversation and firelight when I finally look up from my drink and notice you properly. I lean back, give you a slow once-over, and gesture to the empty seat across from me. "You took your time."',
+            },
+            {
+                value: 'roleplay-after-hours',
+                label: 'After Hours',
+                message: 'The place is almost empty now, all the noise reduced to a distant hush. I step a little closer, my voice lower than it was a minute ago. "Good. Now we can talk without anyone interrupting."',
+            },
+        ],
+    },
+    {
+        group: 'High-Tension Openers',
+        items: [
+            {
+                value: 'roleplay-storm',
+                label: 'Storm Shelter',
+                message: 'Thunder rolls somewhere beyond the walls as I finish securing the last window and turn back toward you. The storm has made the whole world feel smaller, more intimate. "Looks like it is just us for tonight."',
+            },
+            {
+                value: 'roleplay-close-quarters',
+                label: 'Close Quarters',
+                message: 'There is barely enough space between us to call it distance, and neither of us seems interested in fixing that. I let the silence stretch, then break it softly. "If you want me to step back, this is the moment to say it."',
+            },
+            {
+                value: 'roleplay-reunion',
+                label: 'Charged Reunion',
+                message: 'For a second I just look at you, taking in the reality of you being here again. When I finally speak, my voice is steady but not unaffected. "I had a dozen plans for what I would say when I saw you. I do not remember any of them now."',
+            },
+        ],
+    },
+];
+
+export const CHAT_OPENING_MESSAGE_PRESET_MAP: Map<string, string> = new Map(
+    CHAT_OPENING_MESSAGE_PRESETS.flatMap((group) => group.items).map((preset) => [preset.value, preset.message])
+);
+
+export const ROLEPLAY_OPENING_MESSAGE_PRESET_MAP: Map<string, string> = new Map(
+    ROLEPLAY_OPENING_MESSAGE_PRESETS.flatMap((group) => group.items).map((preset) => [preset.value, preset.message])
 );
