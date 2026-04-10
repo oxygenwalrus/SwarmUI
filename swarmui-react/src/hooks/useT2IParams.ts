@@ -18,6 +18,8 @@ interface ParamRange {
   viewMax?: number;
 }
 
+type SamplingOptionLike = SamplerOption | SchedulerOption;
+
 interface T2IParamsState {
   params: T2IParam[];
   groups: T2IParamGroup[];
@@ -58,6 +60,35 @@ const KNOWN_PARAM_IDS = new Set([
   'text2videoframes', 'text2videofps', 'text2videoformat',
 ]);
 
+export function mergeSamplingOptions<T extends SamplingOptionLike>(
+  kind: 'sampler' | 'scheduler',
+  backendValues: string[] | undefined,
+  backendLabels: string[] | undefined,
+  fallbackOptions: T[],
+  fallbackLookup: Map<string, T>,
+): T[] {
+  if (!backendValues || backendValues.length === 0) {
+    return fallbackOptions;
+  }
+
+  const mergedOptions = backendValues.map((value, index) => {
+    const fallback = fallbackLookup.get(value);
+    const backendLabel = backendLabels?.[index] || undefined;
+    if (fallback) {
+      return {
+        ...fallback,
+        label: backendLabel || fallback.label,
+      };
+    }
+    return createUnknownSamplingOption(kind, value, backendLabel) as T;
+  });
+
+  const mergedLookup = new Set(mergedOptions.map((option) => option.value));
+  const missingFallbacks = fallbackOptions.filter((option) => !mergedLookup.has(option.value));
+
+  return [...mergedOptions, ...missingFallbacks];
+}
+
 export function useT2IParams(): T2IParamsState {
   const isInitialized = useSessionStore((state) => state.isInitialized);
   const [rawResponse, setRawResponse] = useState<T2IParamsResponse | null>(null);
@@ -82,8 +113,8 @@ export function useT2IParams(): T2IParamsState {
     }
   }, [isInitialized, loadParams]);
 
-  const params = rawResponse?.list ?? [];
-  const groups = rawResponse?.groups ?? [];
+  const params = useMemo(() => rawResponse?.list ?? [], [rawResponse]);
+  const groups = useMemo(() => rawResponse?.groups ?? [], [rawResponse]);
 
   const samplerLookup = useMemo(() => {
     const map = new Map<string, SamplerOption>();
@@ -99,38 +130,24 @@ export function useT2IParams(): T2IParamsState {
 
   const samplerOptions = useMemo((): SamplerOption[] => {
     const samplerParam = params.find(p => p.id === 'sampler');
-    if (samplerParam?.values && samplerParam.values.length > 0) {
-      return samplerParam.values.map((value, index) => {
-        const fallback = samplerLookup.get(value);
-        const backendLabel = samplerParam.value_names?.[index] || undefined;
-        if (fallback) {
-          return {
-            ...fallback,
-            label: backendLabel || fallback.label,
-          };
-        }
-        return createUnknownSamplingOption('sampler', value, backendLabel) as SamplerOption;
-      });
-    }
-    return FALLBACK_SAMPLERS;
+    return mergeSamplingOptions(
+      'sampler',
+      samplerParam?.values ?? undefined,
+      samplerParam?.value_names ?? undefined,
+      FALLBACK_SAMPLERS,
+      samplerLookup,
+    );
   }, [params, samplerLookup]);
 
   const schedulerOptions = useMemo((): SchedulerOption[] => {
     const schedulerParam = params.find(p => p.id === 'scheduler');
-    if (schedulerParam?.values && schedulerParam.values.length > 0) {
-      return schedulerParam.values.map((value, index) => {
-        const fallback = schedulerLookup.get(value);
-        const backendLabel = schedulerParam.value_names?.[index] || undefined;
-        if (fallback) {
-          return {
-            ...fallback,
-            label: backendLabel || fallback.label,
-          };
-        }
-        return createUnknownSamplingOption('scheduler', value, backendLabel) as SchedulerOption;
-      });
-    }
-    return FALLBACK_SCHEDULERS;
+    return mergeSamplingOptions(
+      'scheduler',
+      schedulerParam?.values ?? undefined,
+      schedulerParam?.value_names ?? undefined,
+      FALLBACK_SCHEDULERS,
+      schedulerLookup,
+    );
   }, [params, schedulerLookup]);
 
   const paramRanges = useMemo(() => {

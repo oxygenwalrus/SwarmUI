@@ -156,8 +156,9 @@ const RegionItem = memo(function RegionItem({
 
         <TextInput
           size="xs"
-          label="Region Label"
-          placeholder={isBackgroundRegion ? 'Background' : 'Character A, Background, Face Fix...'}
+          label={isBackgroundRegion ? 'What Is This Area?' : 'What Is This Region?'}
+          description={isBackgroundRegion ? 'Use a short name like Background, Sky, Room, or Street.' : 'Use a short name like Character A, Face, Jacket, Table, or Background.'}
+          placeholder={isBackgroundRegion ? 'Background' : 'Character A, Face, Jacket, Table...'}
           value={region.label ?? ''}
           onChange={(e) => onUpdate({ label: e.currentTarget.value })}
           onClick={(e) => e.stopPropagation()}
@@ -165,8 +166,9 @@ const RegionItem = memo(function RegionItem({
 
         <Textarea
           size="xs"
-          label={isBackgroundRegion ? 'Background Prompt' : 'Region Prompt'}
-          placeholder={isBackgroundRegion ? 'Describe the background you want...' : 'Describe what this region should contain...'}
+          label={isBackgroundRegion ? 'What Should Be In The Background?' : 'What Should Be In This Region?'}
+          description={isBackgroundRegion ? 'Describe the background look you want to add, replace, or clean up.' : 'Describe what you want generated, changed, or refined inside this box.'}
+          placeholder={isBackgroundRegion ? 'Warm sunset sky, distant city lights, rainy street...' : 'Red jacket, cleaner face, medieval armor, more foliage...'}
           value={region.prompt}
           onChange={(e) => onUpdate({ prompt: e.target.value })}
           onClick={(e) => e.stopPropagation()}
@@ -259,6 +261,7 @@ export const RegionalPromptEditor = memo(function RegionalPromptEditor({
   const targetIdRef = useRef(`regional-prompt-editor-${Math.random().toString(36).slice(2)}`);
   const containerRef = useRef<HTMLDivElement>(null);
   const regionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const previousRegionIdsRef = useRef<Set<string>>(new Set());
   const [focusedRegionId, setFocusedRegionId] = useState<string | null>(null);
   const [isCheckingGrammar, setIsCheckingGrammar] = useState(false);
 
@@ -332,14 +335,36 @@ export const RegionalPromptEditor = memo(function RegionalPromptEditor({
   }, [handleAutocorrectFocusedRegion, handleGrammarCheckFocusedRegion]);
 
   useEffect(() => {
+    const previousRegionIds = previousRegionIdsRef.current;
+    const nextRegionIds = new Set(regions.map((region) => region.id));
+    const isNewActiveRegion = !!activeRegionId && !previousRegionIds.has(activeRegionId);
+    previousRegionIdsRef.current = nextRegionIds;
+
     if (!activeRegionId) {
       return;
     }
-    regionRefs.current[activeRegionId]?.scrollIntoView({
+
+    const regionNode = regionRefs.current[activeRegionId];
+    regionNode?.scrollIntoView({
       behavior: 'smooth',
       block: 'nearest',
     });
-  }, [activeRegionId]);
+
+    if (!isNewActiveRegion) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      const promptInput = regionNode?.querySelector('textarea') as HTMLTextAreaElement | null;
+      if (!promptInput) {
+        return;
+      }
+      promptInput.focus();
+      promptInput.setSelectionRange(promptInput.value.length, promptInput.value.length);
+      setFocusedRegionId(activeRegionId);
+      setActivePromptTarget(targetIdRef.current);
+    });
+  }, [activeRegionId, regions]);
 
   const handleAddRegion = () => {
     const id = addRegion({
@@ -399,13 +424,37 @@ export const RegionalPromptEditor = memo(function RegionalPromptEditor({
           </Group>
         </Group>
 
+        <Box
+          p="sm"
+          style={{
+            border: '1px solid var(--mantine-color-invokeGray-7)',
+            borderRadius: 8,
+            backgroundColor: 'var(--mantine-color-invokeGray-8)',
+          }}
+        >
+          <Stack gap={4}>
+            <Text size="xs" fw={600} c="invokeGray.1">
+              How Regions Work
+            </Text>
+            <Text size="xs" c="invokeGray.4">
+              1. Choose the Region tool and draw a box over the part of the image you want to control.
+            </Text>
+            <Text size="xs" c="invokeGray.4">
+              2. In the new card below, name what that area is.
+            </Text>
+            <Text size="xs" c="invokeGray.4">
+              3. Then describe what you want added, changed, or emphasized inside that area.
+            </Text>
+          </Stack>
+        </Box>
+
         <SwarmButton
           size="xs"
           emphasis="soft"
           leftSection={<IconPlus size={14} />}
           onClick={handleAddRegion}
         >
-          Add Box Region
+          Add Box Region Manually
         </SwarmButton>
 
         <SwarmButton
@@ -441,7 +490,7 @@ export const RegionalPromptEditor = memo(function RegionalPromptEditor({
               No regions defined.
             </Text>
             <Text size="xs" c="invokeGray.5">
-              Use Region tool (R) for boxes, or add a background rule for scene-wide cleanup.
+              Draw a box with the Region tool (R) and it will appear here, or add a background rule for scene-wide cleanup.
             </Text>
           </Box>
         ) : (

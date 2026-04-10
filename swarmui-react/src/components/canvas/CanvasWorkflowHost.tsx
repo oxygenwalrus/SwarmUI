@@ -16,6 +16,7 @@ function hasSelectedModel(params: Partial<GenerateParams> | null): boolean {
 
 export function CanvasWorkflowHost() {
   const navigateToGenerate = useNavigationStore((state) => state.navigateToGenerate);
+  const generationParams = useGenerationStore((state) => state.params);
   const {
     isOpen,
     sessionId,
@@ -163,11 +164,15 @@ export function CanvasWorkflowHost() {
         height={sourceImageHeight ?? undefined}
         mode="workflow"
         workflowStep={currentStep}
-      pendingResult={pendingResult}
-      clearMaskVersion={clearMaskVersion}
-      onClose={closeSession}
-      onApply={(payload) => recordApplyPayload(decoratePayload(payload))}
-      onWorkflowStepChange={setStep}
+        pendingResult={pendingResult}
+        clearMaskVersion={clearMaskVersion}
+        sam2BaseParams={{
+          ...generationParams,
+          ...(fallbackParams ?? {}),
+        }}
+        onClose={closeSession}
+        onApply={(payload) => recordApplyPayload(decoratePayload(payload))}
+        onWorkflowStepChange={setStep}
         onApplyToGenerate={handleApplyToGenerate}
         onGenerateFromCanvas={handleGenerateFromCanvas}
         onOpenUpscaler={openUpscaler}

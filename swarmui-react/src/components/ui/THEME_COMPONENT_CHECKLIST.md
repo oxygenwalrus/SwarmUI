@@ -31,6 +31,10 @@
 - [x] Accent hierarchy defined (`brand`, secondary, tertiary, highlight)
 - [x] Motion profile chosen (`calm`, `standard`, or `energetic`)
 - [x] Contrast checked for dark mode and light-mode overrides where available
+- [x] Text-bearing surfaces grounded on semantic surface tokens
+- [x] Selected and active states use shared readable tokens
+- [x] High-visibility image/card/table selections use scrims or selected-surface tokens
+- [x] Contrast audit added for built-in themes across both color schemes
 
 ## Legacy CSS Tokenization
 - [x] `src/components/context-menu.css`

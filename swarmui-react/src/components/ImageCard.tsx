@@ -1,10 +1,11 @@
 import { memo } from 'react';
-import { Card, ActionIcon, Badge, Checkbox } from '@mantine/core';
+import { Card, Checkbox } from '@mantine/core';
 import { IconStar, IconStarFilled, IconTrash, IconCopy, IconPhoto, IconUpload, IconRotate, IconMaximize } from '@tabler/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ImageListItem } from '../api/types';
 import { LazyImage } from './LazyImage';
 import { ContextMenu, useContextMenu, type ContextMenuItem } from './ContextMenu';
+import { SwarmActionIcon, SwarmBadge } from './ui';
 
 interface ImageCardProps {
     /** The image data */
@@ -201,17 +202,18 @@ export const ImageCard = memo(function ImageCard({
                 <Card
                     p={0}
                     radius="sm"
-                    className="swarm-gallery-image-card"
+                    className="swarm-gallery-image-card swarm-selectable-card"
+                    data-selected={isSelected ? 'true' : undefined}
                     style={{
                         overflow: 'hidden',
                         position: 'relative',
                         border: isSelected
-                            ? '2px solid var(--theme-selection-border)'
+                            ? '2px solid var(--theme-selected-border)'
                             : image.starred
                                 ? '2px solid var(--theme-brand)'
                                 : '1px solid var(--theme-border-subtle)',
                         boxShadow: isSelected
-                            ? '0 0 0 2px color-mix(in srgb, var(--theme-selection-border) 35%, transparent), var(--elevation-shadow-md)'
+                            ? '0 0 0 2px color-mix(in srgb, var(--theme-selected-border) 35%, transparent), var(--elevation-shadow-md)'
                             : isHovered
                                 ? 'var(--elevation-shadow-md)'
                                 : 'none',
@@ -241,7 +243,7 @@ export const ImageCard = memo(function ImageCard({
                                     left: 0,
                                     right: 0,
                                     bottom: 0,
-                                    background: 'color-mix(in srgb, var(--theme-gray-9) 78%, transparent)',
+                                    background: 'color-mix(in srgb, var(--theme-surface-app) 78%, transparent)',
                                     backdropFilter: 'blur(2px)',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -258,10 +260,10 @@ export const ImageCard = memo(function ImageCard({
                                         animate="visible"
                                         exit="exit"
                                     >
-                                        <ActionIcon
+                                        <SwarmActionIcon
                                             size="xl"
-                                            variant="filled"
-                                            color={button.color}
+                                            tone={button.key === 'delete' ? 'danger' : 'warning'}
+                                            emphasis="solid"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 button.onClick();
@@ -271,7 +273,7 @@ export const ImageCard = memo(function ImageCard({
                                             }}
                                         >
                                             {button.icon}
-                                        </ActionIcon>
+                                        </SwarmActionIcon>
                                     </motion.div>
                                 ))}
                             </motion.div>
@@ -300,9 +302,11 @@ export const ImageCard = memo(function ImageCard({
                                     styles={{
                                         input: {
                                             backgroundColor: isSelected
-                                                ? 'var(--theme-selection-border)'
-                                                : 'color-mix(in srgb, var(--theme-gray-8) 84%, transparent)',
-                                            borderColor: 'var(--theme-border-subtle)',
+                                                ? 'var(--theme-selected-border)'
+                                                : 'color-mix(in srgb, var(--theme-surface-raised) 88%, transparent)',
+                                            borderColor: isSelected
+                                                ? 'var(--theme-selected-border)'
+                                                : 'var(--theme-border-subtle)',
                                             cursor: 'pointer',
                                         },
                                     }}
@@ -321,9 +325,9 @@ export const ImageCard = memo(function ImageCard({
                                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                                 style={{ position: 'absolute', top: 8, right: 8 }}
                             >
-                                <Badge color="yellow" size="sm" variant="filled">
+                                <SwarmBadge tone="warning" emphasis="solid" size="sm">
                                     <IconStarFilled size={12} />
-                                </Badge>
+                                </SwarmBadge>
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -336,9 +340,9 @@ export const ImageCard = memo(function ImageCard({
                                 exit={{ scale: 0.9, opacity: 0 }}
                                 style={{ position: 'absolute', bottom: 8, right: 8 }}
                             >
-                                <Badge color="invokeBrand" size="sm" variant="filled">
+                                <SwarmBadge tone="primary" emphasis="solid" size="sm">
                                     {mediaLabel}
-                                </Badge>
+                                </SwarmBadge>
                             </motion.div>
                         )}
                     </AnimatePresence>

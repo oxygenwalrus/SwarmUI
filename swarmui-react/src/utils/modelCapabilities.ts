@@ -13,6 +13,7 @@ const TEXT_TO_VIDEO_PATTERNS = [
     /hunyuan/i,
     /\bltxv\b/i,
     /ltx[\s-]?video/i,
+    /wan/i, // Wan 2.1 & 2.2
 ];
 
 const IMAGE_TO_VIDEO_PATTERNS = [
@@ -21,6 +22,7 @@ const IMAGE_TO_VIDEO_PATTERNS = [
     /cosmos/i,
     /\bltxv\b/i,
     /ltx[\s-]?video/i,
+    /wan/i, // Wan 2.1 & 2.2
 ];
 
 function readBoolean(value: unknown): boolean | undefined {

@@ -276,13 +276,13 @@ function startSwarmUI() {
       const isWindows = process.platform === 'win32';
 
       if (isWindows) {
-        swarmUIProcess = spawn('cmd.exe', ['/c', SWARMUI_EXECUTABLE], {
+        swarmUIProcess = spawn('cmd.exe', ['/c', SWARMUI_EXECUTABLE, '--launch_mode', 'none'], {
           cwd: SWARMUI_DIR,
           stdio: 'pipe',
           windowsHide: true,
         });
       } else {
-        swarmUIProcess = spawn('bash', [SWARMUI_EXECUTABLE], {
+        swarmUIProcess = spawn('bash', [SWARMUI_EXECUTABLE, '--launch_mode', 'none'], {
           cwd: SWARMUI_DIR,
           stdio: 'pipe',
         });
@@ -1074,6 +1074,23 @@ ipcMain.handle('restart-swarmui', async () => {
   await stopProcesses();
   await startSwarmUI();
   return { success: true };
+});
+
+ipcMain.handle('shutdown-app', async () => {
+  isQuitting = true;
+  await stopProcesses();
+  setImmediate(() => {
+    app.quit();
+  });
+  return true;
+});
+
+ipcMain.handle('reload-wrapper', async () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.reload();
+    return true;
+  }
+  return false;
 });
 
 ipcMain.on('set-prompt-target-active', (event, payload) => {

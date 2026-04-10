@@ -14,7 +14,6 @@ import {
   Menu,
   Tooltip,
   Paper,
-  SegmentedControl,
   TextInput,
   SimpleGrid,
 } from '@mantine/core';
@@ -55,6 +54,7 @@ import {
   SwarmActionIcon,
   SwarmBadge,
   SwarmButton,
+  SwarmSegmentedControl,
   type SwarmTone,
   type QuickActionItem,
   type StatusTimelineStep,
@@ -440,6 +440,8 @@ export function QueuePage({ routeState }: QueuePageProps) {
 
   useEffect(() => {
     if (routeState?.view && routeState.view !== viewMode) {
+      // Route navigation can intentionally push a different queue tab after mount.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setViewMode(routeState.view);
     }
 
@@ -636,7 +638,7 @@ export function QueuePage({ routeState }: QueuePageProps) {
           {/* Filters and View Mode */}
           <Group justify="space-between" wrap="wrap" align="flex-start">
             <Group wrap="wrap">
-              <SegmentedControl
+              <SwarmSegmentedControl
                 value={viewMode}
                 onChange={(v) => setViewMode(v as typeof viewMode)}
                 data={[
@@ -730,9 +732,7 @@ export function QueuePage({ routeState }: QueuePageProps) {
                   return (
                     <Table.Tr
                       key={job.id}
-                      style={{
-                        backgroundColor: isSelected ? 'var(--theme-selection-bg)' : undefined
-                      }}
+                      className={isSelected ? 'swarm-selected-table-row' : undefined}
                     >
                       <Table.Td className="swarm-queue-sticky-left">
                         <Checkbox

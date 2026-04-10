@@ -1,6 +1,6 @@
 import { memo, useMemo, useState } from 'react';
-import { Box, Group, ScrollArea, Stack, Text, TextInput, Textarea, ThemeIcon, UnstyledButton } from '@mantine/core';
-import { IconBookmark, IconChevronLeft, IconChevronRight, IconHistory, IconLayersIntersect, IconPlus, IconRoute, IconWand } from '@tabler/icons-react';
+import { Box, Drawer, Group, ScrollArea, Stack, Text, TextInput, Textarea } from '@mantine/core';
+import { IconBookmark, IconHistory, IconLayersIntersect, IconPlus, IconRoute, IconWand } from '@tabler/icons-react';
 import { ElevatedCard, SwarmBadge, SwarmButton, SwarmSegmentedControl } from './ui';
 import type { StepSelectionSummary } from '../features/promptWizard/wizardInsights';
 import type {
@@ -13,11 +13,10 @@ import type {
 } from '../features/promptWizard/types';
 
 interface PromptWizardSidebarProps {
+  opened: boolean;
+  onClose: () => void;
   steps: StepMeta[];
   activeStep: BuilderStep;
-  stacked?: boolean;
-  collapsed?: boolean;
-  onToggleCollapsed?: () => void;
   stepSummaries: Record<BuilderStep, StepSelectionSummary>;
   lastEditedStep: BuilderStep;
   recentSteps: BuilderStep[];
@@ -49,15 +48,13 @@ function formatStepLabel(steps: StepMeta[], step: BuilderStep): string {
 }
 
 export const PromptWizardSidebar = memo(function PromptWizardSidebar({
+  opened,
+  onClose,
   steps,
   activeStep,
-  stacked = false,
-  collapsed = false,
-  onToggleCollapsed,
   stepSummaries,
   lastEditedStep,
   recentSteps,
-  recentGroupKeys,
   profileName,
   nextIncompleteStep,
   defaultPresets,
@@ -88,132 +85,44 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
 
   const saveCurrentDraft = () => {
     const name = draftName.trim();
-    if (!name) {
-      return;
-    }
-    if (activeLibraryTab === 'bundles') {
-      onSaveBundle(name, draftDescription.trim() || undefined);
-    }
-    else if (activeLibraryTab === 'recipes') {
-      onSaveRecipe(name, draftDescription.trim() || undefined);
-    }
-    else if (activeLibraryTab === 'states') {
-      onSaveState(name, draftDescription.trim() || undefined);
-    }
+    if (!name) return;
+    if (activeLibraryTab === 'bundles') onSaveBundle(name, draftDescription.trim() || undefined);
+    else if (activeLibraryTab === 'recipes') onSaveRecipe(name, draftDescription.trim() || undefined);
+    else if (activeLibraryTab === 'states') onSaveState(name, draftDescription.trim() || undefined);
     setDraftName('');
     setDraftDescription('');
   };
 
-  if (collapsed && !stacked) {
-    return (
-      <Box
-        style={{
-          width: 82,
-          minWidth: 82,
-          height: '100%',
-          borderRight: '1px solid var(--mantine-color-default-border)',
-          background: 'color-mix(in srgb, var(--elevation-raised) 70%, transparent)',
-          flexShrink: 0,
-          overflow: 'hidden',
-        }}
-      >
-        <Stack gap="sm" p="sm" align="center">
-          <UnstyledButton
-            onClick={onToggleCollapsed}
-            aria-label="Expand prompt wizard sidebar"
-            style={{ borderRadius: 'var(--mantine-radius-md)' }}
-          >
-            <ThemeIcon size={36} radius="md" variant="light" color="gray">
-              <IconChevronRight size={18} />
-            </ThemeIcon>
-          </UnstyledButton>
-
-          <SwarmBadge tone="secondary" emphasis="soft" size="lg">
-            {profileName.split(/\s+/)[0] ?? 'Profile'}
-          </SwarmBadge>
-
-          <Stack gap="xs" align="center" w="100%">
-            {steps.map((step) => {
-              const summary = stepSummaries[step.step];
-              const tone = step.step === activeStep
-                ? step.tone
-                : summary.completion === 'strong'
-                  ? 'success'
-                  : summary.completion === 'started'
-                    ? step.tone
-                    : 'secondary';
-              return (
-                <UnstyledButton
-                  key={step.step}
-                  onClick={() => onJumpStep(step.step)}
-                  title={`${step.label}: ${summary.count} selected`}
-                  style={{ width: '100%' }}
-                >
-                  <Box
-                    p={6}
-                    style={{
-                      borderRadius: 'var(--mantine-radius-md)',
-                      border: '1px solid var(--mantine-color-default-border)',
-                      background: step.step === activeStep ? `color-mix(in srgb, var(--mantine-color-${step.tone}-light) 55%, transparent)` : 'transparent',
-                    }}
-                  >
-                    <Stack gap={2} align="center">
-                      <SwarmBadge tone={tone} emphasis={step.step === activeStep ? 'solid' : 'soft'}>
-                        {step.label.slice(0, 2).toUpperCase()}
-                      </SwarmBadge>
-                      <Text size="xs" c="dimmed">
-                        {summary.count}
-                      </Text>
-                    </Stack>
-                  </Box>
-                </UnstyledButton>
-              );
-            })}
-          </Stack>
-        </Stack>
-      </Box>
-    );
-  }
+  const handleJumpStep = (step: BuilderStep) => {
+    onJumpStep(step);
+    onClose();
+  };
 
   return (
-    <Box
-      style={{
-        width: stacked ? '100%' : 356,
-        minWidth: stacked ? 0 : 356,
-        maxHeight: stacked ? 296 : 'none',
-        minHeight: 0,
-        height: stacked ? 296 : '100%',
-        borderRight: stacked ? 'none' : '1px solid var(--mantine-color-default-border)',
-        borderBottom: stacked ? '1px solid var(--mantine-color-default-border)' : 'none',
-        background: 'color-mix(in srgb, var(--elevation-raised) 62%, transparent)',
-        flexShrink: 0,
-        overflow: 'hidden',
-      }}
+    <Drawer
+      opened={opened}
+      onClose={onClose}
+      title="Build Tools"
+      position="left"
+      size="sm"
+      overlayProps={{ backgroundOpacity: 0.15, blur: 2 }}
     >
-      <ScrollArea offsetScrollbars scrollbarSize={8} style={{ height: '100%' }}>
-        <Stack gap="md" p="md">
+      <ScrollArea offsetScrollbars scrollbarSize={8} style={{ height: 'calc(100vh - 80px)' }}>
+        <Stack gap="md">
+          {/* Quick navigation */}
           <ElevatedCard elevation="floor" withBorder>
             <Stack gap="sm">
               <Group justify="space-between" align="center">
                 <Text fw={700} size="md">Build Flow</Text>
-                <Group gap="xs" align="center">
-                  <SwarmBadge tone="secondary" emphasis="soft">{profileName}</SwarmBadge>
-                  {!stacked && onToggleCollapsed && (
-                    <UnstyledButton onClick={onToggleCollapsed} aria-label="Collapse prompt wizard sidebar" style={{ borderRadius: 'var(--mantine-radius-sm)' }}>
-                      <ThemeIcon size={30} radius="md" variant="light" color="gray">
-                        <IconChevronLeft size={16} />
-                      </ThemeIcon>
-                    </UnstyledButton>
-                  )}
-                </Group>
+                <SwarmBadge tone="secondary" emphasis="soft">{profileName}</SwarmBadge>
               </Group>
-              <Group grow wrap={stacked ? 'wrap' : 'nowrap'}>
+              <Group grow>
                 <SwarmButton
                   tone="primary"
                   emphasis="soft"
                   leftSection={<IconRoute size={15} />}
                   disabled={!nextIncompleteStep}
-                  onClick={() => nextIncompleteStep && onJumpStep(nextIncompleteStep)}
+                  onClick={() => nextIncompleteStep && handleJumpStep(nextIncompleteStep)}
                 >
                   Next incomplete
                 </SwarmButton>
@@ -222,22 +131,18 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
                   emphasis="soft"
                   leftSection={<IconHistory size={15} />}
                   disabled={!lastEditedStep}
-                  onClick={() => onJumpStep(lastEditedStep)}
+                  onClick={() => handleJumpStep(lastEditedStep)}
                 >
                   Recent step
                 </SwarmButton>
               </Group>
               <Text size="sm" c="dimmed">
-                Recent steps: {recentSteps.slice(0, 4).map((step) => formatStepLabel(steps, step)).join(' / ') || 'None yet'}
+                Recent: {recentSteps.slice(0, 4).map((step) => formatStepLabel(steps, step)).join(' / ') || 'None'}
               </Text>
-              {recentGroupKeys.length > 0 && (
-                <Text size="sm" c="dimmed">
-                  Recent groups: {recentGroupKeys.slice(0, 3).join(' / ')}
-                </Text>
-              )}
             </Stack>
           </ElevatedCard>
 
+          {/* Step summary */}
           <ElevatedCard elevation="floor" withBorder>
             <Stack gap="sm">
               <Text fw={700} size="md">Step Summary</Text>
@@ -248,8 +153,8 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
                 return (
                   <Box
                     key={step.step}
-                    p="sm"
-                    onClick={() => onJumpStep(step.step)}
+                    p="xs"
+                    onClick={() => handleJumpStep(step.step)}
                     style={{
                       cursor: 'pointer',
                       borderRadius: 'var(--mantine-radius-md)',
@@ -257,24 +162,25 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
                       background: isActive ? `color-mix(in srgb, var(--mantine-color-${step.tone}-light) 55%, transparent)` : 'transparent',
                     }}
                   >
-                    <Stack gap={6}>
-                      <Group justify="space-between" align="center">
-                        <Text fw={600} size="sm">{step.label}</Text>
-                        <Group gap={6}>
-                          {summary.explicitCount > 0 && <SwarmBadge tone="danger" emphasis="soft">Explicit {summary.explicitCount}</SwarmBadge>}
-                          <SwarmBadge tone={completionTone} emphasis="soft">{summary.completion}</SwarmBadge>
-                        </Group>
+                    <Group justify="space-between" align="center">
+                      <Text fw={600} size="sm">{step.label}</Text>
+                      <Group gap={4}>
+                        {summary.explicitCount > 0 && <SwarmBadge tone="danger" emphasis="soft" size="sm">18+ {summary.explicitCount}</SwarmBadge>}
+                        <SwarmBadge tone={completionTone} emphasis="soft" size="sm">{summary.count}</SwarmBadge>
                       </Group>
-                      <Text size="xs" c="dimmed">
-                        {summary.count === 0 ? 'Nothing selected yet.' : summary.tags.map((tag) => tag.text).join(', ')}
+                    </Group>
+                    {summary.count > 0 && (
+                      <Text size="xs" c="dimmed" lineClamp={1} mt={2}>
+                        {summary.tags.map((tag) => tag.text).join(', ')}
                       </Text>
-                    </Stack>
+                    )}
                   </Box>
                 );
               })}
             </Stack>
           </ElevatedCard>
 
+          {/* Library */}
           <ElevatedCard elevation="floor" withBorder>
             <Stack gap="sm">
               <Group justify="space-between" align="center">
@@ -299,9 +205,9 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
                 <Stack gap="xs">
                   <TextInput
                     size="sm"
-                    placeholder={activeLibraryTab === 'bundles' ? 'Save current selection as bundle' : activeLibraryTab === 'recipes' ? 'Save current build as recipe' : 'Save current wizard state'}
+                    placeholder={`Save as ${activeLibraryTab.slice(0, -1)}...`}
                     value={draftName}
-                    onChange={(event) => setDraftName(event.currentTarget.value)}
+                    onChange={(e) => setDraftName(e.currentTarget.value)}
                   />
                   <Textarea
                     size="xs"
@@ -310,7 +216,7 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
                     maxRows={3}
                     placeholder="Optional note"
                     value={draftDescription}
-                    onChange={(event) => setDraftDescription(event.currentTarget.value)}
+                    onChange={(e) => setDraftDescription(e.currentTarget.value)}
                   />
                   <SwarmButton
                     tone="primary"
@@ -319,7 +225,7 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
                     onClick={saveCurrentDraft}
                     disabled={!draftName.trim()}
                   >
-                    Save current {activeLibraryTab.slice(0, -1)}
+                    Save {activeLibraryTab.slice(0, -1)}
                   </SwarmButton>
                 </Stack>
               )}
@@ -327,14 +233,14 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
               <Stack gap="xs">
                 {activeLibraryTab === 'presets' && combinedPresets.map((preset) => (
                   <ElevatedCard key={preset.id} elevation="paper" withBorder>
-                    <Stack gap={6}>
+                    <Stack gap={4}>
                       <Group justify="space-between" align="center">
                         <Text fw={600} size="sm">{preset.name}</Text>
-                        <SwarmBadge tone="secondary" emphasis="soft">{formatStepLabel(steps, preset.step)}</SwarmBadge>
+                        <SwarmBadge tone="secondary" emphasis="soft" size="sm">{formatStepLabel(steps, preset.step)}</SwarmBadge>
                       </Group>
                       {preset.description && <Text size="xs" c="dimmed">{preset.description}</Text>}
-                      <SwarmButton tone="secondary" emphasis="soft" leftSection={<IconWand size={14} />} onClick={() => onApplyPreset(preset.tagIds)}>
-                        Apply preset
+                      <SwarmButton tone="secondary" emphasis="soft" leftSection={<IconWand size={14} />} onClick={() => onApplyPreset(preset.tagIds)} size="compact-sm">
+                        Apply
                       </SwarmButton>
                     </Stack>
                   </ElevatedCard>
@@ -342,19 +248,14 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
 
                 {activeLibraryTab === 'bundles' && sessionBundles.map((bundle) => (
                   <ElevatedCard key={bundle.id} elevation="paper" withBorder>
-                    <Stack gap={6}>
+                    <Stack gap={4}>
                       <Group justify="space-between" align="center">
                         <Text fw={600} size="sm">{bundle.name}</Text>
-                        <SwarmBadge tone="secondary" emphasis="soft">{bundle.tagIds.length} tags</SwarmBadge>
+                        <SwarmBadge tone="secondary" emphasis="soft" size="sm">{bundle.tagIds.length}</SwarmBadge>
                       </Group>
-                      {bundle.description && <Text size="xs" c="dimmed">{bundle.description}</Text>}
-                      <Group grow>
-                        <SwarmButton tone="secondary" emphasis="soft" leftSection={<IconLayersIntersect size={14} />} onClick={() => onApplyBundle(bundle.id, 'merge')}>
-                          Merge
-                        </SwarmButton>
-                        <SwarmButton tone="secondary" emphasis="ghost" onClick={() => onRemoveBundle(bundle.id)}>
-                          Remove
-                        </SwarmButton>
+                      <Group grow gap={4}>
+                        <SwarmButton tone="secondary" emphasis="soft" size="compact-sm" leftSection={<IconLayersIntersect size={12} />} onClick={() => onApplyBundle(bundle.id, 'merge')}>Merge</SwarmButton>
+                        <SwarmButton tone="secondary" emphasis="ghost" size="compact-sm" onClick={() => onRemoveBundle(bundle.id)}>Remove</SwarmButton>
                       </Group>
                     </Stack>
                   </ElevatedCard>
@@ -362,43 +263,30 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
 
                 {activeLibraryTab === 'recipes' && savedRecipes.map((recipe) => (
                   <ElevatedCard key={recipe.id} elevation="paper" withBorder>
-                    <Stack gap={6}>
+                    <Stack gap={4}>
                       <Group justify="space-between" align="center">
                         <Text fw={600} size="sm">{recipe.name}</Text>
-                        <SwarmBadge tone="secondary" emphasis="soft">{recipe.tagIds.length} tags</SwarmBadge>
+                        <SwarmBadge tone="secondary" emphasis="soft" size="sm">{recipe.tagIds.length}</SwarmBadge>
                       </Group>
-                      {recipe.description && <Text size="xs" c="dimmed">{recipe.description}</Text>}
-                      <Group grow>
-                        <SwarmButton tone="secondary" emphasis="soft" leftSection={<IconBookmark size={14} />} onClick={() => onApplyRecipe(recipe.id, 'merge')}>
-                          Merge
-                        </SwarmButton>
-                        <SwarmButton tone="secondary" emphasis="ghost" onClick={() => onApplyRecipe(recipe.id, 'replace')}>
-                          Replace
-                        </SwarmButton>
+                      <Group grow gap={4}>
+                        <SwarmButton tone="secondary" emphasis="soft" size="compact-sm" leftSection={<IconBookmark size={12} />} onClick={() => onApplyRecipe(recipe.id, 'merge')}>Merge</SwarmButton>
+                        <SwarmButton tone="secondary" emphasis="ghost" size="compact-sm" onClick={() => onApplyRecipe(recipe.id, 'replace')}>Replace</SwarmButton>
                       </Group>
-                      <SwarmButton tone="secondary" emphasis="ghost" onClick={() => onRemoveRecipe(recipe.id)}>
-                        Remove
-                      </SwarmButton>
+                      <SwarmButton tone="secondary" emphasis="ghost" size="compact-xs" onClick={() => onRemoveRecipe(recipe.id)}>Remove</SwarmButton>
                     </Stack>
                   </ElevatedCard>
                 ))}
 
                 {activeLibraryTab === 'states' && savedStates.map((snapshot) => (
                   <ElevatedCard key={snapshot.id} elevation="paper" withBorder>
-                    <Stack gap={6}>
+                    <Stack gap={4}>
                       <Group justify="space-between" align="center">
                         <Text fw={600} size="sm">{snapshot.name}</Text>
-                        <SwarmBadge tone="secondary" emphasis="soft">{snapshot.selectedTagIds.length} tags</SwarmBadge>
+                        <SwarmBadge tone="secondary" emphasis="soft" size="sm">{snapshot.selectedTagIds.length}</SwarmBadge>
                       </Group>
-                      {snapshot.description && <Text size="xs" c="dimmed">{snapshot.description}</Text>}
-                      <Text size="xs" c="dimmed">Resume on {formatStepLabel(steps, snapshot.activeStep)}</Text>
-                      <Group grow>
-                        <SwarmButton tone="secondary" emphasis="soft" leftSection={<IconHistory size={14} />} onClick={() => onLoadState(snapshot.id)}>
-                          Load state
-                        </SwarmButton>
-                        <SwarmButton tone="secondary" emphasis="ghost" onClick={() => onRemoveState(snapshot.id)}>
-                          Remove
-                        </SwarmButton>
+                      <Group grow gap={4}>
+                        <SwarmButton tone="secondary" emphasis="soft" size="compact-sm" leftSection={<IconHistory size={12} />} onClick={() => onLoadState(snapshot.id)}>Load</SwarmButton>
+                        <SwarmButton tone="secondary" emphasis="ghost" size="compact-sm" onClick={() => onRemoveState(snapshot.id)}>Remove</SwarmButton>
                       </Group>
                     </Stack>
                   </ElevatedCard>
@@ -409,9 +297,7 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
                   || (activeLibraryTab === 'recipes' && savedRecipes.length === 0)
                   || (activeLibraryTab === 'states' && savedStates.length === 0)) && (
                   <Text size="sm" c="dimmed">
-                    {activeLibraryTab === 'presets'
-                      ? 'No presets are available for this step yet.'
-                      : `No ${activeLibraryTab} saved yet.`}
+                    {activeLibraryTab === 'presets' ? 'No presets for this step.' : `No ${activeLibraryTab} saved yet.`}
                   </Text>
                 )}
               </Stack>
@@ -419,6 +305,6 @@ export const PromptWizardSidebar = memo(function PromptWizardSidebar({
           </ElevatedCard>
         </Stack>
       </ScrollArea>
-    </Box>
+    </Drawer>
   );
 });

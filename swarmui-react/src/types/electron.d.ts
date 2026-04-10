@@ -8,6 +8,8 @@ interface ElectronNativeSpellIssue {
 interface ElectronBridge {
     getSwarmUIStatus?: () => Promise<{ running: boolean; serverReady: boolean; port: number }>;
     restartSwarmUI?: () => Promise<{ success: boolean }>;
+    shutdownApp?: () => Promise<boolean>;
+    reloadWrapper?: () => Promise<boolean>;
     platform?: string;
     isElectron?: boolean;
     hasNativeSpellcheck?: () => boolean;
@@ -29,6 +31,7 @@ interface ElectronBridge {
 declare global {
     interface Window {
         electron?: ElectronBridge;
+        electronAPI?: ElectronBridge;
     }
 }
 

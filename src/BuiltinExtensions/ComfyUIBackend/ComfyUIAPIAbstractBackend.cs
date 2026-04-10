@@ -1072,6 +1072,7 @@ public abstract class ComfyUIAPIAbstractBackend : AbstractT2IBackend
     public override async Task<bool> FreeMemory(bool systemRam)
     {
         await SendPost<string>("free", new JObject() { ["unload_models"] = true, ["free_memory"] = systemRam });
+        CurrentModelName = null;
         return true;
     }
 

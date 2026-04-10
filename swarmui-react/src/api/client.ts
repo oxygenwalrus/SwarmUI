@@ -1178,17 +1178,23 @@ export class SwarmUIClient {
   async listControlNets(): Promise<any[]> {
     const response = await this.getCachedTriggerRefresh();
 
-    // SwarmUI TriggerRefresh returns a 'list' object with all parameter types
-    if ('list' in response && response.list) {
-      const controlnetParam = response.list.find((param: any) => param.id === 'controlnetmodel');
-      if (controlnetParam && controlnetParam.values) {
-        return controlnetParam.values.map((cn: any) => ({
-          name: typeof cn === 'string' ? cn : cn.name || cn,
-          title: typeof cn === 'object' ? cn.title || cn.name : cn,
-          description: typeof cn === 'object' ? cn.description || '' : '',
-          path: typeof cn === 'string' ? cn : cn.path || cn.name,
-        }));
-      }
+    // SwarmUI TriggerRefresh returns models in response.models['ControlNet'] as [name, path] pairs.
+    // The 'controlnetmodel' param in response.list has values=null for model-type params —
+    // the actual installed models live under response.models.
+    if ('models' in response && response.models && Array.isArray(response.models['ControlNet'])) {
+      return response.models['ControlNet']
+        .filter((entry: any) => Array.isArray(entry) && entry[0] && entry[0] !== '(None)')
+        .map((entry: any) => {
+          const name = entry[0] as string;
+          // Strip extension for a cleaner display label
+          const label = name.replace(/\.[^/.]+$/, '');
+          return {
+            name,
+            title: label,
+            description: '',
+            path: entry[1] as string,
+          };
+        });
     }
 
     return [];
@@ -1259,8 +1265,14 @@ export class SwarmUIClient {
       .map(([id, value]) => this.normalizeBackendStatus(value as Record<string, unknown>, id));
   }
 
-  async listBackends(): Promise<BackendStatus[]> {
-    const response = await this.post<unknown>('ListBackends', {});
+  async listBackends(options?: {
+    fullData?: boolean;
+    nonreal?: boolean;
+  }): Promise<BackendStatus[]> {
+    const response = await this.post<unknown>('ListBackends', {
+      ...(options?.fullData ? { full_data: true } : {}),
+      ...(options?.nonreal ? { nonreal: true } : {}),
+    });
     return this.normalizeBackendsResponse(response);
   }
 
@@ -2011,9 +2023,10 @@ export class SwarmUIClient {
   }): Promise<{ created: number; updated: number }> {
     const response = await this.post<{ created?: number; updated?: number } | APIError>('CreateLoraDatasetRecordsFromBatchPlan', params);
     if (!('error' in response)) {
+      const data = response as { created?: number; updated?: number };
       return {
-        created: response.created || 0,
-        updated: response.updated || 0,
+        created: data.created || 0,
+        updated: data.updated || 0,
       };
     }
     throw new Error(response.error || 'Failed to create dataset records');
@@ -2072,7 +2085,8 @@ export class SwarmUIClient {
   }): Promise<LoraDatasetItem | null> {
     const response = await this.post<{ item?: LoraDatasetItem } | APIError>('RejectLoraDatasetImage', params);
     if (!('error' in response)) {
-      return response.item || null;
+      const data = response as { item?: LoraDatasetItem };
+      return data.item || null;
     }
     throw new Error(response.error || 'Failed to reject LoRA dataset item');
   }
@@ -2115,7 +2129,7 @@ export class SwarmUIClient {
       job_id: jobId,
     }, { timeout: 30000 });
     if (!('error' in response)) {
-      return response;
+      return response as { started?: boolean; already_running?: boolean; process_id?: number; job?: LoraTrainingJob; status?: LoraTrainingStatus; launch_preview?: Record<string, unknown> };
     }
     throw new Error(response.error || 'Failed to start LoRA training');
   }
@@ -2125,7 +2139,7 @@ export class SwarmUIClient {
       job_id: jobId,
     });
     if (!('error' in response)) {
-      return response;
+      return response as { interrupted?: boolean; status?: LoraTrainingStatus };
     }
     throw new Error(response.error || 'Failed to interrupt LoRA training');
   }
@@ -2133,11 +2147,12 @@ export class SwarmUIClient {
   async getLoraTrainingStatus(): Promise<{ status: LoraTrainingStatus | null; recent_jobs: LoraTrainingJob[]; history_count: number; trainable_projects: LoraTrainableProject[] }> {
     const response = await this.post<{ status?: LoraTrainingStatus; recent_jobs?: LoraTrainingJob[]; history_count?: number; trainable_projects?: LoraTrainableProject[] } | APIError>('GetLoraTrainingStatus', {});
     if (!('error' in response)) {
+      const data = response as { status?: LoraTrainingStatus; recent_jobs?: LoraTrainingJob[]; history_count?: number; trainable_projects?: LoraTrainableProject[] };
       return {
-        status: response.status || null,
-        recent_jobs: response.recent_jobs || [],
-        history_count: response.history_count || 0,
-        trainable_projects: response.trainable_projects || [],
+        status: data.status || null,
+        recent_jobs: data.recent_jobs || [],
+        history_count: data.history_count || 0,
+        trainable_projects: data.trainable_projects || [],
       };
     }
     throw new Error(response.error || 'Failed to load LoRA training status');

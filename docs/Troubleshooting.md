@@ -41,6 +41,10 @@ As time goes on it's likely the Windows drivers will become more stable.
 
 Some users report that setting an environment variable of `HSA_OVERRIDE_GFX_VERSION=10.3.0` can make more older AMD GPUs work with the modern drivers.
 
+For modern supported Radeon cards on Windows, always use Swarm's embedded ComfyUI python environment, usually `dlbackend/comfy/python_embeded/python.exe`. AMD's current Windows PyTorch install flow is a two-step process: install the ROCm SDK packages first, then install the ROCm `torch` / `torchvision` / `torchaudio` wheels. These wheels currently require Python 3.12.
+
+If you are troubleshooting an RX 9070 XT / `gfx1201` system specifically, do not add `--lowvram` to ComfyUI launch args. That can push work into system RAM and make stability worse. Prefer `--normalvram` or `--medvram` if you need a memory mode, and `--disable-pinned-memory` can help with some HIP issues.
+
 ## Common Error Messages
 
 ### AssertionError: Torch not compiled with CUDA enabled
@@ -48,6 +52,8 @@ Some users report that setting an environment variable of `HSA_OVERRIDE_GFX_VERS
 The message `AssertionError: Torch not compiled with CUDA enabled` means that python dependencies of Swarm's comfy backend have been mangled. This most often happens when custom nodes or packages have poorly built requirements files. You'll see issues like this most frequently if you often allow Comfy Manager to install nodepacks.
 
 **So how do I fix it?** The concept is easy, just the details vary. You need to reinstall torch, which means you need to trigger a pip install of: `torch torchvision torchaudio -U --index-url https://download.pytorch.org/whl/cu128` (the cu128 is CUDA version and may change over time, refer to [PyTorch's Website](https://pytorch.org/get-started/locally/) for updated index-url options). Note the usage of `-U` to tell pip to upgrade/replace the existing torch. To see how to install pip packages, refer to [I need to install something with pip](#i-need-to-install-something-with-pip) below.
+
+If you are on Windows with an AMD GPU, do not use the CUDA command above. Reinstall the official ROCm wheels into Swarm's embedded ComfyUI python instead, using AMD's current Windows ROCm install instructions from the `AMD On Windows` section above.
 
 ### fatal: detected dubious ownership in repository at '...'
 

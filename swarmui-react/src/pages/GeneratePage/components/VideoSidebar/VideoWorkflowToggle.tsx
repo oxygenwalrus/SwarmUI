@@ -1,5 +1,5 @@
 import { SegmentedControl, Stack, Text } from '@mantine/core';
-import type { VideoWorkflow } from './VideoModelWarning';
+import type { VideoWorkflow } from './videoModelProfiles';
 
 /**
  * Determines initial workflow state from the current init image preview.

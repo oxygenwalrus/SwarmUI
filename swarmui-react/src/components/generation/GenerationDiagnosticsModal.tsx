@@ -1,9 +1,7 @@
 import { useMemo } from 'react';
 import {
     Accordion,
-    Badge,
     Box,
-    Button,
     Divider,
     Group,
     Modal,
@@ -22,6 +20,7 @@ import {
     IconTrash,
 } from '@tabler/icons-react';
 import { useGenerationDiagnosticsStore, type GenerationDiagnosticEntry } from '../../stores/generationDiagnosticsStore';
+import { SwarmBadge, SwarmButton, type SwarmTone } from '../ui';
 
 interface GenerationDiagnosticsModalProps {
     opened: boolean;
@@ -45,16 +44,16 @@ function formatDuration(entry: GenerationDiagnosticEntry): string {
     return `${seconds}s`;
 }
 
-function statusColor(status: GenerationDiagnosticEntry['status']): string {
+function statusTone(status: GenerationDiagnosticEntry['status']): SwarmTone {
     switch (status) {
         case 'complete':
-            return 'green';
+            return 'success';
         case 'error':
-            return 'red';
+            return 'danger';
         case 'interrupted':
-            return 'yellow';
+            return 'warning';
         default:
-            return 'blue';
+            return 'info';
     }
 }
 
@@ -98,7 +97,7 @@ function JsonBlock({ label, value }: { label: string; value: unknown }) {
     }
     return (
         <Stack gap={6}>
-            <Text size="xs" fw={600} c="invokeGray.2">
+            <Text size="xs" fw={600} c="dimmed">
                 {label}
             </Text>
             <Box
@@ -107,9 +106,9 @@ function JsonBlock({ label, value }: { label: string; value: unknown }) {
                     margin: 0,
                     padding: 12,
                     borderRadius: 8,
-                    background: 'color-mix(in srgb, var(--theme-gray-9) 88%, black)',
-                    border: '1px solid var(--theme-gray-6)',
-                    color: 'var(--theme-gray-1)',
+                    background: 'var(--theme-surface-input)',
+                    border: '1px solid var(--theme-border-subtle)',
+                    color: 'var(--theme-text-on-input)',
                     fontSize: 12,
                     lineHeight: 1.5,
                     overflowX: 'auto',
@@ -148,25 +147,26 @@ export function GenerationDiagnosticsModal({
             centered
         >
             <Stack gap="md">
-                <Paper p="sm" withBorder radius="md">
+                <Paper p="sm" withBorder radius="md" className="swarm-contrast-panel">
                     <Stack gap="xs">
                         <Group justify="space-between" align="flex-start">
                             <Stack gap={4}>
                                 <Text fw={600}>Recent generation traces</Text>
-                                <Text size="sm" c="invokeGray.3">
+                                <Text size="sm" c="dimmed">
                                     Captures frontend payload normalization, websocket lifecycle, backend request IDs, and server error data across recent generations.
                                 </Text>
                             </Stack>
                             <Group gap="xs">
-                                <Badge color="blue" variant="light">{entries.length} stored</Badge>
-                                <Badge color="green" variant="light">{runningCount} running</Badge>
-                                <Badge color="red" variant="light">{errorCount} failed</Badge>
+                                <SwarmBadge tone="info">{entries.length} stored</SwarmBadge>
+                                <SwarmBadge tone="success">{runningCount} running</SwarmBadge>
+                                <SwarmBadge tone="danger">{errorCount} failed</SwarmBadge>
                             </Group>
                         </Group>
                         <Group gap="xs">
-                            <Button
+                            <SwarmButton
                                 size="xs"
-                                variant="light"
+                                tone="info"
+                                emphasis="soft"
                                 leftSection={<IconCopy size={14} />}
                                 disabled={!latestEntry}
                                 onClick={() => {
@@ -176,10 +176,11 @@ export function GenerationDiagnosticsModal({
                                 }}
                             >
                                 Copy Latest
-                            </Button>
-                            <Button
+                            </SwarmButton>
+                            <SwarmButton
                                 size="xs"
-                                variant="light"
+                                tone="info"
+                                emphasis="soft"
                                 leftSection={<IconCopy size={14} />}
                                 disabled={entries.length === 0}
                                 onClick={() => {
@@ -187,11 +188,11 @@ export function GenerationDiagnosticsModal({
                                 }}
                             >
                                 Copy All
-                            </Button>
-                            <Button
+                            </SwarmButton>
+                            <SwarmButton
                                 size="xs"
-                                variant="subtle"
-                                color="red"
+                                tone="danger"
+                                emphasis="ghost"
                                 leftSection={<IconTrash size={14} />}
                                 disabled={entries.length === 0}
                                 onClick={() => {
@@ -204,14 +205,14 @@ export function GenerationDiagnosticsModal({
                                 }}
                             >
                                 Clear
-                            </Button>
+                            </SwarmButton>
                         </Group>
                     </Stack>
                 </Paper>
 
                 {entries.length === 0 ? (
-                    <Paper p="lg" withBorder radius="md">
-                        <Text size="sm" c="invokeGray.3">
+                    <Paper p="lg" withBorder radius="md" className="swarm-contrast-panel">
+                        <Text size="sm" c="dimmed">
                             No generation diagnostics captured yet.
                         </Text>
                     </Paper>
@@ -224,51 +225,51 @@ export function GenerationDiagnosticsModal({
                                         <Group justify="space-between" wrap="nowrap">
                                             <Stack gap={4} style={{ minWidth: 0 }}>
                                                 <Group gap="xs" wrap="nowrap">
-                                                    <Badge
-                                                        color={statusColor(entry.status)}
-                                                        variant="filled"
+                                                    <SwarmBadge
+                                                        tone={statusTone(entry.status)}
+                                                        emphasis="solid"
                                                         leftSection={statusIcon(entry.status)}
                                                     >
                                                         {entry.status}
-                                                    </Badge>
+                                                    </SwarmBadge>
                                                     <Text fw={600} truncate>
                                                         {entry.model || 'Unknown model'}
                                                     </Text>
                                                 </Group>
-                                                <Text size="xs" c="invokeGray.3" truncate>
+                                                <Text size="xs" c="dimmed" truncate>
                                                     Request {entry.requestId || 'pending'} • Started {formatTimestamp(entry.startedAt)} • Duration {formatDuration(entry)}
                                                 </Text>
                                             </Stack>
                                             <Group gap="xs" wrap="nowrap">
-                                                <Badge variant="light" color="blue">
+                                                <SwarmBadge tone="info">
                                                     {entry.payloadKeys.length} key{entry.payloadKeys.length === 1 ? '' : 's'}
-                                                </Badge>
-                                                <Badge variant="light" color="grape">
+                                                </SwarmBadge>
+                                                <SwarmBadge tone="primary">
                                                     {entry.events.length} event{entry.events.length === 1 ? '' : 's'}
-                                                </Badge>
+                                                </SwarmBadge>
                                             </Group>
                                         </Group>
                                     </Accordion.Control>
                                     <Accordion.Panel>
                                         <Stack gap="md">
                                             <Group gap="xs">
-                                                <Badge variant="light" color="gray">Gen {entry.generationId}</Badge>
-                                                <Badge variant="light" color="gray">Request {entry.requestId || 'pending'}</Badge>
+                                                <SwarmBadge tone="secondary">Gen {entry.generationId}</SwarmBadge>
+                                                <SwarmBadge tone="secondary">Request {entry.requestId || 'pending'}</SwarmBadge>
                                                 {entry.errorId && (
-                                                    <Badge variant="light" color="red">Error {entry.errorId}</Badge>
+                                                    <SwarmBadge tone="danger">Error {entry.errorId}</SwarmBadge>
                                                 )}
-                                                <Badge variant="light" color="blue">
+                                                <SwarmBadge tone="info">
                                                     Progress {entry.lastProgress}%
-                                                </Badge>
-                                                <Badge variant="light" color="teal">
+                                                </SwarmBadge>
+                                                <SwarmBadge tone="success">
                                                     Images {entry.imagesReceived}
-                                                </Badge>
+                                                </SwarmBadge>
                                             </Group>
 
                                             <Group align="flex-start" grow>
-                                                <Paper p="sm" withBorder radius="md">
+                                                <Paper p="sm" withBorder radius="md" className="swarm-contrast-panel">
                                                     <Stack gap={4}>
-                                                        <Text size="xs" fw={700} c="invokeGray.2">Summary</Text>
+                                                        <Text size="xs" fw={700} c="dimmed">Summary</Text>
                                                         <Text size="sm">Started: {formatTimestamp(entry.startedAt)}</Text>
                                                         <Text size="sm">Ended: {formatTimestamp(entry.endedAt)}</Text>
                                                         <Text size="sm">Latest phase: {entry.latestPhase || 'N/A'}</Text>
@@ -277,9 +278,9 @@ export function GenerationDiagnosticsModal({
                                                         <Text size="sm">Total batches: {entry.totalBatches ?? 'N/A'}</Text>
                                                     </Stack>
                                                 </Paper>
-                                                <Paper p="sm" withBorder radius="md">
+                                                <Paper p="sm" withBorder radius="md" className="swarm-contrast-panel">
                                                     <Stack gap={4}>
-                                                        <Text size="xs" fw={700} c="invokeGray.2">Frontend payload</Text>
+                                                        <Text size="xs" fw={700} c="dimmed">Frontend payload</Text>
                                                         <Text size="sm">Model: {entry.model || 'N/A'}</Text>
                                                         <Text size="sm">Raw model: {typeof entry.rawModel === 'string' ? entry.rawModel : prettyJson(entry.rawModel)}</Text>
                                                         <Text size="sm">Payload keys: {entry.payloadKeys.join(', ') || 'none'}</Text>
@@ -293,10 +294,16 @@ export function GenerationDiagnosticsModal({
                                             </Group>
 
                                             {entry.error && (
-                                                <Paper p="sm" withBorder radius="md" style={{ borderColor: 'var(--mantine-color-red-6)' }}>
+                                                <Paper
+                                                    p="sm"
+                                                    withBorder
+                                                    radius="md"
+                                                    className="swarm-contrast-panel"
+                                                    style={{ borderColor: 'var(--theme-tone-danger-border)' }}
+                                                >
                                                     <Stack gap={4}>
-                                                        <Text size="xs" fw={700} c="red.3">Final error</Text>
-                                                        <Text size="sm" c="red.1">
+                                                        <Text size="xs" fw={700} style={{ color: 'var(--theme-error)' }}>Final error</Text>
+                                                        <Text size="sm" style={{ color: 'var(--theme-tone-danger-text)' }}>
                                                             {entry.error}
                                                         </Text>
                                                     </Stack>
@@ -312,21 +319,21 @@ export function GenerationDiagnosticsModal({
 
                                             <Stack gap="xs">
                                                 {entry.events.length === 0 ? (
-                                                    <Text size="sm" c="invokeGray.3">
+                                                    <Text size="sm" c="dimmed">
                                                         No lifecycle events recorded for this attempt.
                                                     </Text>
                                                 ) : (
                                                     entry.events.map((event) => (
-                                                        <Paper key={event.id} p="sm" withBorder radius="md">
+                                                        <Paper key={event.id} p="sm" withBorder radius="md" className="swarm-contrast-panel">
                                                             <Stack gap={6}>
                                                                 <Group justify="space-between" align="center">
                                                                     <Group gap="xs">
-                                                                        <Badge color={event.level === 'error' ? 'red' : event.level === 'warn' ? 'yellow' : 'blue'} variant="light">
+                                                                        <SwarmBadge tone={event.level === 'error' ? 'danger' : event.level === 'warn' ? 'warning' : 'info'}>
                                                                             {event.type}
-                                                                        </Badge>
+                                                                        </SwarmBadge>
                                                                         <Text size="sm" fw={500}>{event.message}</Text>
                                                                     </Group>
-                                                                    <Text size="xs" c="invokeGray.3">
+                                                                    <Text size="xs" c="dimmed">
                                                                         +{Math.max(0, event.at - entry.startedAt)}ms
                                                                     </Text>
                                                                 </Group>

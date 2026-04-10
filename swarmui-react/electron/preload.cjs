@@ -102,12 +102,14 @@ function offIgnoredSpellWordsUpdated(callback) {
 
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
-contextBridge.exposeInMainWorld('electron', {
+const electronBridge = {
   // Get SwarmUI backend status
   getSwarmUIStatus: () => ipcRenderer.invoke('get-swarmui-status'),
 
   // Restart SwarmUI backend
   restartSwarmUI: () => ipcRenderer.invoke('restart-swarmui'),
+  shutdownApp: () => ipcRenderer.invoke('shutdown-app'),
+  reloadWrapper: () => ipcRenderer.invoke('reload-wrapper'),
   selectFolder: (startPath) => ipcRenderer.invoke('select-folder', startPath),
 
   // Platform info
@@ -133,4 +135,7 @@ contextBridge.exposeInMainWorld('electron', {
     electron: process.versions.electron,
     chrome: process.versions.chrome,
   }
-});
+};
+
+contextBridge.exposeInMainWorld('electron', electronBridge);
+contextBridge.exposeInMainWorld('electronAPI', electronBridge);
