@@ -32,7 +32,7 @@ import {
 import type { RoleplayBundleData } from '../features/roleplay/roleplayBundle';
 
 const DEFAULT_CHAT_MAX_TOKENS = 768;
-const DEFAULT_PERSONA_ID = 'default-persona';
+export const DEFAULT_PERSONA_ID = 'default-persona';
 
 type LegacyRoleplayCharacter = Partial<RoleplayCharacter> & {
   id: string;
